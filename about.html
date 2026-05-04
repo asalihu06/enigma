@@ -1,0 +1,1714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>About Enigma Transport — Building a Structured Transport System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet" />
+<style>
+
+/* ─────────────────────────────────────────
+   RESET & TOKENS
+───────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Brand */
+  --green:        #5bbf3a;
+  --green-dark:   #3a9e1f;
+  --green-dim:    rgba(91,191,58,0.16);
+  --green-pale:   #eaf7e4;
+
+  /* Ink */
+  --ink:          #0e1a0a;
+  --ink-soft:     #3d4d38;
+  --muted:        #6b7c65;
+  --muted-lt:     #9aad94;
+
+  /* Surfaces */
+  --surface:      #ffffff;
+  --bg:           #f3f7f0;
+  --bg-dark:      #0e1a0a;
+
+  /* Borders */
+  --border:       rgba(91,191,58,0.20);
+  --border-mid:   rgba(91,191,58,0.32);
+  --border-ink:   rgba(255,255,255,0.08);
+
+  /* Typography */
+  --font-head: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+
+  /* Radii */
+  --r-sm:   10px;
+  --r-md:   16px;
+  --r-lg:   22px;
+  --r-xl:   32px;
+  --r-pill: 100px;
+
+  /* Shadows */
+  --shadow-sm:    0 2px 12px rgba(0,0,0,0.05);
+  --shadow-card:  0 4px 32px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+  --shadow-green: 0 6px 24px rgba(91,191,58,0.28);
+}
+
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--surface);
+  color: var(--ink);
+  overflow-x: hidden;
+  /* subtle paper grain overlay */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.018'/%3E%3C/svg%3E");
+}
+
+/* ─────────────────────────────────────────
+   ANIMATIONS
+───────────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideDown {
+  from { transform: translateY(-100%); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+@keyframes drawLine {
+  from { stroke-dashoffset: 200; }
+  to   { stroke-dashoffset: 0;   }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; transform: scale(1);    }
+  50%       { opacity: 1;   transform: scale(1.08); }
+}
+@keyframes ticker {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ─────────────────────────────────────────
+   TOP BAR
+───────────────────────────────────────── */
+.top-bar {
+  background: var(--ink);
+  display: flex; justify-content: flex-end; align-items: center;
+  gap: 28px; padding: 7px 40px;
+  font-size: 11.5px; color: rgba(255,255,255,0.42); letter-spacing: 0.03em;
+}
+.top-bar-item { display: flex; align-items: center; gap: 7px; }
+.top-bar-item svg { opacity: 0.5; flex-shrink: 0; }
+@media (max-width: 760px) { .top-bar { display: none; } }
+
+/* ─────────────────────────────────────────
+   HEADER
+───────────────────────────────────────── */
+.header {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  display: flex; align-items: center; gap: 40px;
+  height: 68px;
+  animation: slideDown 0.45s ease both;
+}
+.logo-link { text-decoration: none; display: flex; align-items: center; flex-shrink: 0; }
+.logo-wordmark {
+  font-family: var(--font-head); font-size: 1.25rem; font-weight: 800;
+  color: var(--ink); letter-spacing: -0.01em;
+}
+.logo-wordmark span { color: var(--green); }
+
+.nav {
+  display: flex; align-items: center;
+  position: absolute; left: 50%; transform: translateX(-50%);
+}
+.nav a {
+  font-size: 13.5px; font-weight: 500; color: var(--ink-soft);
+  text-decoration: none; padding: 8px 15px;
+  position: relative; transition: color 0.2s; white-space: nowrap;
+}
+.nav a::after {
+  content: ''; position: absolute; bottom: 0; left: 50%; right: 50%;
+  height: 2px; background: var(--green); border-radius: 2px;
+  transition: left 0.26s cubic-bezier(.22,1,.36,1), right 0.26s cubic-bezier(.22,1,.36,1);
+}
+.nav a:hover { color: var(--green-dark); }
+.nav a:hover::after, .nav a.active::after { left: 12px; right: 12px; }
+.nav a.active { color: var(--green-dark); font-weight: 600; }
+
+.header-ctas { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.btn-nav-pill {
+  font-family: var(--font-head); font-size: 12px; font-weight: 700;
+  background: var(--green); color: #fff;
+  padding: 9px 20px; border-radius: var(--r-pill); border: none; cursor: pointer;
+  transition: background 0.2s, transform 0.18s;
+  text-decoration: none; display: inline-block;
+}
+.btn-nav-pill:hover { background: var(--green-dark); transform: scale(1.04); }
+.btn-nav-ghost {
+  font-family: var(--font-body); font-size: 12px; font-weight: 600;
+  color: var(--green-dark); background: transparent;
+  border: 1.5px solid var(--green); border-radius: var(--r-pill);
+  padding: 7px 16px; cursor: pointer;
+  transition: background 0.22s, color 0.22s, transform 0.18s;
+  white-space: nowrap; text-decoration: none; display: inline-block;
+}
+.btn-nav-ghost:hover { background: var(--green); color: #fff; transform: scale(1.04); }
+
+.menu-toggle {
+  display: none; background: none; border: none; cursor: pointer;
+  padding: 4px; flex-direction: column; gap: 5px; margin-left: auto;
+}
+.menu-toggle span { display: block; width: 22px; height: 2px; background: var(--ink); border-radius: 2px; transition: all 0.22s; }
+
+/* ─────────────────────────────────────────
+   MOBILE NAV
+───────────────────────────────────────── */
+.mobile-nav {
+  display: none; position: fixed; inset: 0;
+  background: var(--ink); z-index: 300;
+  flex-direction: column; padding: 80px 40px 40px;
+  animation: fadeIn 0.22s ease;
+}
+.mobile-nav.open { display: flex; }
+.mobile-nav a {
+  font-family: var(--font-head); font-size: 1rem; font-weight: 600;
+  color: rgba(255,255,255,0.65); text-decoration: none;
+  padding: 18px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+  transition: color 0.2s;
+}
+.mobile-nav a:hover { color: var(--green); }
+.mobile-nav .close-btn {
+  position: absolute; top: 22px; right: 24px;
+  background: none; border: none; cursor: pointer; color: rgba(255,255,255,0.5);
+}
+.mobile-nav-ctas { margin-top: 36px; display: flex; flex-direction: column; gap: 12px; }
+.btn-fill {
+  font-family: var(--font-head); font-size: 14px; font-weight: 700;
+  background: var(--green); color: #fff; border: none;
+  border-radius: var(--r-pill); padding: 14px 28px; cursor: pointer;
+  text-decoration: none; display: inline-block; text-align: center;
+  transition: background 0.22s;
+}
+.btn-fill:hover { background: var(--green-dark); }
+.btn-stroke {
+  font-family: var(--font-head); font-size: 14px; font-weight: 700;
+  background: transparent; color: #fff;
+  border: 1.5px solid rgba(255,255,255,0.3); border-radius: var(--r-pill);
+  padding: 12px 28px; cursor: pointer;
+  text-decoration: none; display: inline-block; text-align: center;
+  transition: border-color 0.22s, background 0.22s;
+}
+.btn-stroke:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.55); }
+
+/* ─────────────────────────────────────────
+   SHARED UTILITIES
+───────────────────────────────────────── */
+.section-eyebrow {
+  font-family: var(--font-head); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--green-dark); margin-bottom: 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-eyebrow::before { content: ''; width: 18px; height: 2px; background: var(--green); border-radius: 2px; }
+.section-eyebrow.light { color: rgba(91,191,58,0.7); }
+.section-eyebrow.light::before { background: var(--green); }
+.section-eyebrow.center { justify-content: center; }
+
+.section-h2 {
+  font-family: var(--font-head);
+  font-size: clamp(1.9rem, 3.2vw, 2.7rem);
+  font-weight: 800; color: var(--ink); line-height: 1.1;
+}
+.section-h2 .accent { color: var(--green); }
+.section-h2.light { color: #fff; }
+.section-h2.center { text-align: center; }
+
+.section-lead {
+  font-size: 16px; color: var(--muted); line-height: 1.82;
+  max-width: 600px;
+}
+.section-lead.wide { max-width: 740px; }
+.section-lead.center { text-align: center; margin: 0 auto; }
+.section-lead.light { color: rgba(255,255,255,0.48); }
+
+.divider-line {
+  width: 48px; height: 3px; background: var(--green); border-radius: 3px;
+  margin-bottom: 28px;
+}
+.divider-line.center { margin: 0 auto 28px; }
+
+.check-icon {
+  flex-shrink: 0; width: 20px; height: 20px;
+  background: var(--green); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 2px;
+}
+.check-icon svg { width: 10px; height: 10px; }
+
+/* ─────────────────────────────────────────
+   ① HERO
+───────────────────────────────────────── */
+.hero {
+  background: var(--ink);
+  min-height: 88vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  position: relative; overflow: hidden;
+}
+
+/* Fine dot-grid pattern */
+.hero::before {
+  content: '';
+  position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background-image: radial-gradient(rgba(91,191,58,0.09) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(ellipse 75% 85% at 75% 50%, rgba(0,0,0,0.7) 0%, transparent 80%);
+}
+
+/* Green vertical accent strip on right column join */
+.hero-accent-strip {
+  position: absolute; top: 0; bottom: 0; left: 50%;
+  width: 3px;
+  background: linear-gradient(180deg, transparent 0%, var(--green) 30%, var(--green-dark) 70%, transparent 100%);
+  opacity: 0.25; z-index: 2; pointer-events: none;
+}
+
+.hero-left {
+  padding: 100px 60px 80px 40px;
+  display: flex; flex-direction: column; justify-content: center;
+  position: relative; z-index: 3;
+}
+
+.breadcrumb {
+  font-size: 12px; color: rgba(255,255,255,0.28);
+  margin-bottom: 32px; display: flex; align-items: center; gap: 8px;
+}
+.breadcrumb a { color: var(--green); text-decoration: none; transition: opacity 0.2s; }
+.breadcrumb a:hover { opacity: 0.8; }
+.breadcrumb svg { width: 10px; height: 10px; opacity: 0.4; }
+
+.hero-eyebrow {
+  font-family: var(--font-head); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.22em; text-transform: uppercase; color: var(--green);
+  margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
+  animation: fadeUp 0.5s 0.1s both;
+}
+.hero-eyebrow::before { content: ''; width: 18px; height: 2px; background: var(--green); border-radius: 2px; }
+
+.hero-title {
+  font-family: var(--font-head);
+  font-size: clamp(2.6rem, 5vw, 4.4rem);
+  font-weight: 800; color: #fff; line-height: 1.04;
+  margin-bottom: 28px; animation: fadeUp 0.55s 0.18s both;
+}
+.hero-title .accent  { color: var(--green); }
+.hero-title .subdued { color: rgba(255,255,255,0.38); font-weight: 400; }
+
+.hero-statement {
+  font-size: 16.5px; line-height: 1.78;
+  color: rgba(255,255,255,0.52); max-width: 430px;
+  margin-bottom: 20px; animation: fadeUp 0.55s 0.26s both;
+  font-weight: 300;
+}
+
+/* Pull quote — mission statement */
+.hero-mission {
+  border-left: 3px solid var(--green);
+  padding: 16px 20px;
+  background: rgba(91,191,58,0.06);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  margin-bottom: 48px; max-width: 440px;
+  animation: fadeUp 0.55s 0.34s both;
+}
+.hero-mission p {
+  font-size: 14px; font-style: italic; font-weight: 300;
+  color: rgba(255,255,255,0.55); line-height: 1.72;
+}
+.hero-mission strong { color: rgba(255,255,255,0.82); font-style: normal; font-weight: 500; }
+
+.hero-cta-row {
+  display: flex; gap: 12px; flex-wrap: wrap;
+  animation: fadeUp 0.55s 0.42s both;
+}
+.btn-hero-primary {
+  font-family: var(--font-head); font-size: 13.5px; font-weight: 700;
+  background: var(--green); color: #fff; border: none;
+  border-radius: var(--r-pill); padding: 14px 30px; cursor: pointer;
+  transition: background 0.22s, transform 0.18s, box-shadow 0.22s;
+  box-shadow: 0 4px 18px rgba(91,191,58,0.38); text-decoration: none; display: inline-block;
+}
+.btn-hero-primary:hover { background: var(--green-dark); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(91,191,58,0.45); }
+.btn-hero-ghost {
+  font-family: var(--font-head); font-size: 13.5px; font-weight: 700;
+  background: rgba(255,255,255,0.07); color: #fff;
+  border: 1.5px solid rgba(255,255,255,0.22); border-radius: var(--r-pill);
+  padding: 12px 26px; cursor: pointer; backdrop-filter: blur(6px);
+  transition: background 0.22s, border-color 0.22s, transform 0.18s;
+  text-decoration: none; display: inline-block;
+}
+.btn-hero-ghost:hover { background: rgba(255,255,255,0.13); border-color: rgba(255,255,255,0.5); transform: translateY(-2px); }
+
+/* Hero right — structured visual panel */
+.hero-right {
+  position: relative; z-index: 3; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  padding: 60px 40px 60px 60px;
+}
+
+.hero-panel {
+  width: 100%; max-width: 400px;
+  display: flex; flex-direction: column; gap: 16px;
+  animation: fadeUp 0.7s 0.3s both;
+}
+
+/* Company fact card */
+.fact-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(91,191,58,0.18);
+  border-radius: var(--r-lg); padding: 24px 26px;
+  transition: border-color 0.25s, background 0.25s;
+}
+.fact-card:hover { border-color: rgba(91,191,58,0.38); background: rgba(91,191,58,0.04); }
+.fact-card-label {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
+  color: rgba(255,255,255,0.28); margin-bottom: 10px;
+}
+.fact-card-value {
+  font-family: var(--font-head); font-size: 1rem; font-weight: 700;
+  color: #fff; line-height: 1.35;
+}
+.fact-card-value .green { color: var(--green); }
+.fact-card-sub { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 5px; line-height: 1.6; }
+
+.fact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.fact-grid .fact-card { padding: 18px 20px; }
+.fact-grid .fact-card-value { font-size: 1.4rem; }
+
+.hero-status-bar {
+  background: rgba(91,191,58,0.08); border: 1px solid rgba(91,191,58,0.2);
+  border-radius: var(--r-md); padding: 14px 18px;
+  display: flex; align-items: center; gap: 12px;
+}
+.status-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--green);
+  box-shadow: 0 0 0 4px rgba(91,191,58,0.18);
+  animation: pulse 2.2s ease-in-out infinite; flex-shrink: 0;
+}
+.hero-status-bar p { font-size: 12.5px; color: rgba(255,255,255,0.45); line-height: 1.5; }
+.hero-status-bar strong { color: rgba(255,255,255,0.72); font-weight: 600; }
+
+/* ─────────────────────────────────────────
+   ② WHO WE ARE
+───────────────────────────────────────── */
+.who-section {
+  background: var(--surface);
+  padding: 110px 40px;
+  position: relative;
+}
+/* subtle left rule */
+.who-section::before {
+  content: '';
+  position: absolute; left: 40px; top: 80px; bottom: 80px;
+  width: 1px; background: var(--border);
+}
+
+.who-inner {
+  max-width: 1060px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1.7fr; gap: 80px; align-items: start;
+}
+.who-left { position: sticky; top: 100px; }
+.who-number {
+  font-family: var(--font-head); font-size: 7rem; font-weight: 800;
+  color: var(--green-dim); line-height: 1; margin-bottom: -10px;
+  user-select: none;
+}
+
+.who-body p { font-size: 15.5px; color: var(--muted); line-height: 1.85; margin-bottom: 22px; }
+.who-body p:last-child { margin-bottom: 0; }
+.who-body p strong { color: var(--ink-soft); font-weight: 600; }
+
+.early-stage-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--green-pale); border: 1px solid rgba(91,191,58,0.28);
+  border-radius: var(--r-pill); padding: 6px 14px;
+  font-family: var(--font-head); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--green-dark);
+  margin-bottom: 24px;
+}
+.early-stage-badge svg { width: 12px; height: 12px; }
+
+/* ─────────────────────────────────────────
+   TICKER / MARQUEE
+───────────────────────────────────────── */
+.marquee-bar {
+  background: var(--ink); padding: 0;
+  overflow: hidden; border-top: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.marquee-track { display: flex; gap: 0; white-space: nowrap; animation: ticker 30s linear infinite; }
+.marquee-item {
+  display: flex; align-items: center; gap: 20px;
+  padding: 16px 36px; font-size: 12px; font-weight: 500;
+  color: rgba(255,255,255,0.28); letter-spacing: 0.06em; flex-shrink: 0;
+}
+.marquee-item .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--green); opacity: 0.6; }
+.marquee-item strong { color: rgba(255,255,255,0.5); font-weight: 600; }
+
+/* ─────────────────────────────────────────
+   ③ THE PROBLEM
+───────────────────────────────────────── */
+.problem-section {
+  background: var(--bg);
+  padding: 110px 40px;
+}
+.problem-inner { max-width: 1060px; margin: 0 auto; }
+.problem-head { margin-bottom: 64px; }
+
+.problem-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+.problem-card {
+  background: var(--surface); padding: 36px 32px;
+  border: 1px solid var(--border);
+  position: relative; overflow: hidden;
+  transition: border-color 0.28s, transform 0.28s;
+}
+.problem-card:first-child { border-radius: var(--r-lg) 0 0 var(--r-lg); }
+.problem-card:last-child  { border-radius: 0 var(--r-lg) var(--r-lg) 0; }
+.problem-card:hover { border-color: var(--green); transform: translateY(-4px); }
+
+/* top accent line */
+.problem-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--green), var(--green-dark));
+  opacity: 0; transition: opacity 0.28s;
+}
+.problem-card:hover::before { opacity: 1; }
+
+.problem-num {
+  font-family: var(--font-head); font-size: 3.5rem; font-weight: 800;
+  color: var(--green-dim); line-height: 1; margin-bottom: 20px;
+  user-select: none;
+}
+.problem-icon {
+  width: 44px; height: 44px; border-radius: var(--r-sm);
+  background: var(--green-pale); display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px;
+}
+.problem-icon svg { width: 20px; height: 20px; color: var(--green-dark); }
+.problem-card h3 {
+  font-family: var(--font-head); font-size: 1.05rem; font-weight: 800;
+  color: var(--ink); margin-bottom: 12px; line-height: 1.3;
+}
+.problem-card p { font-size: 13.5px; color: var(--muted); line-height: 1.75; }
+
+/* ─────────────────────────────────────────
+   ④ OUR SOLUTION
+───────────────────────────────────────── */
+.solution-section {
+  background: var(--ink);
+  padding: 110px 40px;
+  position: relative; overflow: hidden;
+}
+/* large decorative text */
+.solution-section::after {
+  content: 'SOLUTION';
+  position: absolute; right: -40px; bottom: -60px;
+  font-family: var(--font-head); font-size: 14rem; font-weight: 800;
+  color: rgba(91,191,58,0.03); line-height: 1;
+  pointer-events: none; user-select: none; white-space: nowrap;
+}
+
+.solution-inner {
+  max-width: 1060px; margin: 0 auto;
+  display: grid; grid-template-columns: 1.2fr 1fr; gap: 80px; align-items: center;
+}
+
+.solution-points { display: flex; flex-direction: column; gap: 0; margin-top: 40px; }
+.solution-point {
+  display: flex; gap: 20px; align-items: flex-start;
+  padding: 24px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.solution-point:last-child { border-bottom: none; }
+.sol-num {
+  font-family: var(--font-head); font-size: 11px; font-weight: 800;
+  color: var(--green); letter-spacing: 0.1em; flex-shrink: 0; padding-top: 2px;
+}
+.sol-text h4 {
+  font-family: var(--font-head); font-size: 15px; font-weight: 700;
+  color: #fff; margin-bottom: 7px;
+}
+.sol-text p { font-size: 13px; color: rgba(255,255,255,0.38); line-height: 1.72; }
+
+/* Solution visual */
+.solution-visual {
+  display: flex; flex-direction: column; gap: 14px;
+  animation: fadeUp 0.6s 0.3s both;
+}
+.sol-card {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(91,191,58,0.16);
+  border-radius: var(--r-md); padding: 20px 22px;
+  display: flex; gap: 14px; align-items: flex-start;
+  transition: background 0.22s, border-color 0.22s;
+}
+.sol-card:hover { background: rgba(91,191,58,0.06); border-color: rgba(91,191,58,0.32); }
+.sol-card-icon {
+  width: 38px; height: 38px; border-radius: 10px;
+  background: rgba(91,191,58,0.12); border: 1px solid rgba(91,191,58,0.18);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.sol-card-icon svg { width: 17px; height: 17px; color: var(--green); }
+.sol-card h5 {
+  font-family: var(--font-head); font-size: 13px; font-weight: 700;
+  color: #fff; margin-bottom: 4px;
+}
+.sol-card p { font-size: 12px; color: rgba(255,255,255,0.32); line-height: 1.6; }
+
+/* ─────────────────────────────────────────
+   ⑤ HOW WE OPERATE
+───────────────────────────────────────── */
+.operate-section {
+  background: var(--surface);
+  padding: 110px 40px;
+}
+.operate-inner { max-width: 1060px; margin: 0 auto; }
+.operate-head { max-width: 560px; margin-bottom: 72px; }
+
+.operate-flow {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 0; position: relative;
+}
+/* connecting line behind nodes */
+.operate-flow::before {
+  content: '';
+  position: absolute; top: 26px; left: 7%; right: 7%;
+  height: 1.5px; background: var(--border); z-index: 0;
+}
+
+.operate-step {
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; padding: 0 14px; position: relative; z-index: 1;
+  animation: fadeUp 0.5s both;
+}
+.operate-step:nth-child(1) { animation-delay: 0.08s; }
+.operate-step:nth-child(2) { animation-delay: 0.16s; }
+.operate-step:nth-child(3) { animation-delay: 0.24s; }
+.operate-step:nth-child(4) { animation-delay: 0.32s; }
+
+.op-node {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: var(--surface); border: 2px solid var(--green);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px; position: relative; z-index: 1;
+  transition: background 0.25s, transform 0.25s, box-shadow 0.25s;
+}
+.operate-step:hover .op-node {
+  background: var(--green); transform: scale(1.1);
+  box-shadow: 0 0 0 6px rgba(91,191,58,0.12);
+}
+.op-node svg { width: 20px; height: 20px; color: var(--green); transition: color 0.25s; }
+.operate-step:hover .op-node svg { color: #fff; }
+
+.operate-step h4 {
+  font-family: var(--font-head); font-size: 13.5px; font-weight: 700;
+  color: var(--ink); margin-bottom: 10px; line-height: 1.3;
+}
+.operate-step p { font-size: 12.5px; color: var(--muted); line-height: 1.7; }
+
+/* ─────────────────────────────────────────
+   ⑥ WHY WE ARE BUILDING THIS
+───────────────────────────────────────── */
+.why-section {
+  background: var(--bg);
+  padding: 110px 40px;
+}
+.why-inner {
+  max-width: 1060px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start;
+}
+
+.why-text p { font-size: 15px; color: var(--muted); line-height: 1.85; margin-bottom: 22px; }
+.why-text p:last-child { margin-bottom: 0; }
+.why-text p strong { color: var(--ink-soft); font-weight: 600; }
+
+/* Pull quote */
+.pull-quote {
+  border-left: 3px solid var(--green);
+  background: var(--green-pale); border-radius: 0 var(--r-md) var(--r-md) 0;
+  padding: 20px 24px; margin-top: 32px;
+}
+.pull-quote p {
+  font-family: var(--font-head); font-size: 1.05rem; font-weight: 600;
+  color: var(--green-dark); line-height: 1.55; font-style: italic;
+}
+
+.why-right { padding-top: 8px; }
+.why-pillars { display: flex; flex-direction: column; gap: 0; }
+.why-pillar {
+  display: flex; gap: 16px; align-items: flex-start;
+  padding: 22px 0; border-bottom: 1px solid var(--border);
+}
+.why-pillar:last-child { border-bottom: none; }
+.pillar-icon {
+  width: 42px; height: 42px; border-radius: 12px;
+  background: var(--surface); border: 1.5px solid var(--border);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  transition: border-color 0.22s, background 0.22s;
+}
+.why-pillar:hover .pillar-icon { border-color: var(--green); background: var(--green-pale); }
+.pillar-icon svg { width: 18px; height: 18px; color: var(--green-dark); }
+.pillar-body h4 {
+  font-family: var(--font-head); font-size: 14px; font-weight: 700;
+  color: var(--ink); margin-bottom: 6px;
+}
+.pillar-body p { font-size: 13px; color: var(--muted); line-height: 1.7; }
+
+/* ─────────────────────────────────────────
+   ⑦ TRUST & TRANSPARENCY
+───────────────────────────────────────── */
+.trust-section {
+  background: var(--ink);
+  padding: 110px 40px;
+  position: relative; overflow: hidden;
+}
+.trust-section::before {
+  content: '';
+  position: absolute; top: -180px; right: -100px;
+  width: 580px; height: 580px; border-radius: 50%;
+  border: 1px solid rgba(91,191,58,0.06); pointer-events: none;
+}
+.trust-section::after {
+  content: '';
+  position: absolute; bottom: -120px; left: -80px;
+  width: 380px; height: 380px; border-radius: 50%;
+  border: 1px solid rgba(91,191,58,0.05); pointer-events: none;
+}
+
+.trust-inner { max-width: 1060px; margin: 0 auto; }
+.trust-head { text-align: center; margin-bottom: 70px; }
+.trust-head .section-lead { margin: 16px auto 0; }
+
+.trust-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 52px; }
+.trust-card {
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(91,191,58,0.14);
+  border-radius: var(--r-lg); padding: 32px 28px;
+  transition: background 0.25s, border-color 0.25s, transform 0.28s;
+  animation: fadeUp 0.5s both;
+}
+.trust-card:nth-child(1) { animation-delay: 0.08s; }
+.trust-card:nth-child(2) { animation-delay: 0.16s; }
+.trust-card:nth-child(3) { animation-delay: 0.24s; }
+.trust-card:hover { background: rgba(91,191,58,0.05); border-color: rgba(91,191,58,0.3); transform: translateY(-5px); }
+
+.trust-card-icon {
+  width: 46px; height: 46px; border-radius: 13px;
+  background: rgba(91,191,58,0.10); border: 1px solid rgba(91,191,58,0.18);
+  display: flex; align-items: center; justify-content: center; margin-bottom: 18px;
+}
+.trust-card-icon svg { width: 20px; height: 20px; color: var(--green); }
+.trust-card h4 { font-family: var(--font-head); font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 10px; }
+.trust-card p { font-size: 13px; color: rgba(255,255,255,0.36); line-height: 1.75; }
+
+/* Risk acknowledgment band */
+.risk-band {
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(212,168,39,0.22);
+  border-radius: var(--r-lg); padding: 28px 32px;
+  display: flex; gap: 20px; align-items: flex-start;
+}
+.risk-band-icon {
+  width: 42px; height: 42px; border-radius: 11px;
+  background: rgba(212,168,39,0.12); border: 1px solid rgba(212,168,39,0.22);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.risk-band-icon svg { width: 20px; height: 20px; color: #d4a827; }
+.risk-band h4 { font-family: var(--font-head); font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.75); margin-bottom: 8px; }
+.risk-band p { font-size: 13px; color: rgba(255,255,255,0.34); line-height: 1.75; }
+
+/* ─────────────────────────────────────────
+   ⑧ WHAT WE OFFER INVESTORS
+───────────────────────────────────────── */
+.offer-section {
+  background: var(--surface);
+  padding: 110px 40px;
+}
+.offer-inner { max-width: 1060px; margin: 0 auto; }
+.offer-head { margin-bottom: 64px; }
+
+.offer-grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 24px; }
+
+/* Main offer block */
+.offer-main {
+  background: var(--ink); border-radius: var(--r-xl); padding: 44px 38px;
+  display: flex; flex-direction: column; justify-content: space-between;
+  min-height: 400px; position: relative; overflow: hidden;
+  animation: fadeUp 0.55s 0.1s both;
+}
+.offer-main::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(91,191,58,0.08) 1px, transparent 1px);
+  background-size: 24px 24px; pointer-events: none;
+}
+.offer-main-content { position: relative; z-index: 1; }
+.offer-main h3 {
+  font-family: var(--font-head); font-size: 1.5rem; font-weight: 800;
+  color: #fff; line-height: 1.18; margin-bottom: 16px;
+}
+.offer-main h3 .accent { color: var(--green); }
+.offer-main p { font-size: 13.5px; color: rgba(255,255,255,0.4); line-height: 1.75; }
+
+.offer-main-footer { position: relative; z-index: 1; margin-top: 36px; }
+.offer-main-cta {
+  font-family: var(--font-head); font-size: 13px; font-weight: 700;
+  background: var(--green); color: #fff; border: none;
+  border-radius: var(--r-pill); padding: 13px 26px; cursor: pointer;
+  transition: background 0.22s, transform 0.18s, box-shadow 0.22s;
+  box-shadow: 0 4px 16px rgba(91,191,58,0.35); text-decoration: none; display: inline-block;
+}
+.offer-main-cta:hover { background: var(--green-dark); transform: translateY(-2px); box-shadow: 0 7px 22px rgba(91,191,58,0.42); }
+
+/* Tier cards */
+.tier-card {
+  border: 1.5px solid var(--border); border-radius: var(--r-xl);
+  padding: 36px 28px; display: flex; flex-direction: column;
+  transition: border-color 0.28s, transform 0.28s, box-shadow 0.28s;
+  animation: fadeUp 0.55s both;
+}
+.tier-card.standard { animation-delay: 0.18s; }
+.tier-card.premium  { animation-delay: 0.26s; border-color: rgba(212,168,39,0.28); }
+.tier-card:hover { transform: translateY(-6px); box-shadow: 0 18px 48px rgba(91,191,58,0.1); border-color: var(--green); }
+.tier-card.premium:hover { border-color: #d4a827; box-shadow: 0 18px 48px rgba(212,168,39,0.12); }
+
+.tier-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  border-radius: var(--r-pill); padding: 5px 12px;
+  font-family: var(--font-head); font-size: 10px; font-weight: 800;
+  letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 22px; align-self: flex-start;
+}
+.tier-badge.standard { background: var(--green-pale); color: var(--green-dark); border: 1px solid rgba(91,191,58,0.25); }
+.tier-badge.premium  { background: #fdf6e3;           color: #9a7a10;           border: 1px solid rgba(212,168,39,0.3);  }
+
+.tier-name { font-family: var(--font-head); font-size: 1.2rem; font-weight: 800; color: var(--ink); margin-bottom: 6px; }
+.tier-desc { font-size: 13px; color: var(--muted); line-height: 1.65; margin-bottom: 28px; }
+.tier-features { display: flex; flex-direction: column; gap: 11px; flex: 1; }
+.tier-feat { display: flex; align-items: flex-start; gap: 10px; font-size: 12.5px; color: var(--ink-soft); line-height: 1.5; }
+.tier-feat svg { flex-shrink: 0; margin-top: 2px; }
+
+.tier-link {
+  font-family: var(--font-head); font-size: 12.5px; font-weight: 700;
+  text-decoration: none; display: flex; align-items: center; gap: 6px;
+  margin-top: 28px; transition: gap 0.2s;
+}
+.tier-link.green { color: var(--green-dark); }
+.tier-link.gold  { color: #b8920e; }
+.tier-link:hover { gap: 10px; }
+.tier-link svg { width: 13px; height: 13px; }
+
+/* ─────────────────────────────────────────
+   ⑨ CALL TO ACTION
+───────────────────────────────────────── */
+.cta-section {
+  background: var(--bg);
+  padding: 110px 40px;
+}
+.cta-inner {
+  max-width: 1060px; margin: 0 auto;
+  display: grid; grid-template-columns: 1.2fr 1fr; gap: 80px; align-items: center;
+}
+
+.cta-text .section-h2 { margin-bottom: 18px; }
+.cta-text .section-lead { margin-bottom: 36px; }
+.cta-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn-cta-primary {
+  font-family: var(--font-head); font-size: 14px; font-weight: 700;
+  background: var(--green); color: #fff; border: none;
+  border-radius: var(--r-pill); padding: 15px 32px; cursor: pointer;
+  transition: background 0.22s, transform 0.18s, box-shadow 0.22s;
+  box-shadow: 0 4px 18px rgba(91,191,58,0.35); text-decoration: none; display: inline-block;
+}
+.btn-cta-primary:hover { background: var(--green-dark); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(91,191,58,0.42); }
+.btn-cta-outline {
+  font-family: var(--font-head); font-size: 14px; font-weight: 700;
+  background: transparent; color: var(--ink-soft);
+  border: 1.5px solid var(--border-mid); border-radius: var(--r-pill);
+  padding: 13px 28px; cursor: pointer;
+  transition: border-color 0.22s, color 0.22s, background 0.22s;
+  text-decoration: none; display: inline-block;
+}
+.btn-cta-outline:hover { border-color: var(--green); color: var(--green-dark); background: var(--green-pale); }
+
+/* Contact info panel */
+.cta-panel {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--r-xl); padding: 36px 32px;
+  box-shadow: var(--shadow-card);
+}
+.cta-panel h4 { font-family: var(--font-head); font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 22px; }
+.contact-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 18px; }
+.contact-row:last-child { margin-bottom: 0; }
+.contact-icon { width: 36px; height: 36px; border-radius: 10px; background: var(--green-pale); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.contact-icon svg { width: 16px; height: 16px; color: var(--green-dark); }
+.contact-label { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
+.contact-value { font-size: 13.5px; font-weight: 500; color: var(--ink); }
+.contact-value a { color: var(--green-dark); text-decoration: none; }
+.contact-value a:hover { text-decoration: underline; }
+
+.cta-panel-divider { height: 1px; background: var(--border); margin: 22px 0; }
+.cta-panel-note { font-size: 12px; color: var(--muted); line-height: 1.65; }
+.cta-panel-note strong { color: var(--ink-soft); }
+
+/* ─────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────── */
+footer { background: var(--ink); padding: 60px 40px 0; }
+.footer-grid {
+  max-width: 1060px; margin: 0 auto;
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px; padding-bottom: 52px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+  margin-bottom: 24px; align-items: start;
+}
+.footer-wordmark { font-family: var(--font-head); font-size: 1.3rem; font-weight: 800; color: #fff; margin-bottom: 12px; }
+.footer-wordmark span { color: var(--green); }
+.footer-tagline { font-size: 12px; color: rgba(255,255,255,0.3); line-height: 1.75; max-width: 270px; margin-bottom: 22px; }
+.footer-contact { display: flex; flex-direction: column; gap: 10px; }
+.footer-contact-row { display: flex; align-items: flex-start; gap: 9px; }
+.footer-contact-row svg { width: 13px; height: 13px; color: var(--green); margin-top: 2px; flex-shrink: 0; }
+.footer-contact-row a, .footer-contact-row span { font-size: 12px; color: rgba(255,255,255,0.35); text-decoration: none; transition: color 0.2s; }
+.footer-contact-row a:hover { color: var(--green); }
+.footer-col h5 { font-family: var(--font-head); font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--green); margin-bottom: 16px; }
+.footer-col a { display: block; font-size: 12px; color: rgba(255,255,255,0.35); text-decoration: none; margin-bottom: 10px; transition: color 0.2s; }
+.footer-col a:hover { color: var(--green); }
+.footer-bottom {
+  max-width: 1060px; margin: 0 auto;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 10px; padding: 20px 0;
+  font-size: 12px; color: rgba(255,255,255,0.2);
+}
+.footer-bottom a { color: rgba(255,255,255,0.28); text-decoration: none; transition: color 0.2s; }
+.footer-bottom a:hover { color: var(--green); }
+.footer-dot { margin: 0 6px; }
+.disclaimer-strip {
+  background: rgba(255,255,255,0.025); border-top: 1px solid rgba(255,255,255,0.05);
+  padding: 16px 40px; text-align: center;
+  font-size: 11px; color: rgba(255,255,255,0.18); line-height: 1.65;
+}
+
+/* ─────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .hero                { grid-template-columns: 1fr; min-height: auto; }
+  .hero-right          { display: none; }
+  .who-inner           { grid-template-columns: 1fr; gap: 40px; }
+  .who-left            { position: static; }
+  .problem-grid        { grid-template-columns: 1fr; }
+  .problem-card        { border-radius: 0; }
+  .problem-card:first-child { border-radius: var(--r-lg) var(--r-lg) 0 0; }
+  .problem-card:last-child  { border-radius: 0 0 var(--r-lg) var(--r-lg); }
+  .solution-inner      { grid-template-columns: 1fr; gap: 48px; }
+  .operate-flow        { grid-template-columns: repeat(2, 1fr); }
+  .operate-flow::before { display: none; }
+  .why-inner           { grid-template-columns: 1fr; gap: 48px; }
+  .trust-grid          { grid-template-columns: 1fr 1fr; }
+  .offer-grid          { grid-template-columns: 1fr; }
+  .offer-main          { min-height: auto; }
+  .cta-inner           { grid-template-columns: 1fr; gap: 48px; }
+  .footer-grid         { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 760px) {
+  .header              { padding: 0 20px; }
+  .nav                 { display: none; }
+  .header-ctas         { display: none; }
+  .menu-toggle         { display: flex; }
+  .hero-left           { padding: 70px 20px 60px; }
+  .who-section::before { display: none; }
+  .who-section, .problem-section, .solution-section, .operate-section,
+  .why-section, .trust-section, .offer-section, .cta-section { padding: 70px 20px; }
+  .trust-grid          { grid-template-columns: 1fr; }
+  .operate-flow        { grid-template-columns: 1fr; }
+  .marquee-bar         { display: none; }
+  footer               { padding: 44px 20px 0; }
+  .footer-grid         { grid-template-columns: 1fr; gap: 28px; }
+  .disclaimer-strip    { padding: 14px 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Top Bar ── -->
+<div class="top-bar">
+  <div class="top-bar-item">
+    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 010 1.17 2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>
+    +234 (0) 800 000 0000
+  </div>
+  <div class="top-bar-item">
+    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+    invest@enigmatransport.com
+  </div>
+  <div class="top-bar-item">
+    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    Mon – Fri &nbsp;|&nbsp; 9:00 AM – 4:00 PM WAT
+  </div>
+</div>
+
+<!-- ── Header ── -->
+<header class="header">
+  <a href="index.html" class="logo-link">
+    <span class="logo-wordmark">Enigma<span>.</span></span>
+  </a>
+  <nav class="nav">
+    <a href="index.html">Home</a>
+    <a href="about.html" class="active">About</a>
+    <a href="opportunities.html">Opportunities</a>
+    <a href="how-it-works.html">How It Works</a>
+
+  </nav>
+  <div class="header-ctas">
+    <a href="invest.html"  class="btn-nav-pill">Request Investment Brief</a>
+    <a href="contact.html" class="btn-nav-ghost">Become a Driver</a>
+
+  </div>
+  <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<!-- ── Mobile Nav ── -->
+<div class="mobile-nav" id="mobileNav">
+  <button class="close-btn" id="closeNav" aria-label="Close">
+    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <a href="index.html">Home</a>
+  <a href="about.html" class="active">About</a>
+  <a href="opportunities.html">Opportunities</a>
+  <a href="how-it-works.html">How It Works</a>
+  <a href="contact.html">Contact</a>
+  <div class="mobile-nav-ctas">
+    <a href="invest.html"  class="btn-fill">Request Investment Brief</a>
+    <a href="contact.html" class="btn-stroke">Become a Driver</a>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+   ① HERO
+════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-accent-strip"></div>
+
+  <div class="hero-left">
+    <div class="breadcrumb">
+      <a href="index.html">Home</a>
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      About Us
+    </div>
+
+    <div class="hero-eyebrow">About Enigma Transport</div>
+
+    <h1 class="hero-title">
+      A Structured Approach <br/>
+       to Transport <span class="accent">Investment in Abuja</span><br/>
+    
+    </h1>
+
+    <p class="hero-statement">
+      Enigma Transport operates real vehicles on defined routes, generating daily revenue from transport activity. We provide a structured, asset-backed way for investors to participate in that operation with clear documentation, disciplined reporting, and full operational management.
+    </p>
+
+    <div class="hero-mission">
+      <p>Our mission is to <strong>build a structured, asset-backed transport operation</strong> in Abuja — one that is disciplined in its reporting, honest about its risks, and transparent with everyone who participates in it.</p>
+    </div>
+
+    <div class="hero-cta-row">
+      <a href="opportunities.html" class="btn-hero-primary">View Investment Opportunities</a>
+      <a href="invest.html" class="btn-hero-ghost">Request Investor Brief</a>
+    </div>
+  </div>
+
+  <!-- Right panel — structured fact cards -->
+  <div class="hero-right">
+    <div class="hero-panel">
+      <div class="fact-card">
+        <div class="fact-card-label">What We Do</div>
+        <div class="fact-card-value">Transport &amp; logistics operations in Abuja, with <span class="green">structured investor participation</span></div>
+      </div>
+
+      <div class="fact-grid">
+        <div class="fact-card">
+          <div class="fact-card-label">Stage</div>
+          <div class="fact-card-value" style="font-size:1.1rem;">Early-Stage</div>
+          <div class="fact-card-sub">Operational startup</div>
+        </div>
+        <div class="fact-card">
+          <div class="fact-card-label">Market</div>
+          <div class="fact-card-value" style="font-size:1.1rem;">Abuja, FCT</div>
+          <div class="fact-card-sub">Primary focus</div>
+        </div>
+        <div class="fact-card">
+          <div class="fact-card-label">Revenue Source</div>
+          <div class="fact-card-value" style="font-size:1rem;">Transport<br/>Operations</div>
+        </div>
+        <div class="fact-card">
+          <div class="fact-card-label">Investment Tiers</div>
+          <div class="fact-card-value" style="font-size:1rem;">Standard<br/>&amp; Premium</div>
+        </div>
+      </div>
+
+      <div class="hero-status-bar">
+        <div class="status-dot"></div>
+        <p><strong>Accepting investor enquiries.</strong> Capital thresholds and return parameters are disclosed only through the formal briefing process.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════
+   ② WHO WE ARE
+════════════════════════════════════════ -->
+<section class="who-section">
+  <div class="who-inner">
+    <div class="who-left">
+      <div class="who-number">01</div>
+      <div class="section-eyebrow">Who We Are</div>
+      <h2 class="section-h2">An Early-Stage<br/><span class="accent">Transport Startup</span></h2>
+    </div>
+    <div class="who-body">
+      <div class="early-stage-badge">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="12" height="12"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        Early-Stage Company — We Are Transparent About This
+      </div>
+      <p>
+        Enigma Transport is an early-stage transport and logistics company based in Abuja. We are not a large established operator — we are building something from the ground up, with a clear focus on getting the operational fundamentals right before anything else.
+      </p>
+      <p>
+        Our model is built around <strong>real logistics activity</strong>: vehicles on routes, revenue from transport operations, and a structured system for deploying investor capital into that activity. We are not a financial product — we are an operating company that invites investors to participate in what we build.
+      </p>
+      <p>
+        We are direct about where we are in our development. We have vehicles in operation, an investment framework under formal documentation, and a team working to scale the business responsibly. We do not overstate our traction or make projections we cannot support.
+      </p>
+      <p>
+        If you are looking for a company that will speak plainly about its model, its risks, and its roadmap — that is what we aim to be. Every investor brief we issue reflects the current state of the business, not an idealised version of it.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── Marquee Bar ── -->
+<div class="marquee-bar" aria-hidden="true">
+  <div class="marquee-track">
+    <div class="marquee-item"><span class="dot"></span> <strong>Asset-Backed</strong> &nbsp;Transport Investment</div>
+    <div class="marquee-item"><span class="dot"></span> <strong>Weekly</strong> &nbsp;Performance Payouts</div>
+    <div class="marquee-item"><span class="dot"></span> <strong>Formal</strong> &nbsp;Written Agreements</div>
+    <div class="marquee-item"><span class="dot"></span> <strong>Abuja</strong> &nbsp;Transport Operations</div>
+    <div class="marquee-item"><span class="dot"></span> <strong>Structured</strong> &nbsp;Investor Participation</div>
+    <div class="marquee-item"><span class="dot"></span> <strong>Transparent</strong> &nbsp;Reporting Model</div>
+    <div class="marquee-item"><span class="dot"></span> <strong>Standard</strong> &nbsp;&amp; Premium Tiers</div>
+    <div class="marquee-item"><span class="dot"></span> <strong>Fully Managed</strong> &nbsp;Operations</div>
+    <!-- duplicate for seamless loop -->
+    <div class="marquee-item"><span class="dot"></span> <strong>Asset-Backed</strong> &nbsp;Transport Investment</div>
+    <div class="marquee-item"><span class="dot"></span> <strong>Weekly</strong> &nbsp;Performance Payouts</div>
+    <div class="marquee-item"><span class="dot"></span> <strong>Formal</strong> &nbsp;Written Agreements</div>
+    <div class="marquee-item"><span class="dot"></span> <strong>Abuja</strong> &nbsp;Transport Operations</div>
+    <div class="marquee-item"><span class="dot"></span> <strong>Structured</strong> &nbsp;Investor Participation</div>
+    <div class="marquee-item"><span class="dot"></span> <strong>Transparent</strong> &nbsp;Reporting Model</div>
+    <div class="marquee-item"><span class="dot"></span> <strong>Standard</strong> &nbsp;&amp; Premium Tiers</div>
+    <div class="marquee-item"><span class="dot"></span> <strong>Fully Managed</strong> &nbsp;Operations</div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+   ③ THE PROBLEM
+════════════════════════════════════════ -->
+<section class="problem-section">
+  <div class="problem-inner">
+    <div class="problem-head">
+      <div class="section-eyebrow">The Market Gap</div>
+      <h2 class="section-h2">Three Problems<br/><span class="accent">We Set Out to Fix</span></h2>
+      <p class="section-lead" style="margin-top:16px;">
+        Nigeria's urban transport sector moves millions of people daily — but it operates with structural inefficiencies that reduce its reliability for passengers, operators, and potential investors alike.
+      </p>
+    </div>
+
+    <div class="problem-grid">
+      <div class="problem-card">
+        <div class="problem-num">01</div>
+        <div class="problem-icon">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <h3>Operational Inefficiency</h3>
+        <p>Most urban transport in Abuja operates informally  with no structured route management, no consistent maintenance discipline, and no reliable revenue tracking. The result is unpredictable service, high downtime, and poor asset utilisation across the sector.</p>
+      </div>
+
+      <div class="problem-card">
+        <div class="problem-num">02</div>
+        <div class="problem-icon">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        </div>
+        <h3>No Structured Investment Access</h3>
+        <p>Private individuals who want to invest in transport assets currently have no structured, documented route to do so. Informal arrangements carry undisclosed risk, no formal agreements, and no accountability. The gap between interested capital and real transport activity has never been properly bridged.</p>
+      </div>
+
+      <div class="problem-card">
+        <div class="problem-num">03</div>
+        <div class="problem-icon">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        </div>
+        <h3>Trust Deficit in the Sector</h3>
+        <p>Informal operations make it difficult to build trust at scale with passengers, partners, or investors. Without clear reporting structures, documented agreements, and consistent operational standards, the sector struggles to attract the capital and talent it needs to modernise.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════
+   ④ OUR SOLUTION
+════════════════════════════════════════ -->
+<section class="solution-section">
+  <div class="solution-inner">
+    <div class="solution-left">
+      <div class="section-eyebrow light">Our Response</div>
+      <h2 class="section-h2 light">What Enigma<br/><span class="accent">Is Building</span></h2>
+
+      <div class="solution-points">
+        <div class="solution-point">
+          <span class="sol-num">01</span>
+          <div class="sol-text">
+            <h4>A Managed Fleet Operation</h4>
+            <p>We deploy vehicles into defined routes and manage every aspect of day-to-day operations  driver management, maintenance scheduling, fuel logistics, and revenue collection. The goal is consistent, trackable performance from every asset in the fleet.</p>
+          </div>
+        </div>
+        <div class="solution-point">
+          <span class="sol-num">02</span>
+          <div class="sol-text">
+            <h4>A Structured Investment Framework</h4>
+            <p>Investor participation is governed by formal written agreements that specify asset class, capital amount, return structure, and payout schedule. Capital is only received after documentation is executed. There are no informal arrangements and no verbal commitments.</p>
+          </div>
+        </div>
+        <div class="solution-point">
+          <span class="sol-num">03</span>
+          <div class="sol-text">
+            <h4>Reporting and Accountability</h4>
+            <p>Returns are calculated from verified operational revenue and distributed on a weekly cycle. Investors receive regular performance summaries. We are building toward a real-time reporting dashboard for all active investors  transparency is not a feature, it is the operating standard.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="solution-visual">
+      <div class="sol-card">
+        <div class="sol-card-icon">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        </div>
+        <div>
+          <h5>Asset Tracking</h5>
+          <p>Each vehicle in the fleet is tracked operationally route coverage, daily revenue, and maintenance status are monitored on an ongoing basis.</p>
+        </div>
+      </div>
+      <div class="sol-card">
+        <div class="sol-card-icon">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <div>
+          <h5>Written Agreements</h5>
+          <p>Every investor engagement begins with a formal document. Terms are agreed in writing before any capital changes hands.</p>
+        </div>
+      </div>
+      <div class="sol-card">
+        <div class="sol-card-icon">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div>
+          <h5>Weekly Return Settlement</h5>
+          <p>Performance-based returns are calculated weekly from verified asset revenue and paid to investors on a fixed settlement schedule.</p>
+        </div>
+      </div>
+      <div class="sol-card">
+        <div class="sol-card-icon">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div>
+          <h5>Investor-First Discipline</h5>
+          <p>Operational decisions are made with investor capital in mind. Asset utilisation, downtime management, and revenue reporting are all designed around that commitment.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════
+   ⑤ HOW WE OPERATE
+════════════════════════════════════════ -->
+<section class="operate-section">
+  <div class="operate-inner">
+    <div class="operate-head">
+      <div class="section-eyebrow">Operations</div>
+      <h2 class="section-h2">How the <span class="accent">Business Works</span></h2>
+      <p class="section-lead" style="margin-top:16px;">
+        A simple, linear model: vehicles in operation generate daily revenue, that revenue funds investor returns, and every step in between is documented and managed by Enigma.
+      </p>
+    </div>
+
+    <div class="operate-flow">
+      <div class="operate-step">
+        <div class="op-node">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        </div>
+        <h4>Capital Received</h4>
+        <p>Investor capital is received only after a formal agreement is signed. Funds are allocated to a specific asset class defined in the agreement.</p>
+      </div>
+
+      <div class="operate-step">
+        <div class="op-node">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        </div>
+        <h4>Asset Deployed</h4>
+        <p>Capital is used to deploy or maintain a vehicle within the Enigma fleet. The asset is assigned to a defined route and placed under full operational management.</p>
+      </div>
+
+      <div class="operate-step">
+        <div class="op-node">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <h4>Revenue Generated</h4>
+        <p>The vehicle operates daily, generating transport revenue. Enigma collects, reconciles, and records all earnings from each asset in the fleet on a weekly basis.</p>
+      </div>
+
+      <div class="operate-step">
+        <div class="op-node">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 010 1.17 2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>
+        </div>
+        <h4>Returns Distributed</h4>
+        <p>Performance-based returns are calculated and paid to investors on the agreed weekly schedule, with a summary report issued alongside each settlement.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════
+   ⑥ WHY WE ARE BUILDING THIS
+════════════════════════════════════════ -->
+<section class="why-section">
+  <div class="why-inner">
+    <div class="why-text">
+      <div class="section-eyebrow">Our Motivation</div>
+      <h2 class="section-h2">Why We Are<br/><span class="accent">Building This</span></h2>
+      <div class="divider-line" style="margin-top:18px;"></div>
+      <p>
+        Abuja has a transport problem that is visible every day overcrowded routes, unreliable services, and a sector that struggles to attract the operational investment it clearly needs. This is not a niche observation. It is something that affects millions of commuters on a daily basis.
+      </p>
+      <p>
+        We started Enigma because we believed there was a way to build something more structured inside that market not necessarily to solve the entire problem at once, but to demonstrate that <strong>a disciplined, asset-backed operation is viable</strong> and can generate consistent returns for investors while delivering more reliable transport services.
+      </p>
+      <p>
+        We are not building Enigma around an idea. We are building it around a specific operational model real vehicles, defined routes, documented revenue and we are inviting investors to be part of that in a way that is honest about what stage we are at and what we are working toward.
+      </p>
+      <div class="pull-quote">
+        <p>"We are not here to promise what we cannot deliver. We are here to build something real and let the results speak over time."</p>
+      </div>
+    </div>
+
+    <div class="why-right">
+      <div class="why-pillars">
+        <div class="why-pillar">
+          <div class="pillar-icon">
+            <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <div class="pillar-body">
+            <h4>Real Market Demand</h4>
+            <p>Abuja's transport demand is consistent and measurable. This is not a speculative market millions of commuters, corporate users, and logistics operators depend on it every day. The gap between supply and organised, structured operation is substantial.</p>
+          </div>
+        </div>
+        <div class="why-pillar">
+          <div class="pillar-icon">
+            <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          </div>
+          <div class="pillar-body">
+            <h4>An Identifiable Structural Gap</h4>
+            <p>There is a specific gap in the market for a company that can bridge private investor capital and operational transport assets through a clear, accountable structure. That is precisely what Enigma is designed to do.</p>
+          </div>
+        </div>
+        <div class="why-pillar">
+          <div class="pillar-icon">
+            <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+          </div>
+          <div class="pillar-body">
+            <h4>Realistic Growth Trajectory</h4>
+            <p>We are not projecting exponential expansion. We are focused on building a model that works at small scale first and expanding that model as the operational evidence supports it. Growth follows discipline, not the other way around.</p>
+          </div>
+        </div>
+        <div class="why-pillar">
+          <div class="pillar-icon">
+            <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <div class="pillar-body">
+            <h4>Investor Participation as a Core Feature</h4>
+            <p>We did not add investment as an afterthought. The model was designed from the beginning to accommodate structured participation from individuals who want exposure to real transport assets without managing operations themselves.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════
+   ⑦ TRUST & TRANSPARENCY
+════════════════════════════════════════ -->
+<section class="trust-section">
+  <div class="trust-inner">
+    <div class="trust-head">
+      <div class="section-eyebrow light center">How We Operate</div>
+      <h2 class="section-h2 light center" style="margin-bottom:0;">Trust &amp; <span class="accent">Transparency</span></h2>
+      <p class="section-lead light center">We hold ourselves to a clear standard of accountability. These are not values we aspire to they are the operating conditions of the model.</p>
+    </div>
+
+    <div class="trust-grid">
+      <div class="trust-card">
+        <div class="trust-card-icon">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+        </div>
+        <h4>Written Agreements, Always</h4>
+        <p>Every investor engagement is governed by a formal written contract. There are no verbal arrangements, informal agreements, or undocumented understandings. The agreement specifies asset class, capital, return structure, and payout schedule before a single naira is received.</p>
+      </div>
+
+      <div class="trust-card">
+        <div class="trust-card-icon">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <h4>Regular Reporting</h4>
+        <p>Investors receive regular performance summaries tied to the actual weekly settlement cycle. We do not wait for things to go wrong before communicating reporting is part of the operating standard, not a reactive measure.</p>
+      </div>
+
+      <div class="trust-card">
+        <div class="trust-card-icon">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        </div>
+        <h4>No Public Payment Collection</h4>
+        <p>Capital is never collected through any public-facing page or channel. Funds are only received through the formal process: brief, agreement, verification, and then settlement. This is a non-negotiable operating rule.</p>
+      </div>
+
+      <div class="trust-card">
+        <div class="trust-card-icon">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h4>Operational Risk Management</h4>
+        <p>We maintain active oversight of every vehicle in the fleet monitoring for downtime, route performance, and maintenance needs. Risk management is embedded in how we run the operation, not managed after the fact.</p>
+      </div>
+
+      <div class="trust-card">
+        <div class="trust-card-icon">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <h4>Honest About Stage</h4>
+        <p>We are an early-stage company. We say that clearly on this page and in every investor brief we issue. We will not represent our traction, scale, or certainty of outcomes beyond what the evidence supports at any given point in time.</p>
+      </div>
+
+      <div class="trust-card">
+        <div class="trust-card-icon">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <h4>Investor Dashboard (In Development)</h4>
+        <p>We are building a dedicated investor portal that will provide real-time asset tracking, return monitoring, and performance analytics. Until it launches, reporting is delivered directly via the investor team on the weekly settlement cycle.</p>
+      </div>
+    </div>
+
+    <div class="risk-band">
+      <div class="risk-band-icon">
+        <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <div>
+        <h4>A Note on Risk</h4>
+        <p>All investments in Enigma Transport carry operational risk. Returns are performance-based and are not guaranteed they reflect real asset utilisation and can be affected by vehicle downtime, route conditions, and general market variation. We disclose this clearly in every investor brief. If you are considering an investment, we encourage you to read the full risk disclosure document before making any decision.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════
+   ⑧ WHAT WE OFFER INVESTORS
+════════════════════════════════════════ -->
+<section class="offer-section">
+  <div class="offer-inner">
+    <div class="offer-head">
+      <div class="section-eyebrow">Investment Participation</div>
+      <h2 class="section-h2">What We <span class="accent">Offer Investors</span></h2>
+      <p class="section-lead" style="margin-top:16px;">
+        A structured, asset-backed way to participate in Abuja's transport operations with a written agreement, a defined return structure, and full operational management by the Enigma team.
+      </p>
+    </div>
+
+    <div class="offer-grid">
+      <!-- Main description -->
+      <div class="offer-main">
+        <div class="offer-main-content">
+          <div class="section-eyebrow light" style="margin-bottom:20px;">The Core Offer</div>
+          <h3>Capital Deployed Into<br/><span class="accent">Real Transport Assets</span></h3>
+          <p>You invest. We operate. Your capital is deployed into a defined asset class a vehicle or fleet of vehicles that generates revenue from daily transport activity. We manage all operations. You receive weekly performance-based returns and regular reporting.</p>
+          <div style="margin-top:24px;display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;align-items:flex-start;gap:12px;">
+              <div class="check-icon"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+              <span style="font-size:13.5px;color:rgba(255,255,255,0.5);line-height:1.6;">Formal written agreement before capital is received</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:12px;">
+              <div class="check-icon"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+              <span style="font-size:13.5px;color:rgba(255,255,255,0.5);line-height:1.6;">Weekly performance-based payout settlement</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:12px;">
+              <div class="check-icon"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+              <span style="font-size:13.5px;color:rgba(255,255,255,0.5);line-height:1.6;">Fully managed operations — investors are entirely passive</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:12px;">
+              <div class="check-icon"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+              <span style="font-size:13.5px;color:rgba(255,255,255,0.5);line-height:1.6;">Regular performance reporting included in both tiers</span>
+            </div>
+          </div>
+        </div>
+        <div class="offer-main-footer">
+          <a href="invest.html" class="offer-main-cta">Request an Investor Brief</a>
+        </div>
+      </div>
+
+      <!-- Standard Tier -->
+      <div class="tier-card standard">
+        <div class="tier-badge standard">Standard Plan</div>
+        <div class="tier-name">Tier 1 — Standard</div>
+        <div class="tier-desc">Entry-level investment. Designed for first-time investors in the Enigma platform structured, documented, and straightforward.</div>
+        <div class="tier-features">
+          <div class="tier-feat">
+            <svg width="14" height="14" fill="none" stroke="var(--green)" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg>
+            Single asset class deployment
+          </div>
+          <div class="tier-feat">
+            <svg width="14" height="14" fill="none" stroke="var(--green)" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg>
+            Lower minimum capital commitment
+          </div>
+          <div class="tier-feat">
+            <svg width="14" height="14" fill="none" stroke="var(--green)" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg>
+            Moderate, performance-based return rate
+          </div>
+          <div class="tier-feat">
+            <svg width="14" height="14" fill="none" stroke="var(--green)" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg>
+            Weekly payout settlement
+          </div>
+          <div class="tier-feat">
+            <svg width="14" height="14" fill="none" stroke="var(--green)" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg>
+            Monthly performance summary
+          </div>
+          <div class="tier-feat">
+            <svg width="14" height="14" fill="none" stroke="var(--green)" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg>
+            Dedicated team contact
+          </div>
+        </div>
+        <a href="opportunities.html#plans" class="tier-link green">
+          View Full Details
+          <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 12 12"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+        </a>
+      </div>
+
+      <!-- Premium Tier -->
+      <div class="tier-card premium">
+        <div class="tier-badge premium">Premium Plan</div>
+        <div class="tier-name">Tier 2 — Premium</div>
+        <div class="tier-desc">Growth allocation. For investors deploying larger capital across multiple asset classes, with enhanced reporting and priority processing.</div>
+        <div class="tier-features">
+          <div class="tier-feat">
+            <svg width="14" height="14" fill="none" stroke="#d4a827" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg>
+            Multi-asset class deployment
+          </div>
+          <div class="tier-feat">
+            <svg width="14" height="14" fill="none" stroke="#d4a827" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg>
+            Higher minimum capital commitment
+          </div>
+          <div class="tier-feat">
+            <svg width="14" height="14" fill="none" stroke="#d4a827" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg>
+            Enhanced performance-based return rate
+          </div>
+          <div class="tier-feat">
+            <svg width="14" height="14" fill="none" stroke="#d4a827" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg>
+            Priority weekly payout processing
+          </div>
+          <div class="tier-feat">
+            <svg width="14" height="14" fill="none" stroke="#d4a827" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg>
+            Enhanced weekly reporting with asset-level data
+          </div>
+          <div class="tier-feat">
+            <svg width="14" height="14" fill="none" stroke="#d4a827" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg>
+            Early access to new asset classes
+          </div>
+        </div>
+        <a href="opportunities.html#plans" class="tier-link gold">
+          View Full Details
+          <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 12 12"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════
+   ⑨ CALL TO ACTION
+════════════════════════════════════════ -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <div class="cta-text">
+      <div class="section-eyebrow">Get Involved</div>
+      <h2 class="section-h2">If You Would Like<br/>to <span class="accent">Learn More</span></h2>
+      <p class="section-lead">
+        We are not here to push you toward a decision. If what we are building sounds like something you want to understand better, request an investor brief and we will send you a detailed document covering asset classes, return structure, tier thresholds, and our full risk disclosure.
+      </p>
+      <p class="section-lead" style="margin-top:16px;font-size:15px;">
+        There is no obligation, no payment involved, and no pressure. Just a conversation and the documents you need to make an informed decision at your own pace.
+      </p>
+      <div class="cta-actions" style="margin-top:36px;">
+        <a href="invest.html" class="btn-cta-primary">Request Investor Brief</a>
+        <a href="opportunities.html" class="btn-cta-outline">View Opportunities</a>
+      </div>
+    </div>
+
+    <!-- Contact info panel -->
+    <div class="cta-panel">
+      <h4>Speak with Our Team Directly</h4>
+      <div class="contact-row">
+        <div class="contact-icon">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </div>
+        <div>
+          <div class="contact-label">Email</div>
+          <div class="contact-value"><a href="mailto:invest@enigmatransport.com">invest@enigmatransport.com</a></div>
+        </div>
+      </div>
+      <div class="contact-row">
+        <div class="contact-icon">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 010 1.17 2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>
+        </div>
+        <div>
+          <div class="contact-label">Phone</div>
+          <div class="contact-value"><a href="tel:+2348000000000">+234 (0) 800 000 0000</a></div>
+        </div>
+      </div>
+      <div class="contact-row">
+        <div class="contact-icon">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div>
+          <div class="contact-label">Office Hours</div>
+          <div class="contact-value" style="font-size:13px;">Monday – Friday, 9:00 AM – 5:00 PM WAT</div>
+        </div>
+      </div>
+      <div class="contact-row">
+        <div class="contact-icon">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div>
+          <div class="contact-label">Location</div>
+          <div class="contact-value" style="font-size:13px;">Abuja, FCT, Nigeria</div>
+        </div>
+      </div>
+      <div class="cta-panel-divider"></div>
+      <p class="cta-panel-note">
+        <strong>No payment is required at the brief stage.</strong> Capital is only received after a formal investment agreement has been fully executed by both parties.
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── Footer ── -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-wordmark">Enigma<span>.</span></div>
+      <p class="footer-tagline">A structured asset-backed investment platform focused on transport income generation in Abuja.</p>
+      <div class="footer-contact">
+        <div class="footer-contact-row">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 010 1.17 2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>
+          <a href="tel:+2348000000000">+234 (0) 800 000 0000</a>
+        </div>
+        <div class="footer-contact-row">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          <a href="mailto:invest@enigmatransport.com">invest@enigmatransport.com</a>
+        </div>
+        <div class="footer-contact-row">
+          <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>Abuja, FCT, Nigeria</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h5>Platform</h5>
+      <a href="index.html">Home</a>
+      <a href="about.html">About Enigma</a>
+      <a href="opportunities.html">Investment Opportunities</a>
+      <a href="how-it-works.html">How It Works</a>
+    </div>
+    <div class="footer-col">
+      <h5>Invest</h5>
+      <a href="invest.html">Request Investment Brief</a>
+      <a href="opportunities.html#plans">Standard Plan</a>
+      <a href="opportunities.html#plans">Premium Plan</a>
+      <a href="risk.html">Risk Disclosure</a>
+    </div>
+    <div class="footer-col">
+      <h5>Company</h5>
+      <a href="about.html">Our Mission</a>
+      <a href="contact.html">Become a Driver</a>
+      <a href="contact.html">Contact Us</a>
+      <a href="privacy.html">Privacy Policy</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2025 Enigma Transport Ltd. All rights reserved.</span>
+    <span>
+      <a href="privacy.html">Privacy Policy</a>
+      <span class="footer-dot">&middot;</span>
+      <a href="terms.html">Terms of Use</a>
+      <span class="footer-dot">&middot;</span>
+      <a href="risk.html">Risk Disclosure</a>
+    </span>
+  </div>
+  <div class="disclaimer-strip">
+    Enigma Transport is an early-stage company. Investment returns are performance-based and not guaranteed. All investments carry operational risk. Capital is only received after a formal written agreement has been executed. This page does not constitute financial advice. Please read the full risk disclosure document before committing capital.
+  </div>
+</footer>
+
+
+<script>
+// Mobile nav
+const menuToggle = document.getElementById('menuToggle');
+const mobileNav  = document.getElementById('mobileNav');
+const closeNav   = document.getElementById('closeNav');
+if (menuToggle) menuToggle.addEventListener('click', () => mobileNav.classList.add('open'));
+if (closeNav)   closeNav.addEventListener('click',   () => mobileNav.classList.remove('open'));
+
+// Scroll-triggered fade-up via IntersectionObserver
+const animEls = document.querySelectorAll(
+  '.problem-card, .trust-card, .why-card, .sol-card, .why-pillar, .operate-step, .fact-card'
+);
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.animationPlayState = 'running';
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+animEls.forEach(el => {
+  el.style.animationPlayState = 'paused';
+  io.observe(el);
+});
+</script>
+</body>
+</html>

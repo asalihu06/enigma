@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Investment Plans — Enigma Transport Services</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+
+<style>
+/* ── Reset & Tokens ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --green:       #5bbf3a;
+  --green-dark:  #3a9e1f;
+  --green-dim:   rgba(91,191,58,0.15);
+  --green-pale:  #eaf7e4;
+  --ink:         #0e1a0a;
+  --ink-soft:    #3d4d38;
+  --muted:       #6b7c65;
+  --surface:     #ffffff;
+  --bg:          #f3f7f0;
+  --border:      rgba(91,191,58,0.22);
+  --radius-card: 18px;
+  --radius-btn:  100px;
+  --font-head:   'Syne', sans-serif;
+  --font-body:   'DM Sans', sans-serif;
+  --shadow-card: 0 4px 32px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+}
+
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-body); background: var(--surface); color: var(--ink); overflow-x: hidden; }
+
+/* ── Animations ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideDown {
+  from { transform: translateY(-100%); opacity: 0; }
+  to   { transform: translateY(0);     opacity: 1; }
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ── Top Bar ── */
+.top-bar {
+  display: flex; justify-content: flex-end; align-items: center;
+  gap: 24px; background: var(--ink); padding: 7px 40px;
+  font-size: 12px; color: rgba(255,255,255,0.5); letter-spacing: 0.02em;
+}
+.top-bar-item { display: flex; align-items: center; gap: 7px; }
+@media (max-width: 760px) { .top-bar { display: none; } }
+
+/* ── Header ── */
+.header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1.5px solid var(--border);
+  padding: 0 40px;
+  display: flex; align-items: center; gap: 40px;
+  height: 68px; animation: slideDown 0.5s ease both;
+}
+.logo-link { text-decoration: none; display: flex; align-items: center; flex-shrink: 0; }
+.logo-wordmark {
+  font-family: var(--font-head); font-size: 1.25rem; font-weight: 800;
+  color: var(--ink); letter-spacing: -0.01em;
+}
+.logo-wordmark span { color: var(--green); }
+
+.nav {
+  display: flex; align-items: center; gap: 0;
+  position: absolute; left: 50%; transform: translateX(-50%);
+}
+.nav a {
+  font-size: 14px; font-weight: 500; color: var(--ink-soft);
+  text-decoration: none; padding: 8px 16px;
+  position: relative; transition: color 0.22s; white-space: nowrap;
+}
+.nav a::after {
+  content: ''; position: absolute; bottom: 0; left: 50%; right: 50%;
+  height: 2.5px; background: var(--green); border-radius: 2px;
+  transition: left 0.28s cubic-bezier(.22,1,.36,1), right 0.28s cubic-bezier(.22,1,.36,1);
+}
+.nav a:hover { color: var(--green-dark); }
+.nav a:hover::after, .nav a.active::after { left: 12px; right: 12px; }
+.nav a.active { color: var(--green-dark); font-weight: 600; }
+
+.cta-group { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.nav-cta {
+  font-family: var(--font-head); font-size: 12px; font-weight: 700;
+  background: var(--green); color: #fff !important;
+  padding: 10px 22px; border-radius: var(--radius-btn);
+  border: none; cursor: pointer; transition: background 0.2s, transform 0.2s;
+  text-decoration: none; display: inline-block;
+}
+.nav-cta:hover { background: var(--green-dark) !important; transform: scale(1.04) !important; }
+.nav-cta::after { display: none !important; }
+.nav-cta-secondary {
+  font-family: var(--font-body); font-size: 12px; font-weight: 600;
+  color: var(--green-dark); background: transparent;
+  border: 2px solid var(--green); border-radius: var(--radius-btn);
+  padding: 8px 16px; cursor: pointer;
+  transition: background 0.25s, color 0.25s, transform 0.2s;
+  white-space: nowrap; text-decoration: none; display: inline-block;
+}
+.nav-cta-secondary::after { display: none !important; }
+.nav-cta-secondary:hover { background: var(--green); color: #fff; transform: scale(1.04); }
+
+.menu-toggle {
+  display: none; background: none; border: none; cursor: pointer;
+  padding: 4px; flex-direction: column; gap: 5px; margin-left: auto;
+}
+.menu-toggle span { display: block; width: 22px; height: 2px; background: var(--ink); border-radius: 2px; }
+
+/* ── Mobile Nav ── */
+.mobile-nav {
+  display: none; position: fixed; inset: 0;
+  background: var(--ink); z-index: 200;
+  flex-direction: column; padding: 80px 40px 40px;
+  animation: fadeIn 0.22s ease;
+}
+.mobile-nav.open { display: flex; }
+.mobile-nav a {
+  font-family: var(--font-head); font-size: 1rem; font-weight: 600;
+  color: rgba(255,255,255,0.7); text-decoration: none;
+  padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.06); transition: color 0.2s;
+}
+.mobile-nav a:hover { color: var(--green); }
+.mobile-nav .close-btn {
+  position: absolute; top: 20px; right: 24px;
+  background: none; border: none; cursor: pointer; color: rgba(255,255,255,0.6);
+}
+.mobile-nav-ctas { margin-top: 32px; display: flex; flex-direction: column; gap: 12px; }
+.mn-btn-primary {
+  font-family: var(--font-head); font-size: 14px; font-weight: 700;
+  background: var(--green); color: #fff; border: none;
+  border-radius: var(--radius-btn); padding: 14px 28px;
+  text-decoration: none; text-align: center; display: block;
+}
+.mn-btn-ghost {
+  font-family: var(--font-head); font-size: 14px; font-weight: 700;
+  background: rgba(255,255,255,0.08); color: #fff;
+  border: 1.5px solid rgba(255,255,255,0.25); border-radius: var(--radius-btn);
+  padding: 12px 28px; text-decoration: none; text-align: center; display: block;
+}
+
+/* ── Shared Utilities ── */
+.section-tag {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-head); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--green-dark);
+  margin-bottom: 14px;
+}
+.section-tag::before { content: ''; width: 20px; height: 2px; background: var(--green); border-radius: 2px; }
+
+.section-h2 {
+  font-family: var(--font-head); font-size: clamp(1.8rem, 3vw, 2.5rem);
+  font-weight: 800; color: var(--ink); line-height: 1.12; margin-bottom: 16px;
+}
+.section-h2 .accent { color: var(--green); }
+.section-intro { font-size: 16px; color: var(--muted); line-height: 1.75; max-width: 560px; }
+
+.check {
+  flex-shrink: 0; width: 22px; height: 22px; background: var(--green);
+  border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+}
+.check svg { width: 11px; height: 11px; }
+
+/* ── Page Hero ── */
+.page-hero {
+  background: var(--ink); padding: 80px 40px 100px;
+  position: relative; overflow: hidden;
+}
+.page-hero::before {
+  content: ''; position: absolute; top: -140px; right: -80px;
+  width: 560px; height: 560px; border-radius: 50%;
+  border: 1.5px solid rgba(91,191,58,0.08); pointer-events: none;
+}
+.page-hero::after {
+  content: ''; position: absolute; bottom: -100px; left: 5%;
+  width: 400px; height: 400px; border-radius: 50%;
+  border: 1px solid rgba(91,191,58,0.06); pointer-events: none;
+}
+.page-hero-inner {
+  max-width: 1100px; margin: 0 auto; position: relative; z-index: 2;
+}
+.breadcrumb {
+  font-size: 12px; color: rgba(255,255,255,0.3);
+  margin-bottom: 22px; display: flex; align-items: center; gap: 8px;
+}
+.breadcrumb a { color: var(--green); text-decoration: none; }
+.breadcrumb span { opacity: 0.4; }
+.page-hero .section-tag { color: var(--green); margin-bottom: 18px; }
+.page-hero .section-tag::before { background: var(--green); }
+.page-hero h1 {
+  font-family: var(--font-head); font-size: clamp(2.4rem, 5vw, 4rem);
+  font-weight: 800; color: #fff; line-height: 1.06; margin-bottom: 20px;
+  animation: fadeUp 0.55s 0.1s both;
+}
+.page-hero h1 .accent { color: var(--green); }
+.page-hero > .page-hero-inner > p {
+  font-size: 16px; color: rgba(255,255,255,0.52); max-width: 520px;
+  line-height: 1.75; animation: fadeUp 0.55s 0.2s both;
+}
+
+/* ── Asset Catalogue ── */
+.catalogue { padding: 90px 40px; background: var(--surface); }
+.catalogue-inner { max-width: 1100px; margin: 0 auto; }
+.catalogue-head { margin-bottom: 60px; }
+
+.asset-list { display: flex; flex-direction: column; gap: 0; }
+
+.asset-row {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0; border-radius: var(--radius-card);
+  overflow: hidden; border: 1.5px solid var(--border);
+  margin-bottom: 28px; background: var(--bg);
+  transition: box-shadow 0.3s, border-color 0.3s;
+}
+.asset-row:hover { box-shadow: 0 12px 40px rgba(91,191,58,0.10); border-color: rgba(91,191,58,0.38); }
+.asset-row.reverse { direction: rtl; }
+.asset-row.reverse > * { direction: ltr; }
+
+/* Image pane */
+.asset-img-wrap {
+  position: relative; min-height: 340px;
+  background: var(--ink); overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+/* subtle dot pattern on image placeholder */
+.asset-img-wrap::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(91,191,58,0.10) 1px, transparent 1px);
+  background-size: 22px 22px;
+}
+
+/* SVG vehicle illustration wrapper */
+.asset-svg-frame {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 16px; padding: 40px;
+  width: 100%; height: 100%;
+  transition: transform 0.4s cubic-bezier(.22,1,.36,1);
+}
+.asset-row:hover .asset-svg-frame { transform: scale(1.04) translateY(-4px); }
+
+.asset-svg-label {
+  font-family: var(--font-head); font-size: 9px; font-weight: 700;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: rgba(91,191,58,0.3); text-align: center;
+}
+/* Real image slot — set opacity:1 when image added */
+.asset-real-img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+  opacity: 0; transition: opacity 0.5s ease; z-index: 2;
+}
+
+/* Asset body pane */
+.asset-body {
+  padding: 44px 48px; display: flex; flex-direction: column;
+  justify-content: center; background: var(--surface);
+}
+.asset-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--green-pale); border: 1px solid rgba(91,191,58,0.28);
+  border-radius: var(--radius-btn); padding: 4px 12px;
+  font-family: var(--font-head); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--green-dark);
+  margin-bottom: 18px; width: fit-content;
+}
+.asset-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+.asset-badge.soon {
+  background: rgba(107,124,101,0.08); border-color: rgba(107,124,101,0.2); color: var(--muted);
+}
+.asset-badge.soon::before { background: var(--muted); }
+
+.asset-body h3 {
+  font-family: var(--font-head); font-size: clamp(1.4rem, 2.2vw, 2rem);
+  font-weight: 800; color: var(--ink); margin-bottom: 14px; line-height: 1.15;
+}
+.asset-body > p {
+  font-size: 15px; color: var(--muted); line-height: 1.78;
+  margin-bottom: 28px; max-width: 400px;
+}
+
+/* Variants inside asset body */
+.asset-variants { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+.variant-pill {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 10px; padding: 10px 14px;
+  transition: border-color 0.2s, background 0.2s;
+}
+.variant-pill:hover { border-color: rgba(91,191,58,0.35); background: var(--green-pale); }
+.variant-pill-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.variant-pill-dot.fuel     { background: var(--green); }
+.variant-pill-dot.electric { background: #3dd6f5; }
+.variant-pill-dot.future   { background: var(--muted); }
+.variant-pill-text { }
+.variant-pill-name { font-family: var(--font-head); font-size: 12.5px; font-weight: 700; color: var(--ink); }
+.variant-pill-note { font-size: 11.5px; color: var(--muted); margin-top: 1px; }
+
+.asset-cta { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* Buttons */
+.btn-primary {
+  font-family: var(--font-head); font-size: 13px; font-weight: 700;
+  background: var(--green); color: #fff; border: none;
+  border-radius: var(--radius-btn); padding: 12px 24px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 7px;
+  transition: background 0.22s, transform 0.18s, box-shadow 0.22s;
+  box-shadow: 0 4px 16px rgba(91,191,58,0.32); text-decoration: none;
+}
+.btn-primary:hover { background: var(--green-dark); transform: translateY(-2px); box-shadow: 0 7px 22px rgba(91,191,58,0.38); }
+.btn-primary svg { width: 13px; height: 13px; transition: transform 0.2s; }
+.btn-primary:hover svg { transform: translateX(3px); }
+
+.btn-ghost-sm {
+  font-family: var(--font-head); font-size: 13px; font-weight: 700;
+  background: transparent; color: var(--ink-soft);
+  border: 1.5px solid var(--border); border-radius: var(--radius-btn);
+  padding: 10px 22px; cursor: pointer;
+  transition: border-color 0.22s, color 0.22s, background 0.22s;
+  text-decoration: none; display: inline-block;
+}
+.btn-ghost-sm:hover { border-color: var(--green); color: var(--green-dark); background: var(--green-pale); }
+
+/* ── How It Works ── */
+.hp-section { background: var(--bg); padding: 90px 40px; }
+.hp-inner {
+  max-width: 1100px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center;
+}
+.hp-text > p { font-size: 16px; color: var(--muted); line-height: 1.7; margin-bottom: 40px; }
+
+.hp-steps { display: flex; flex-direction: column; gap: 0; }
+.hp-step {
+  display: flex; gap: 18px; align-items: flex-start;
+  padding: 20px 0; border-bottom: 1px solid var(--border);
+  transition: background 0.2s;
+}
+.hp-step:last-child { border-bottom: none; }
+.hp-step-num {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--green-dim); border: 2px solid rgba(91,191,58,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-head); font-size: 14px; font-weight: 800; color: var(--green-dark);
+  flex-shrink: 0; margin-top: 2px;
+  transition: background 0.25s, border-color 0.25s, transform 0.25s;
+}
+.hp-step:hover .hp-step-num { background: var(--green); border-color: var(--green); color: #fff; transform: scale(1.08); }
+.hp-step-body h4 { font-family: var(--font-head); font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 6px; }
+.hp-step-body p { font-size: 13.5px; color: var(--muted); line-height: 1.7; }
+
+/* Visual panel */
+.hp-visual { position: relative; }
+.hp-img-frame {
+  width: 100%; height: 440px; border-radius: 20px; overflow: hidden;
+  background: var(--ink); display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+.hp-img-frame::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(91,191,58,0.09) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.hp-img-placeholder {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+}
+.hp-img-placeholder svg { opacity: 0.35; }
+.hp-img-placeholder span {
+  font-family: var(--font-head); font-size: 9px; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase; color: rgba(91,191,58,0.3);
+}
+/* real image — set opacity:1 when src added */
+.hp-real-img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; opacity: 0; z-index: 2; transition: opacity 0.5s;
+}
+
+.hp-overlay-card {
+  position: absolute; bottom: -20px; left: -20px;
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 16px; padding: 22px 26px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+}
+.oc-label { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.oc-value { font-family: var(--font-head); font-size: 2rem; font-weight: 800; color: var(--green); line-height: 1; }
+.oc-sub { font-size: 12px; color: var(--muted); margin-top: 5px; }
+
+/* ── Tier Plans ── */
+.plans { background: var(--surface); padding: 90px 40px; }
+.plans-inner { max-width: 1100px; margin: 0 auto; }
+.plans-head { margin-bottom: 52px; }
+
+.plans-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 800px; margin: 0 auto; }
+
+.plan-card {
+  background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: 22px; padding: 40px 36px;
+  position: relative; overflow: hidden;
+  transition: transform 0.3s cubic-bezier(.22,1,.36,1), box-shadow 0.3s, border-color 0.3s;
+}
+.plan-card:hover { transform: translateY(-6px); box-shadow: 0 20px 52px rgba(91,191,58,0.12); border-color: rgba(91,191,58,0.38); }
+.plan-card.featured {
+  background: var(--ink); border-color: var(--green);
+  box-shadow: 0 8px 32px rgba(91,191,58,0.20);
+}
+.plan-card.featured:hover { box-shadow: 0 20px 52px rgba(91,191,58,0.28); }
+
+.featured-badge {
+  position: absolute; top: 0; left: 0; right: 0;
+  background: var(--green); text-align: center; padding: 7px;
+  font-family: var(--font-head); font-size: 10px; font-weight: 800;
+  letter-spacing: 0.2em; text-transform: uppercase; color: #fff;
+}
+
+.plan-name {
+  font-family: var(--font-head); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--green-dark); margin-bottom: 8px;
+}
+.plan-card.featured .plan-name { color: var(--green); margin-top: 24px; }
+
+.plan-title {
+  font-family: var(--font-head); font-size: 2rem; font-weight: 800;
+  color: var(--ink); line-height: 1.1; margin-bottom: 8px;
+}
+.plan-card.featured .plan-title { color: #fff; }
+
+.plan-sub { font-size: 13.5px; color: var(--muted); line-height: 1.6; margin-bottom: 24px; }
+.plan-card.featured .plan-sub { color: rgba(255,255,255,0.48); }
+
+.plan-divider { height: 1px; background: var(--border); margin-bottom: 22px; }
+.plan-card.featured .plan-divider { background: rgba(91,191,58,0.22); }
+
+.plan-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+.plan-features li {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 13.5px; color: var(--ink-soft); line-height: 1.5;
+}
+.plan-card.featured .plan-features li { color: rgba(255,255,255,0.65); }
+
+.plan-btn {
+  display: block; width: 100%; text-align: center;
+  font-family: var(--font-head); font-size: 14px; font-weight: 700;
+  border-radius: var(--radius-btn); padding: 14px 24px; cursor: pointer;
+  border: none; text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+}
+.plan-card:not(.featured) .plan-btn {
+  background: var(--green); color: #fff;
+  box-shadow: 0 4px 16px rgba(91,191,58,0.32);
+}
+.plan-card:not(.featured) .plan-btn:hover { background: var(--green-dark); transform: translateY(-2px); box-shadow: 0 7px 24px rgba(91,191,58,0.38); }
+.plan-card.featured .plan-btn {
+  background: #fff; color: var(--green-dark);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+.plan-card.featured .plan-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.18); }
+
+/* ── Protections Grid ── */
+.add-services { background: var(--bg); padding: 90px 40px; }
+.add-inner { max-width: 1100px; margin: 0 auto; }
+.add-head { margin-bottom: 52px; }
+
+.services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+.service-card {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--radius-card); overflow: hidden;
+  transition: transform 0.3s cubic-bezier(.22,1,.36,1), box-shadow 0.3s, border-color 0.3s;
+}
+.service-card:hover { transform: translateY(-5px); box-shadow: 0 14px 36px rgba(91,191,58,0.10); border-color: rgba(91,191,58,0.38); }
+
+.service-card-img {
+  height: 140px; background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.service-card-img::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(91,191,58,0.08) 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+.img-placeholder {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  position: relative; z-index: 1;
+}
+.img-placeholder svg { width: 44px; height: 44px; color: var(--green-dark); opacity: 0.6; }
+.img-placeholder span {
+  font-family: var(--font-head); font-size: 8.5px; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase; color: rgba(91,191,58,0.3);
+}
+/* real image slot */
+.service-real-img {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; opacity: 0; transition: opacity 0.5s; z-index: 2;
+}
+
+.service-card-body { padding: 22px 22px 26px; }
+.service-card-body h4 {
+  font-family: var(--font-head); font-size: 14px; font-weight: 800;
+  color: var(--ink); margin-bottom: 8px; line-height: 1.3;
+}
+.service-card-body p { font-size: 13px; color: var(--muted); line-height: 1.65; }
+
+/* ── FAQ ── */
+.faq { background: var(--surface); padding: 90px 40px; }
+.faq-inner { max-width: 800px; margin: 0 auto; }
+.faq-head { margin-bottom: 44px; }
+
+.faq-list { display: flex; flex-direction: column; gap: 0; }
+
+.faq-item {
+  border-bottom: 1px solid var(--border);
+}
+.faq-item:first-child { border-top: 1px solid var(--border); }
+
+.faq-q {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 20px 4px; cursor: pointer; gap: 20px;
+  transition: color 0.2s;
+}
+.faq-q:hover { color: var(--green-dark); }
+.faq-q span {
+  font-family: var(--font-head); font-size: 15px; font-weight: 700;
+  color: var(--ink); line-height: 1.4; transition: color 0.2s;
+}
+.faq-q:hover span { color: var(--green-dark); }
+
+.faq-icon {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 1.5px solid var(--border); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.22s, border-color 0.22s, transform 0.25s;
+}
+.faq-item.open .faq-icon { background: var(--green); border-color: var(--green); transform: rotate(45deg); }
+.faq-icon svg { width: 10px; height: 10px; }
+.faq-item.open .faq-icon svg path { stroke: #fff; }
+
+.faq-a {
+  display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.32s ease;
+}
+.faq-item.open .faq-a { grid-template-rows: 1fr; }
+.faq-a-inner {
+  overflow: hidden; padding: 0 4px;
+  font-size: 14px; color: var(--muted); line-height: 1.78;
+}
+.faq-item.open .faq-a-inner { padding-bottom: 22px; }
+
+/* ── CTA Banner ── */
+.cta-banner {
+  background: linear-gradient(120deg, var(--green-dark) 0%, var(--green) 100%);
+  padding: 80px 40px; text-align: center; position: relative; overflow: hidden;
+}
+.cta-banner::before {
+  content: ''; position: absolute; top: -80px; right: -80px;
+  width: 320px; height: 320px; border-radius: 50%;
+  background: rgba(255,255,255,0.06); pointer-events: none;
+}
+.cta-banner h2 {
+  font-family: var(--font-head); font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 800; color: #fff; margin-bottom: 14px; position: relative; z-index: 1;
+}
+.cta-banner p {
+  font-size: 16px; color: rgba(255,255,255,0.78); max-width: 480px;
+  margin: 0 auto 32px; line-height: 1.7; position: relative; z-index: 1;
+}
+.cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; position: relative; z-index: 1; }
+
+.btn-white {
+  font-family: var(--font-head); font-size: 14px; font-weight: 700;
+  background: #fff; color: var(--green-dark); border: none;
+  border-radius: var(--radius-btn); padding: 14px 28px; cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s; text-decoration: none; display: inline-block;
+  box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+}
+.btn-white:hover { transform: translateY(-2px) scale(1.03); box-shadow: 0 8px 28px rgba(0,0,0,0.2); }
+
+.btn-outline-white {
+  font-family: var(--font-head); font-size: 14px; font-weight: 700;
+  background: transparent; color: #fff;
+  border: 1.5px solid rgba(255,255,255,0.45); border-radius: var(--radius-btn);
+  padding: 12px 26px; cursor: pointer;
+  transition: background 0.22s, border-color 0.22s; text-decoration: none; display: inline-block;
+}
+.btn-outline-white:hover { background: rgba(255,255,255,0.12); border-color: #fff; }
+
+/* ── Footer ── */
+footer { background: var(--ink); padding: 64px 40px 0; }
+.footer-grid {
+  max-width: 1100px; margin: 0 auto;
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px; padding-bottom: 52px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 28px;
+}
+.footer-logo-text { font-family: var(--font-head); font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 10px; }
+.footer-logo-text span { color: var(--green); }
+.footer-tagline { font-size: 12px; color: rgba(255,255,255,0.35); line-height: 1.75; max-width: 270px; margin-bottom: 20px; }
+.footer-contact-block { display: flex; flex-direction: column; gap: 10px; }
+.footer-contact-item { display: flex; align-items: flex-start; gap: 9px; }
+.footer-contact-icon { width: 13px; height: 13px; flex-shrink: 0; color: var(--green); margin-top: 2px; }
+.footer-contact-item a, .footer-contact-item span { font-size: 12px; color: rgba(255,255,255,0.38); text-decoration: none; transition: color 0.2s; }
+.footer-contact-item a:hover { color: var(--green); }
+.footer-col h5 { font-family: var(--font-head); font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--green); margin-bottom: 16px; }
+.footer-col a { display: block; font-size: 12px; color: rgba(255,255,255,0.38); text-decoration: none; margin-bottom: 10px; transition: color 0.2s; }
+.footer-col a:hover { color: var(--green); }
+.footer-bottom {
+  max-width: 1100px; margin: 0 auto;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 10px; padding: 20px 0;
+  font-size: 12px; color: rgba(255,255,255,0.22);
+}
+.footer-bottom a { color: rgba(255,255,255,0.3); text-decoration: none; transition: color 0.2s; }
+.footer-bottom a:hover { color: var(--green); }
+.footer-dot { margin: 0 6px; }
+.disclaimer-strip {
+  background: rgba(255,255,255,0.03); border-top: 1px solid rgba(255,255,255,0.05);
+  padding: 16px 40px; text-align: center;
+  font-size: 11px; color: rgba(255,255,255,0.18); line-height: 1.65;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .asset-row { grid-template-columns: 1fr; }
+  .asset-row.reverse { direction: ltr; }
+  .asset-img-wrap { min-height: 260px; }
+  .hp-inner { grid-template-columns: 1fr; gap: 48px; }
+  .hp-visual { display: none; }
+  .services-grid { grid-template-columns: repeat(2, 1fr); }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 760px) {
+  .header { padding: 0 20px; }
+  .nav { display: none; }
+  .cta-group { display: none; }
+  .menu-toggle { display: flex; }
+  .page-hero { padding: 60px 20px 80px; }
+  .catalogue, .hp-section, .plans, .add-services, .faq, .cta-banner { padding: 60px 20px; }
+  .plans-grid { grid-template-columns: 1fr; }
+  .services-grid { grid-template-columns: 1fr; }
+  .asset-body { padding: 28px 24px; }
+  footer { padding: 44px 20px 0; }
+  .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+  .disclaimer-strip { padding: 14px 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="top-bar">
+  <div class="top-bar-item">
+    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 010 1.17 2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>
+    +234 800 000 0000
+  </div>
+  <div class="top-bar-item">
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="1" y="3" width="14" height="10" rx="1.5"/><path d="M1 3l7 5.5L15 3"/></svg>
+    invest@enigmatransport.com
+  </div>
+  <div class="top-bar-item">Abuja, FCT, Nigeria</div>
+</div>
+
+<!-- Header -->
+<header class="header">
+  <a href="index.html" class="logo-link">
+    <span class="logo-wordmark">Enigma<span>.</span></span>
+  </a>
+  <nav class="nav">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="opportunities.html">Opportunities</a>
+    <a href="how-it-works.html"  class="active">How It Works</a>
+  </nav>
+  <div class="cta-group">
+        <a href="invest.html" class="nav-cta">Request Investment Brief</a>
+    <a href="contact.html" class="nav-cta-secondary">Become a Driver</a>
+
+  </div>
+  <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</header>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobileNav">
+  <button class="close-btn" id="closeNav" aria-label="Close">
+    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <a href="index.html">Home</a>
+  <a href="about.html">About</a>
+  <a href="opportunities.html">Opportunities</a>
+  <a href="how-it-works.html">How It Works</a>
+  <a href="contact.html">Contact</a>
+  <div class="mobile-nav-ctas">
+    <a href="invest.html" class="mn-btn-primary">Request Investment Brief</a>
+    <a href="contact.html" class="mn-btn-ghost">Become a Driver</a>
+  </div>
+</div>
+
+
+<!-- ═══════ PAGE HERO ═══════ -->
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div class="breadcrumb">
+      <a href="index.html">Home</a>
+      <span>›</span>
+      <span>Investment Opportunities</span>
+    </div>
+    <div class="section-tag" style="color:var(--green);">Investment Plans</div>
+    <h1>Choose your asset.<br><span class="accent">Put capital to work.</span></h1>
+    <p>Two structured investment tiers, performance-based weekly returns, and full operational management by Enigma — from the day your agreement is signed.</p>
+  </div>
+</section>
+
+
+<!-- ═══════ ASSET CATALOGUE ═══════ -->
+<section class="catalogue" id="assets">
+  <div class="catalogue-inner">
+    <div class="catalogue-head">
+      <div class="section-tag">Deployable Asset Classes</div>
+      <h2 class="section-h2">One framework. <span class="accent">Multiple asset paths.</span></h2>
+      <p class="section-intro">All asset classes operate under the same investment structure — two tiers, weekly performance-based returns, and full operational management by Enigma.</p>
+    </div>
+
+    <div class="asset-list">
+
+      <!-- Asset 1: Motorcycles -->
+      <div class="asset-row" id="motorcycles">
+        <div class="asset-img-wrap">
+          <!-- Real image: set opacity:1 on .asset-real-img when src added -->
+          <img class="asset-real-img" src="" alt="Motorcycle"/>
+          <div class="asset-svg-frame">
+            <svg width="220" height="130" viewBox="0 0 220 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="42" cy="95" r="28" fill="rgba(10,22,5,0.9)" stroke="rgba(91,191,58,0.4)" stroke-width="1.8"/>
+              <circle cx="42" cy="95" r="17" fill="none" stroke="rgba(91,191,58,0.2)" stroke-width="1.4"/>
+              <circle cx="42" cy="95" r="5" fill="rgba(91,191,58,0.5)"/>
+              <line x1="42" y1="78" x2="42" y2="86" stroke="rgba(91,191,58,0.3)" stroke-width="1.3"/>
+              <line x1="42" y1="104" x2="42" y2="112" stroke="rgba(91,191,58,0.3)" stroke-width="1.3"/>
+              <line x1="25" y1="95" x2="33" y2="95" stroke="rgba(91,191,58,0.3)" stroke-width="1.3"/>
+              <line x1="51" y1="95" x2="59" y2="95" stroke="rgba(91,191,58,0.3)" stroke-width="1.3"/>
+              <line x1="30" y1="82" x2="36" y2="88" stroke="rgba(91,191,58,0.2)" stroke-width="1.1"/>
+              <line x1="48" y1="102" x2="54" y2="108" stroke="rgba(91,191,58,0.2)" stroke-width="1.1"/>
+              <line x1="30" y1="108" x2="36" y2="102" stroke="rgba(91,191,58,0.2)" stroke-width="1.1"/>
+              <line x1="48" y1="88" x2="54" y2="82" stroke="rgba(91,191,58,0.2)" stroke-width="1.1"/>
+              <path d="M42 95 L72 58 L118 54 L132 74" stroke="rgba(91,191,58,0.45)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+              <path d="M72 58 L88 95" stroke="rgba(91,191,58,0.22)" stroke-width="1.8" fill="none"/>
+              <path d="M118 54 L134 95" stroke="rgba(91,191,58,0.22)" stroke-width="1.8" fill="none"/>
+              <rect x="83" y="66" width="52" height="28" rx="6" fill="rgba(91,191,58,0.07)" stroke="rgba(91,191,58,0.28)" stroke-width="1.4"/>
+              <path d="M90 54 Q110 44 132 50 L132 66 L90 66 Z" fill="rgba(91,191,58,0.09)" stroke="rgba(91,191,58,0.28)" stroke-width="1.3"/>
+              <path d="M108 50 Q126 44 140 48 L140 56 Q126 52 108 58 Z" fill="rgba(91,191,58,0.14)" stroke="rgba(91,191,58,0.24)" stroke-width="1"/>
+              <line x1="152" y1="52" x2="166" y2="80" stroke="rgba(91,191,58,0.35)" stroke-width="2.2" stroke-linecap="round"/>
+              <path d="M146 46 Q152 42 158 46 L158 52 Q152 48 146 52 Z" fill="rgba(91,191,58,0.14)" stroke="rgba(91,191,58,0.3)" stroke-width="1"/>
+              <ellipse cx="164" cy="54" rx="4" ry="3" fill="rgba(255,240,100,0.2)" stroke="rgba(255,240,100,0.45)" stroke-width="1"/>
+              <circle cx="178" cy="95" r="28" fill="rgba(10,22,5,0.9)" stroke="rgba(91,191,58,0.4)" stroke-width="1.8"/>
+              <circle cx="178" cy="95" r="17" fill="none" stroke="rgba(91,191,58,0.2)" stroke-width="1.4"/>
+              <circle cx="178" cy="95" r="5" fill="rgba(91,191,58,0.5)"/>
+              <line x1="178" y1="78" x2="178" y2="86" stroke="rgba(91,191,58,0.3)" stroke-width="1.3"/>
+              <line x1="178" y1="104" x2="178" y2="112" stroke="rgba(91,191,58,0.3)" stroke-width="1.3"/>
+              <line x1="161" y1="95" x2="169" y2="95" stroke="rgba(91,191,58,0.3)" stroke-width="1.3"/>
+              <line x1="187" y1="95" x2="195" y2="95" stroke="rgba(91,191,58,0.3)" stroke-width="1.3"/>
+              <ellipse cx="110" cy="124" rx="80" ry="4" fill="rgba(0,0,0,0.3)"/>
+            </svg>
+            <span class="asset-svg-label">Image Placeholder — Motorcycle</span>
+          </div>
+        </div>
+        <div class="asset-body">
+          <div class="asset-badge">Available on Request</div>
+          <h3>Motorcycles (Bikes)</h3>
+          <p>For dispatch operators, food delivery networks, and urban commuter services. Motorcycles generate income across multiple trips per day, making them a high-frequency, short-cycle asset well suited to structured fleet investment in Abuja's dense urban corridors.</p>
+          <div class="asset-variants">
+            <div class="variant-pill">
+              <div class="variant-pill-dot fuel"></div>
+              <div class="variant-pill-text">
+                <div class="variant-pill-name">Fuel-Based Motorcycles</div>
+                <div class="variant-pill-note">Reliable, widely deployed — easy to integrate into daily operations immediately.</div>
+              </div>
+            </div>
+            <div class="variant-pill">
+              <div class="variant-pill-dot electric"></div>
+              <div class="variant-pill-text">
+                <div class="variant-pill-name">Electric Motorcycles</div>
+                <div class="variant-pill-note">Lower running cost, growing urban adoption — improved net margin per trip.</div>
+              </div>
+            </div>
+          </div>
+          <div class="asset-cta">
+            <a class="btn-primary" href="invest.html">
+              Request Investment Brief
+              <svg viewBox="0 0 13 13" fill="none"><path d="M2 6.5h9M7 3l3.5 3.5L7 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <a class="btn-ghost-sm" href="opportunities.html#motorcycles">View Full Details</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Asset 2: Cars -->
+      <div class="asset-row reverse" id="cars">
+        <div class="asset-img-wrap">
+          <img class="asset-real-img" src="" alt="Car"/>
+          <div class="asset-svg-frame">
+            <svg width="230" height="130" viewBox="0 0 230 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22 90 L22 75 Q24 62 40 57 L68 50 Q90 40 115 40 Q140 40 162 50 L190 57 Q206 62 208 75 L208 90 Z" fill="rgba(91,191,58,0.07)" stroke="rgba(91,191,58,0.30)" stroke-width="1.6"/>
+              <path d="M66 57 Q84 34 115 33 Q146 33 164 57"/>
+              <path d="M66 57 Q84 34 115 33 Q146 33 164 57" fill="rgba(91,191,58,0.05)" stroke="rgba(91,191,58,0.20)" stroke-width="1.4"/>
+              <path d="M68 55 Q82 40 100 40 L100 57 Z" fill="rgba(91,191,58,0.07)" stroke="rgba(91,191,58,0.16)" stroke-width="1"/>
+              <rect x="103" y="40" width="24" height="17" rx="2" fill="rgba(91,191,58,0.07)" stroke="rgba(91,191,58,0.16)" stroke-width="1"/>
+              <path d="M129 40 L152 40 Q162 47 162 55 L129 57 Z" fill="rgba(91,191,58,0.07)" stroke="rgba(91,191,58,0.16)" stroke-width="1"/>
+              <path d="M22 90 L22 95 L208 95 L208 90" fill="rgba(91,191,58,0.05)" stroke="rgba(91,191,58,0.14)" stroke-width="1"/>
+              <path d="M24 72 L38 68 L42 78 L24 80 Z" fill="rgba(255,240,100,0.12)" stroke="rgba(255,240,100,0.38)" stroke-width="1"/>
+              <path d="M206 70 L192 66 L190 80 L206 80 Z" fill="rgba(255,60,60,0.16)" stroke="rgba(255,80,80,0.38)" stroke-width="1"/>
+              <path d="M26 80 L40 78 L40 88 L26 88 Z" fill="rgba(91,191,58,0.04)" stroke="rgba(91,191,58,0.18)" stroke-width="1"/>
+              <line x1="29" y1="78" x2="29" y2="88" stroke="rgba(91,191,58,0.13)" stroke-width="0.7"/>
+              <line x1="33" y1="78" x2="33" y2="88" stroke="rgba(91,191,58,0.13)" stroke-width="0.7"/>
+              <line x1="37" y1="78" x2="37" y2="88" stroke="rgba(91,191,58,0.13)" stroke-width="0.7"/>
+              <line x1="100" y1="57" x2="100" y2="90" stroke="rgba(91,191,58,0.12)" stroke-width="1"/>
+              <line x1="130" y1="57" x2="130" y2="90" stroke="rgba(91,191,58,0.12)" stroke-width="1"/>
+              <rect x="84" y="75" width="12" height="4" rx="2" fill="rgba(91,191,58,0.18)" stroke="rgba(91,191,58,0.24)" stroke-width="0.7"/>
+              <rect x="134" y="75" width="12" height="4" rx="2" fill="rgba(91,191,58,0.18)" stroke="rgba(91,191,58,0.24)" stroke-width="0.7"/>
+              <circle cx="60" cy="100" r="22" fill="rgba(10,22,5,0.9)" stroke="rgba(91,191,58,0.38)" stroke-width="1.8"/>
+              <circle cx="60" cy="100" r="13" fill="none" stroke="rgba(91,191,58,0.18)" stroke-width="1.4"/>
+              <circle cx="60" cy="100" r="4" fill="rgba(91,191,58,0.5)"/>
+              <line x1="60" y1="87" x2="60" y2="95" stroke="rgba(91,191,58,0.28)" stroke-width="1.3"/>
+              <line x1="60" y1="105" x2="60" y2="113" stroke="rgba(91,191,58,0.28)" stroke-width="1.3"/>
+              <line x1="47" y1="100" x2="55" y2="100" stroke="rgba(91,191,58,0.28)" stroke-width="1.3"/>
+              <line x1="65" y1="100" x2="73" y2="100" stroke="rgba(91,191,58,0.28)" stroke-width="1.3"/>
+              <circle cx="170" cy="100" r="22" fill="rgba(10,22,5,0.9)" stroke="rgba(91,191,58,0.38)" stroke-width="1.8"/>
+              <circle cx="170" cy="100" r="13" fill="none" stroke="rgba(91,191,58,0.18)" stroke-width="1.4"/>
+              <circle cx="170" cy="100" r="4" fill="rgba(91,191,58,0.5)"/>
+              <line x1="170" y1="87" x2="170" y2="95" stroke="rgba(91,191,58,0.28)" stroke-width="1.3"/>
+              <line x1="170" y1="105" x2="170" y2="113" stroke="rgba(91,191,58,0.28)" stroke-width="1.3"/>
+              <line x1="157" y1="100" x2="165" y2="100" stroke="rgba(91,191,58,0.28)" stroke-width="1.3"/>
+              <line x1="175" y1="100" x2="183" y2="100" stroke="rgba(91,191,58,0.28)" stroke-width="1.3"/>
+              <text x="105" y="86" font-family="'Syne',sans-serif" font-size="8" font-weight="800" fill="rgba(91,191,58,0.28)" letter-spacing="2">ENIGMA</text>
+              <ellipse cx="115" cy="126" rx="92" ry="4" fill="rgba(0,0,0,0.3)"/>
+            </svg>
+            <span class="asset-svg-label">Image Placeholder — Car</span>
+          </div>
+        </div>
+        <div class="asset-body">
+          <div class="asset-badge">Available on Request</div>
+          <h3>Cars (Fleet Vehicles)</h3>
+          <p>For ride-hailing platforms, corporate transport contracts, and logistics operations across Abuja. Cars are a structured, scalable fleet asset — individually sourced, registered, and GPS-fitted before deployment — generating consistent daily revenue from high-utilisation routes.</p>
+          <div class="asset-variants">
+            <div class="variant-pill">
+              <div class="variant-pill-dot fuel"></div>
+              <div class="variant-pill-text">
+                <div class="variant-pill-name">Fuel-Based Vehicles</div>
+                <div class="variant-pill-note">Proven across Abuja's full road network — high-mileage daily operations with established servicing infrastructure.</div>
+              </div>
+            </div>
+            <div class="variant-pill">
+              <div class="variant-pill-dot electric"></div>
+              <div class="variant-pill-text">
+                <div class="variant-pill-name">Electric Vehicles</div>
+                <div class="variant-pill-note">Lower per-km running costs — well suited to structured corporate and contract routes.</div>
+              </div>
+            </div>
+          </div>
+          <div class="asset-cta">
+            <a class="btn-primary" href="invest.html">
+              Request Investment Brief
+              <svg viewBox="0 0 13 13" fill="none"><path d="M2 6.5h9M7 3l3.5 3.5L7 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <a class="btn-ghost-sm" href="opportunities.html#cars">View Full Details</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Asset 3: Tricycles -->
+      <div class="asset-row" id="tricycles">
+        <div class="asset-img-wrap">
+          <img class="asset-real-img" src="" alt="Tricycle"/>
+          <div class="asset-svg-frame">
+            <svg width="230" height="130" viewBox="0 0 230 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M34 88 L34 76 Q36 65 50 61 L80 55 L168 55 L182 61 Q196 66 198 76 L198 88 Z" fill="rgba(91,191,58,0.07)" stroke="rgba(91,191,58,0.28)" stroke-width="1.6"/>
+              <path d="M78 55 Q80 37 116 36 Q152 36 154 55" fill="rgba(91,191,58,0.06)" stroke="rgba(91,191,58,0.20)" stroke-width="1.4"/>
+              <path d="M80 55 Q84 42 116 40 Q96 40 86 50 L80 55 Z" fill="rgba(91,191,58,0.09)" stroke="rgba(91,191,58,0.18)" stroke-width="1"/>
+              <path d="M116 40 Q148 40 152 50 L144 55 L116 55 Z" fill="rgba(91,191,58,0.07)" stroke="rgba(91,191,58,0.16)" stroke-width="1"/>
+              <line x1="78" y1="55" x2="78" y2="88" stroke="rgba(91,191,58,0.14)" stroke-width="1"/>
+              <line x1="154" y1="55" x2="154" y2="88" stroke="rgba(91,191,58,0.14)" stroke-width="1"/>
+              <rect x="88" y="60" width="66" height="26" rx="4" fill="rgba(91,191,58,0.04)" stroke="rgba(91,191,58,0.13)" stroke-width="1"/>
+              <rect x="96" y="68" width="14" height="12" rx="3" fill="rgba(91,191,58,0.07)" stroke="rgba(91,191,58,0.14)" stroke-width="0.8"/>
+              <rect x="116" y="68" width="14" height="12" rx="3" fill="rgba(91,191,58,0.07)" stroke="rgba(91,191,58,0.14)" stroke-width="0.8"/>
+              <rect x="136" y="68" width="10" height="12" rx="3" fill="rgba(91,191,58,0.07)" stroke="rgba(91,191,58,0.14)" stroke-width="0.8"/>
+              <rect x="48" y="58" width="26" height="20" rx="4" fill="rgba(91,191,58,0.07)" stroke="rgba(91,191,58,0.20)" stroke-width="1.1"/>
+              <path d="M54 58 Q62 49 70 58" stroke="rgba(91,191,58,0.28)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+              <ellipse cx="62" cy="80" rx="6" ry="4" fill="rgba(255,240,100,0.12)" stroke="rgba(255,240,100,0.38)" stroke-width="1"/>
+              <rect x="34" y="84" width="164" height="4" rx="0" fill="rgba(91,191,58,0.18)"/>
+              <text x="160" y="80" font-family="'Syne',sans-serif" font-size="7" font-weight="800" fill="rgba(91,191,58,0.28)" letter-spacing="1.5">KEKE</text>
+              <circle cx="62" cy="104" r="20" fill="rgba(10,22,5,0.9)" stroke="rgba(91,191,58,0.38)" stroke-width="1.8"/>
+              <circle cx="62" cy="104" r="12" fill="none" stroke="rgba(91,191,58,0.18)" stroke-width="1.4"/>
+              <circle cx="62" cy="104" r="4" fill="rgba(91,191,58,0.5)"/>
+              <line x1="62" y1="92" x2="62" y2="99" stroke="rgba(91,191,58,0.28)" stroke-width="1.3"/>
+              <line x1="62" y1="109" x2="62" y2="116" stroke="rgba(91,191,58,0.28)" stroke-width="1.3"/>
+              <line x1="50" y1="104" x2="57" y2="104" stroke="rgba(91,191,58,0.28)" stroke-width="1.3"/>
+              <line x1="67" y1="104" x2="74" y2="104" stroke="rgba(91,191,58,0.28)" stroke-width="1.3"/>
+              <circle cx="140" cy="104" r="20" fill="rgba(10,22,5,0.9)" stroke="rgba(91,191,58,0.38)" stroke-width="1.8"/>
+              <circle cx="140" cy="104" r="12" fill="none" stroke="rgba(91,191,58,0.18)" stroke-width="1.4"/>
+              <circle cx="140" cy="104" r="4" fill="rgba(91,191,58,0.5)"/>
+              <line x1="140" y1="92" x2="140" y2="99" stroke="rgba(91,191,58,0.28)" stroke-width="1.3"/>
+              <line x1="140" y1="109" x2="140" y2="116" stroke="rgba(91,191,58,0.28)" stroke-width="1.3"/>
+              <circle cx="184" cy="104" r="20" fill="rgba(10,22,5,0.9)" stroke="rgba(91,191,58,0.38)" stroke-width="1.8"/>
+              <circle cx="184" cy="104" r="12" fill="none" stroke="rgba(91,191,58,0.18)" stroke-width="1.4"/>
+              <circle cx="184" cy="104" r="4" fill="rgba(91,191,58,0.5)"/>
+              <line x1="184" y1="92" x2="184" y2="99" stroke="rgba(91,191,58,0.28)" stroke-width="1.3"/>
+              <line x1="184" y1="109" x2="184" y2="116" stroke="rgba(91,191,58,0.28)" stroke-width="1.3"/>
+              <line x1="130" y1="88" x2="194" y2="88" stroke="rgba(91,191,58,0.18)" stroke-width="1.8" stroke-linecap="round"/>
+              <ellipse cx="134" cy="126" rx="100" ry="4" fill="rgba(0,0,0,0.28)"/>
+            </svg>
+            <span class="asset-svg-label">Image Placeholder — Keke Napep</span>
+          </div>
+        </div>
+        <div class="asset-body">
+          <div class="asset-badge">Available on Request</div>
+          <h3>Tricycles (Keke Napep)</h3>
+          <p>For high-density neighbourhood routes, market corridors, and estate connections across the FCT. Tricycles deliver consistent daily earnings from volume of short trips — with comparatively low operating costs and strong, stable local demand that persists regardless of wider economic conditions.</p>
+          <div class="asset-variants">
+            <div class="variant-pill">
+              <div class="variant-pill-dot fuel"></div>
+              <div class="variant-pill-text">
+                <div class="variant-pill-name">Standard (Fuel-Based) Tricycles</div>
+                <div class="variant-pill-note">The dominant form of intra-city transport in Abuja — widely operated, with ready servicing support across the FCT.</div>
+              </div>
+            </div>
+            <div class="variant-pill">
+              <div class="variant-pill-dot electric"></div>
+              <div class="variant-pill-text">
+                <div class="variant-pill-name">Electric Tricycles</div>
+                <div class="variant-pill-note">Particularly cost-effective on short, frequent trips — reduced fuel costs improve net earnings per day.</div>
+              </div>
+            </div>
+          </div>
+          <div class="asset-cta">
+            <a class="btn-primary" href="invest.html">
+              Request Investment Brief
+              <svg viewBox="0 0 13 13" fill="none"><path d="M2 6.5h9M7 3l3.5 3.5L7 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <a class="btn-ghost-sm" href="opportunities.html#tricycles">View Full Details</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Asset 4: Interstate -->
+      <div class="asset-row reverse" id="interstate">
+        <div class="asset-img-wrap">
+          <img class="asset-real-img" src="" alt="Interstate Bus"/>
+          <div class="asset-svg-frame">
+            <svg width="260" height="130" viewBox="0 0 260 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="18" y="48" width="224" height="60" rx="9" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.10)" stroke-width="1.6"/>
+              <rect x="24" y="44" width="212" height="7" rx="3" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+              <rect x="34" y="40" width="192" height="4" rx="2" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+              <rect x="50" y="56" width="26" height="20" rx="4" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.09)" stroke-width="1"/>
+              <rect x="84" y="56" width="26" height="20" rx="4" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.09)" stroke-width="1"/>
+              <rect x="118" y="56" width="26" height="20" rx="4" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.09)" stroke-width="1"/>
+              <rect x="152" y="56" width="26" height="20" rx="4" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.09)" stroke-width="1"/>
+              <rect x="18" y="54" width="30" height="44" rx="7" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.09)" stroke-width="1.1"/>
+              <rect x="20" y="52" width="24" height="22" rx="3" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.09)" stroke-width="1"/>
+              <rect x="20" y="78" width="14" height="8" rx="3" fill="rgba(255,240,100,0.08)" stroke="rgba(255,240,100,0.18)" stroke-width="1"/>
+              <rect x="20" y="90" width="10" height="6" rx="2" fill="rgba(255,60,60,0.08)" stroke="rgba(255,80,80,0.18)" stroke-width="1"/>
+              <rect x="196" y="62" width="26" height="40" rx="4" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.09)" stroke-width="1"/>
+              <line x1="209" y1="62" x2="209" y2="102" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+              <circle cx="203" cy="83" r="3" fill="rgba(255,255,255,0.08)"/>
+              <rect x="18" y="96" width="224" height="4" rx="0" fill="rgba(255,255,255,0.05)"/>
+              <rect x="50" y="82" width="144" height="18" rx="3" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+              <text x="122" y="95" font-family="'Syne',sans-serif" font-size="8" font-weight="800" fill="rgba(255,255,255,0.15)" letter-spacing="3" text-anchor="middle">INTERSTATE</text>
+              <circle cx="66" cy="110" r="18" fill="rgba(10,22,5,0.9)" stroke="rgba(255,255,255,0.10)" stroke-width="1.8"/>
+              <circle cx="66" cy="110" r="10" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1.3"/>
+              <circle cx="66" cy="110" r="3.5" fill="rgba(255,255,255,0.12)"/>
+              <circle cx="130" cy="110" r="18" fill="rgba(10,22,5,0.9)" stroke="rgba(255,255,255,0.10)" stroke-width="1.8"/>
+              <circle cx="130" cy="110" r="10" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1.3"/>
+              <circle cx="130" cy="110" r="3.5" fill="rgba(255,255,255,0.12)"/>
+              <circle cx="194" cy="110" r="18" fill="rgba(10,22,5,0.9)" stroke="rgba(255,255,255,0.10)" stroke-width="1.8"/>
+              <circle cx="194" cy="110" r="10" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1.3"/>
+              <circle cx="194" cy="110" r="3.5" fill="rgba(255,255,255,0.12)"/>
+              <line x1="120" y1="104" x2="204" y2="104" stroke="rgba(255,255,255,0.07)" stroke-width="1.8" stroke-linecap="round"/>
+              <line x1="40" y1="128" x2="68" y2="128" stroke="rgba(255,255,255,0.05)" stroke-width="1.8" stroke-dasharray="5 4"/>
+              <line x1="96" y1="128" x2="134" y2="128" stroke="rgba(255,255,255,0.05)" stroke-width="1.8" stroke-dasharray="5 4"/>
+              <line x1="162" y1="128" x2="200" y2="128" stroke="rgba(255,255,255,0.05)" stroke-width="1.8" stroke-dasharray="5 4"/>
+              <ellipse cx="130" cy="129" rx="100" ry="3" fill="rgba(0,0,0,0.22)"/>
+            </svg>
+            <span class="asset-svg-label" style="color:rgba(255,255,255,0.08);">Image Placeholder — Interstate Bus</span>
+          </div>
+        </div>
+        <div class="asset-body">
+          <div class="asset-badge soon">Coming Soon</div>
+          <h3>Interstate Transport</h3>
+          <p>The next phase of Enigma's expansion — long-distance passenger buses and intercity freight vehicles operating on structured routes connecting Abuja to major destinations across Nigeria. This tier will offer structured contract revenue from scheduled services. Not yet open for investment; existing investors will be notified ahead of launch.</p>
+          <div class="asset-variants">
+            <div class="variant-pill">
+              <div class="variant-pill-dot future"></div>
+              <div class="variant-pill-text">
+                <div class="variant-pill-name">Buses &amp; Long-Haul Vehicles</div>
+                <div class="variant-pill-note">Intercity passenger services and freight logistics on planned scheduled routes.</div>
+              </div>
+            </div>
+            <div class="variant-pill">
+              <div class="variant-pill-dot future"></div>
+              <div class="variant-pill-text">
+                <div class="variant-pill-name">Future Electric Integration</div>
+                <div class="variant-pill-note">Electric options planned for this category as infrastructure and range requirements mature.</div>
+              </div>
+            </div>
+          </div>
+          <div class="asset-cta">
+            <a class="btn-primary" href="invest.html" style="opacity:0.55;pointer-events:none;cursor:not-allowed;">
+              Not Yet Available
+            </a>
+            <a class="btn-ghost-sm" href="invest.html">Register Interest</a>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /asset-list -->
+  </div>
+</section>
+
+
+<!-- ═══════ HOW IT WORKS ═══════ -->
+<section class="hp-section" id="how-it-works">
+  <div class="hp-inner">
+    <div class="hp-text">
+      <div class="section-tag">The Process</div>
+      <h2 class="section-h2">Four steps to<br><span class="accent">your first return.</span></h2>
+      <p>From your first enquiry to the first weekly payout — here is exactly what happens.</p>
+
+      <div class="hp-steps">
+        <div class="hp-step">
+          <div class="hp-step-num">1</div>
+          <div class="hp-step-body">
+            <h4>Select Your Asset &amp; Tier</h4>
+            <p>Choose an asset class and investment tier — Standard (Tier 1) or Premium (Tier 2). Both operate under the same structured framework with weekly performance-based returns.</p>
+          </div>
+        </div>
+        <div class="hp-step">
+          <div class="hp-step-num">2</div>
+          <div class="hp-step-body">
+            <h4>Receive &amp; Sign Your Agreement</h4>
+            <p>A formal written investment agreement is issued covering your asset class, capital amount, return parameters, and payout schedule. Capital is only received after the agreement is fully executed.</p>
+          </div>
+        </div>
+        <div class="hp-step">
+          <div class="hp-step-num">3</div>
+          <div class="hp-step-body">
+            <h4>Asset Deployment &amp; Operations</h4>
+            <p>Your capital is deployed into the agreed asset class. Enigma manages all operations — driver assignment, route management, maintenance, and revenue collection — from day one.</p>
+          </div>
+        </div>
+        <div class="hp-step">
+          <div class="hp-step-num">4</div>
+          <div class="hp-step-body">
+            <h4>Earn Weekly Returns</h4>
+            <p>Performance-based returns are calculated from actual asset utilisation and paid to you on a fixed weekly settlement schedule, with a summary report issued alongside each payout.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hp-visual">
+      <div class="hp-img-frame">
+        <!-- Real image: set opacity:1 on .hp-real-img when src is added -->
+        <img class="hp-real-img" src="" alt="Operations"/>
+        <div class="hp-img-placeholder">
+          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="rgba(91,191,58,0.4)" stroke-width="1.5">
+            <rect x="8" y="8" width="48" height="48" rx="8"/>
+            <circle cx="32" cy="32" r="12"/>
+            <line x1="32" y1="8" x2="32" y2="20"/>
+            <line x1="32" y1="44" x2="32" y2="56"/>
+            <line x1="8" y1="32" x2="20" y2="32"/>
+            <line x1="44" y1="32" x2="56" y2="32"/>
+          </svg>
+          <span>Image Placeholder — Operations</span>
+        </div>
+      </div>
+      <div class="hp-overlay-card">
+        <div class="oc-label">Return Cycle</div>
+        <div class="oc-value">Weekly</div>
+        <div class="oc-sub">Performance-based payouts</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════ TIER PLANS ═══════ -->
+<section class="plans" id="plans">
+  <div class="plans-inner">
+    <div class="plans-head" style="text-align:center;">
+      <div class="section-tag" style="justify-content:center;">Understanding Your Options</div>
+      <h2 class="section-h2" style="text-align:center;">Tier 1 or Tier 2 —<br><span class="accent">same structured outcome.</span></h2>
+      <p class="section-intro" style="text-align:center; margin: 12px auto 0; max-width:500px;">Both tiers deploy capital into real transport assets and return weekly performance-based income. Choose based on your capital range and the level of engagement you want.</p>
+    </div>
+
+    <div class="plans-grid" style="margin-top:48px;">
+      <div class="plan-card">
+        <div class="plan-name">Tier 1</div>
+        <div class="plan-title">Standard<br>Investment</div>
+        <div class="plan-sub">Entry-level capital. Single asset class. Straightforward and fully documented.</div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li><span class="check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Entry-level capital commitment</li>
+          <li><span class="check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Single asset class deployment</li>
+          <li><span class="check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Moderate, performance-based return rate</li>
+          <li><span class="check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Weekly payout &amp; monthly reporting</li>
+          <li><span class="check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Formal written agreement — no informalities</li>
+        </ul>
+        <a class="plan-btn" href="invest.html">Request Standard Brief</a>
+      </div>
+
+      <div class="plan-card featured">
+        <div class="featured-badge">Enhanced Returns</div>
+        <div class="plan-name">Tier 2</div>
+        <div class="plan-title">Premium<br>Investment</div>
+        <div class="plan-sub">Larger capital. Multiple asset classes. Priority payouts and enhanced reporting.</div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li><span class="check" style="background:#5bbf3a;"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Higher capital — multi-asset deployment</li>
+          <li><span class="check" style="background:#5bbf3a;"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Enhanced, performance-based return rate</li>
+          <li><span class="check" style="background:#5bbf3a;"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Priority weekly payout processing</li>
+          <li><span class="check" style="background:#5bbf3a;"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Enhanced weekly asset-level reporting</li>
+          <li><span class="check" style="background:#5bbf3a;"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Early access to new asset classes</li>
+        </ul>
+        <a class="plan-btn" href="invest.html">Request Premium Brief</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════ INVESTOR PROTECTIONS ═══════ -->
+<section class="add-services" id="protections">
+  <div class="add-inner">
+    <div class="add-head" style="text-align:center;">
+      <div class="section-tag" style="justify-content:center;">Built-In Structure &amp; Accountability</div>
+      <h2 class="section-h2" style="text-align:center;">Every investment includes <span class="accent">these standards.</span></h2>
+      <p class="section-intro" style="text-align:center; margin: 12px auto 0;">Not optional features — built into every investment from the point of agreement.</p>
+    </div>
+
+    <div class="services-grid" style="margin-top:52px;">
+
+      <div class="service-card">
+        <div class="service-card-img">
+          <img class="service-real-img" src="" alt="Written Agreement"/>
+          <div class="img-placeholder">
+            <svg viewBox="0 0 36 36" fill="none"><rect x="6" y="4" width="24" height="28" rx="3" stroke="currentColor" stroke-width="2"/><line x1="11" y1="12" x2="25" y2="12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="11" y1="17" x2="25" y2="17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><line x1="11" y1="22" x2="20" y2="22" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <span>Written Agreement</span>
+          </div>
+        </div>
+        <div class="service-card-body">
+          <h4>Formal Written Agreement</h4>
+          <p>Every investment is governed by a signed written contract specifying asset class, capital amount, return parameters, and payout schedule. No verbal arrangements — no exceptions.</p>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <div class="service-card-img">
+          <img class="service-real-img" src="" alt="GPS Tracking"/>
+          <div class="img-placeholder">
+            <svg viewBox="0 0 36 36" fill="none"><circle cx="18" cy="16" r="6" stroke="currentColor" stroke-width="2"/><path d="M18 2v4M18 26v4M2 16h4M28 16h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="18" cy="16" r="2" fill="currentColor" opacity=".4"/></svg>
+            <span>GPS Tracking</span>
+          </div>
+        </div>
+        <div class="service-card-body">
+          <h4>GPS Tracking on All Assets</h4>
+          <p>Every deployed vehicle is GPS-fitted before entering operations. Asset location and activity are monitored continuously — supporting route management and operational accountability.</p>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <div class="service-card-img">
+          <img class="service-real-img" src="" alt="Weekly Reporting"/>
+          <div class="img-placeholder">
+            <svg viewBox="0 0 36 36" fill="none"><polyline points="6,26 12,18 18,22 24,12 30,16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="4" y="4" width="28" height="28" rx="3" stroke="currentColor" stroke-width="2"/></svg>
+            <span>Weekly Reporting</span>
+          </div>
+        </div>
+        <div class="service-card-body">
+          <h4>Weekly Performance Reporting</h4>
+          <p>Returns are accompanied by a performance summary each settlement cycle. Premium investors receive enhanced weekly reports with asset-level utilisation data.</p>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <div class="service-card-img">
+          <img class="service-real-img" src="" alt="Managed Operations"/>
+          <div class="img-placeholder">
+            <svg viewBox="0 0 36 36" fill="none"><path d="M18 4l12 5v9c0 7-5.5 11.5-12 14C12 29.5 6 25 6 18V9l12-5z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M13 18l3 3 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Managed Operations</span>
+          </div>
+        </div>
+        <div class="service-card-body">
+          <h4>Fully Managed Operations</h4>
+          <p>Investors are entirely passive. Enigma handles all driver assignment, route management, maintenance scheduling, and revenue collection from day one of deployment.</p>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <div class="service-card-img">
+          <img class="service-real-img" src="" alt="No Public Payment"/>
+          <div class="img-placeholder">
+            <svg viewBox="0 0 36 36" fill="none"><rect x="4" y="12" width="28" height="18" rx="3" stroke="currentColor" stroke-width="2"/><path d="M12 12V9a6 6 0 0112 0v3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="18" cy="21" r="3" stroke="currentColor" stroke-width="1.5"/></svg>
+            <span>Secure Capital Process</span>
+          </div>
+        </div>
+        <div class="service-card-body">
+          <h4>Secure Capital Process</h4>
+          <p>Capital is never collected through any public-facing page or informal channel. Funds are only received following agreement execution and manual team verification.</p>
+        </div>
+      </div>
+
+      <div class="service-card">
+        <div class="service-card-img">
+          <img class="service-real-img" src="" alt="Investor Dashboard"/>
+          <div class="img-placeholder">
+            <svg viewBox="0 0 36 36" fill="none"><rect x="2" y="18" width="14" height="8" rx="2" stroke="currentColor" stroke-width="2"/><rect x="20" y="10" width="14" height="16" rx="2" stroke="currentColor" stroke-width="2"/><rect x="2" y="6" width="14" height="8" rx="2" stroke="currentColor" stroke-width="2"/></svg>
+            <span>Dashboard — In Development</span>
+          </div>
+        </div>
+        <div class="service-card-body">
+          <h4>Investor Dashboard (In Development)</h4>
+          <p>A dedicated investor portal providing real-time asset tracking, return monitoring, and performance analytics is in active development. All current investors will be migrated on launch.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════ FAQ ═══════ -->
+<section class="faq">
+  <div class="faq-inner">
+    <div class="faq-head" style="text-align:center;">
+      <div class="section-tag" style="justify-content:center;">Common Questions</div>
+      <h2 class="section-h2" style="text-align:center;">Frequently asked <span class="accent">questions.</span></h2>
+    </div>
+
+    <div class="faq-list">
+
+      <div class="faq-item open">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>What is the difference between Tier 1 and Tier 2?</span>
+          <div class="faq-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M6 2v8M2 6h8" stroke="#6b7c65" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        </div>
+        <div class="faq-a">
+          <div class="faq-a-inner">Tier 1 (Standard) is designed for entry-level capital allocation into a single asset class, with a moderate performance-based return rate and monthly reporting. Tier 2 (Premium) is for larger capital deployment across multiple asset classes — it carries an enhanced return rate, priority weekly payout processing, and asset-level weekly reporting. Both tiers are governed by formal written agreements and operate under the same operational management framework.</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>Is my capital guaranteed?</span>
+          <div class="faq-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M6 2v8M2 6h8" stroke="#6b7c65" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        </div>
+        <div class="faq-a">
+          <div class="faq-a-inner">No. All investments carry operational risk — returns are performance-based and not guaranteed. They reflect actual asset utilisation and can be affected by vehicle downtime, route conditions, and market variation. We disclose this clearly in every investor brief. We encourage all prospective investors to read the full risk disclosure before committing capital.</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>When and how are returns paid?</span>
+          <div class="faq-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M6 2v8M2 6h8" stroke="#6b7c65" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        </div>
+        <div class="faq-a">
+          <div class="faq-a-inner">Returns are calculated from verified weekly asset revenue and paid on a fixed weekly settlement date. Each payout is accompanied by a performance summary. Premium investors receive enhanced weekly reports with asset-level data. There are no manual requests required — settlement is processed automatically each cycle.</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>What happens to my capital if an asset has downtime?</span>
+          <div class="faq-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M6 2v8M2 6h8" stroke="#6b7c65" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        </div>
+        <div class="faq-a">
+          <div class="faq-a-inner">Downtime reduces the revenue generated by the asset during that period, which directly affects the return for that week. Enigma's operations team works to minimise downtime through proactive maintenance scheduling and rapid response. Downtime events are reported to investors in the performance summary accompanying each payout.</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>Is any payment collected on this website?</span>
+          <div class="faq-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M6 2v8M2 6h8" stroke="#6b7c65" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        </div>
+        <div class="faq-a">
+          <div class="faq-a-inner">No. Capital is never collected through any public-facing page or online form. Funds are only received following a formal consultation, agreement execution, and manual verification by the Enigma investment team. If you encounter any request for payment that does not follow this process, do not proceed and contact us directly.</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>How do I access my investment performance data?</span>
+          <div class="faq-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M6 2v8M2 6h8" stroke="#6b7c65" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        </div>
+        <div class="faq-a">
+          <div class="faq-a-inner">Currently, performance data is delivered via the weekly summary report issued alongside each payout. A dedicated investor dashboard providing real-time asset tracking and return monitoring is in active development — all active investors will be notified and migrated to the portal on launch.</div>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span>Can I invest in multiple asset classes at the same time?</span>
+          <div class="faq-icon"><svg viewBox="0 0 12 12" fill="none"><path d="M6 2v8M2 6h8" stroke="#6b7c65" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+        </div>
+        <div class="faq-a">
+          <div class="faq-a-inner">Yes — this is the defining characteristic of Tier 2 (Premium). Premium investors deploy capital across multiple asset classes simultaneously, with each asset class covered by the relevant section of the investment agreement. If you are on Tier 1 and wish to expand, contact the team to discuss an upgrade pathway.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════ CTA BANNER ═══════ -->
+<section class="cta-banner">
+  <h2>Ready to deploy capital?</h2>
+  <p>Request an investment brief and our team will prepare a tailored document covering asset classes, return parameters, capital thresholds, and the formal agreement process — at no obligation.</p>
+  <div class="cta-btns">
+    <a class="btn-white" href="invest.html">Request Investment Brief</a>
+    <a class="btn-outline-white" href="contact.html">Speak to the Team</a>
+  </div>
+</section>
+
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-logo-text">Enigma<span>.</span></div>
+      <p class="footer-tagline">A structured asset-backed investment platform focused on transport income generation in Abuja. Founded 2026.</p>
+      <div class="footer-contact-block">
+        <div class="footer-contact-item">
+          <svg class="footer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 010 1.17 2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>
+          <a href="tel:+2348000000000">+234 800 000 0000</a>
+        </div>
+        <div class="footer-contact-item">
+          <svg class="footer-contact-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="1" y="3" width="14" height="10" rx="1.5"/><path d="M1 3l7 5.5L15 3"/></svg>
+          <a href="mailto:invest@enigmatransport.com">invest@enigmatransport.com</a>
+        </div>
+        <div class="footer-contact-item">
+          <svg class="footer-contact-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M8 1.5A4.5 4.5 0 0112.5 6c0 3.5-4.5 8.5-4.5 8.5S3.5 9.5 3.5 6A4.5 4.5 0 018 1.5z"/><circle cx="8" cy="6" r="1.5"/></svg>
+          <span>Abuja, FCT, Nigeria</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h5>Company</h5>
+      <a href="index.html">Home</a>
+      <a href="about.html">About Us</a>
+      <a href="opportunities.html">Opportunities</a>
+      <a href="contact.html">Contact</a>
+    </div>
+    <div class="footer-col">
+      <h5>Asset Classes</h5>
+      <a href="opportunities.html#motorcycles">Motorcycles</a>
+      <a href="opportunities.html#cars">Cars</a>
+      <a href="opportunities.html#tricycles">Tricycles (Keke)</a>
+      <a href="opportunities.html#interstate">Interstate (Coming Soon)</a>
+      <a href="opportunities.html#plans">Tier 1 vs Tier 2</a>
+    </div>
+    <div class="footer-col">
+      <h5>Legal</h5>
+      <a href="terms.html">Terms &amp; Conditions</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="risk.html">Risk Disclosure</a>
+      <a href="invest.html">Request Investment Brief</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2026 Enigma Transport Services. All rights reserved.</span>
+    <span>
+      <a href="terms.html">Terms &amp; Conditions</a>
+      <span class="footer-dot">&middot;</span>
+      <a href="privacy.html">Privacy Policy</a>
+      <span class="footer-dot">&middot;</span>
+      <a href="risk.html">Risk Disclosure</a>
+    </span>
+  </div>
+  <div class="disclaimer-strip">
+    Investment returns are performance-based and not guaranteed. All investments carry operational risk. Capital is only received after a formal written agreement has been fully executed. This page does not constitute financial advice. Please read the full risk disclosure before committing capital.
+  </div>
+</footer>
+
+
+<script>
+  // Mobile nav
+  const menuToggle = document.getElementById('menuToggle');
+  const mobileNav  = document.getElementById('mobileNav');
+  const closeNav   = document.getElementById('closeNav');
+  if (menuToggle) menuToggle.addEventListener('click', () => mobileNav.classList.add('open'));
+  if (closeNav)   closeNav.addEventListener('click',   () => mobileNav.classList.remove('open'));
+
+  // FAQ accordion
+  function toggleFaq(el) {
+    const item = el.parentElement;
+    const allItems = document.querySelectorAll('.faq-item');
+    allItems.forEach(i => { if (i !== item) i.classList.remove('open'); });
+    item.classList.toggle('open');
+  }
+
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.asset-row, .hp-step, .service-card, .plan-card');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.10 });
+
+  revealEls.forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = `opacity 0.55s ${i * 0.06}s ease, transform 0.55s ${i * 0.06}s ease`;
+    io.observe(el);
+  });
+</script>
+
+</body>
+</html>
