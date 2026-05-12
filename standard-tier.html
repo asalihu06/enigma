@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Standard Investment Plan — Enigma Transport</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & Tokens ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#5bbf3a;--green-dark:#3a9e1f;--green-dim:rgba(91,191,58,0.14);
+  --green-pale:#eaf7e4;--ink:#0e1a0a;--ink-soft:#3d4d38;--muted:#6b7c65;
+  --surface:#ffffff;--bg:#f3f7f0;--border:rgba(91,191,58,0.20);
+  --border-mid:rgba(91,191,58,0.34);--r-card:18px;--r-btn:100px;
+  --font-head:'Syne',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* ── Animations ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideDown{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* ── Top Bar ── */
+.top-bar{display:flex;justify-content:flex-end;align-items:center;gap:24px;background:var(--ink);padding:7px 40px;font-size:12px;color:rgba(255,255,255,0.45);letter-spacing:.02em}
+.top-bar-item{display:flex;align-items:center;gap:7px}
+@media(max-width:760px){.top-bar{display:none}}
+
+/* ── Header ── */
+.header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1.5px solid var(--border);padding:0 40px;display:flex;align-items:center;gap:40px;height:68px;animation:slideDown .5s ease both}
+.logo-link{text-decoration:none;display:flex;align-items:center;flex-shrink:0}
+.logo-wordmark{font-family:var(--font-head);font-size:1.25rem;font-weight:800;color:var(--ink);letter-spacing:-.01em}
+.logo-wordmark span{color:var(--green)}
+.nav{display:flex;align-items:center;position:absolute;left:50%;transform:translateX(-50%)}
+.nav a{font-size:14px;font-weight:500;color:var(--ink-soft);text-decoration:none;padding:8px 16px;position:relative;transition:color .22s;white-space:nowrap}
+.nav a::after{content:'';position:absolute;bottom:0;left:50%;right:50%;height:2.5px;background:var(--green);border-radius:2px;transition:left .28s cubic-bezier(.22,1,.36,1),right .28s cubic-bezier(.22,1,.36,1)}
+.nav a:hover{color:var(--green-dark)}.nav a:hover::after,.nav a.active::after{left:12px;right:12px}.nav a.active{color:var(--green-dark);font-weight:600}
+.cta-group{margin-left:auto;display:flex;align-items:center;gap:8px}
+.nav-cta{font-family:var(--font-head);font-size:12px;font-weight:700;background:var(--green);color:#fff!important;padding:10px 22px;border-radius:var(--r-btn);border:none;cursor:pointer;transition:background .2s,transform .2s;text-decoration:none;display:inline-block}
+.nav-cta:hover{background:var(--green-dark)!important;transform:scale(1.04)!important}.nav-cta::after{display:none!important}
+.nav-cta-secondary{font-family:var(--font-body);font-size:12px;font-weight:600;color:var(--green-dark);background:transparent;border:2px solid var(--green);border-radius:var(--r-btn);padding:8px 16px;cursor:pointer;transition:background .25s,color .25s,transform .2s;white-space:nowrap;text-decoration:none;display:inline-block}
+.nav-cta-secondary:hover{background:var(--green);color:#fff;transform:scale(1.04)}.nav-cta-secondary::after{display:none!important}
+.menu-toggle{display:none;background:none;border:none;cursor:pointer;padding:4px;flex-direction:column;gap:5px;margin-left:auto}
+.menu-toggle span{display:block;width:22px;height:2px;background:var(--ink);border-radius:2px}
+.mobile-nav{display:none;position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;background:var(--ink);z-index:200;flex-direction:column;padding:80px 40px 40px;animation:fadeIn 0.25s ease;overflow-x:hidden;overflow-y:auto}
+.mobile-nav.open{display:flex}
+.mobile-nav a{font-family:var(--font-head);font-size:1rem;font-weight:600;color:rgba(255,255,255,0.7);text-decoration:none;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06);transition:color 0.2s;letter-spacing:-0.02em;line-height:1.1}
+.mobile-nav a:hover{color:var(--green)}
+.mobile-nav .close-btn{position:absolute;top:24px;right:24px;background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.6);padding:8px;z-index:201}
+.mobile-nav-ctas{margin-top:auto;padding-top:32px;display:flex;flex-direction:column;gap:12px}
+.btn-primary{font-family:var(--font-head);font-size:14px;font-weight:700;background:var(--green);color:#fff;border:none;border-radius:100px;padding:14px 28px;cursor:pointer;transition:background 0.25s,transform 0.2s,box-shadow 0.25s;box-shadow:0 4px 20px rgba(91,191,58,0.4);text-decoration:none;display:inline-block}
+.btn-primary:hover{background:var(--green-dark);transform:translateY(-2px);box-shadow:0 8px 28px rgba(91,191,58,0.45)}
+.btn-ghost{font-family:var(--font-head);font-size:14px;font-weight:700;background:rgba(255,255,255,0.1);color:#fff;border:1.5px solid rgba(255,255,255,0.35);border-radius:100px;padding:12px 24px;cursor:pointer;backdrop-filter:blur(6px);transition:background 0.25s,border-color 0.25s,transform 0.2s;text-decoration:none;display:inline-block}
+.btn-ghost:hover{background:rgba(255,255,255,0.18);border-color:rgba(255,255,255,0.7);transform:translateY(-2px)}
+.mn-p{font-family:var(--font-head);font-size:14px;font-weight:700;background:var(--green);color:#fff;border:none;border-radius:var(--r-btn);padding:14px 28px;text-decoration:none;text-align:center;display:block}
+.mn-g{font-family:var(--font-head);font-size:14px;font-weight:700;background:rgba(255,255,255,.08);color:#fff;border:1.5px solid rgba(255,255,255,.25);border-radius:var(--r-btn);padding:12px 28px;text-decoration:none;text-align:center;display:block}
+
+/* ── Page Hero ── */
+.page-hero{background:var(--ink);padding:80px 40px 110px;position:relative;overflow:hidden}
+.page-hero::before{content:'';position:absolute;top:-120px;right:-80px;width:540px;height:540px;border-radius:50%;border:1.5px solid rgba(91,191,58,0.08);pointer-events:none}
+.page-hero::after{content:'';position:absolute;bottom:-90px;left:8%;width:360px;height:360px;border-radius:50%;border:1px solid rgba(91,191,58,0.05);pointer-events:none}
+/* Background grid */
+.page-hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(91,191,58,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(91,191,58,0.04) 1px,transparent 1px);background-size:44px 44px;pointer-events:none}
+.page-hero-inner{max-width:1100px;margin:0 auto;position:relative;z-index:2}
+.breadcrumb{font-size:12px;color:rgba(255,255,255,0.3);margin-bottom:22px;display:flex;align-items:center;gap:8px}
+.breadcrumb a{color:var(--green);text-decoration:none}.breadcrumb a:hover{text-decoration:underline}
+
+/* Tier label badge */
+.tier-hero-badge{display:inline-flex;align-items:center;gap:10px;background:rgba(91,191,58,0.12);border:1px solid rgba(91,191,58,0.28);border-radius:var(--r-btn);padding:7px 18px;margin-bottom:20px;animation:fadeUp .5s .05s both}
+.tier-hero-badge-dot{width:8px;height:8px;border-radius:50%;background:var(--green)}
+.tier-hero-badge span{font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:rgba(91,191,58,0.85)}
+
+.page-hero h1{font-family:var(--font-head);font-size:clamp(1.6rem,5.5vw,4.4rem);font-weight:800;color:#fff;line-height:1.05;margin-bottom:20px;animation:fadeUp .55s .12s both}
+.page-hero h1 .accent{color:var(--green)}
+.page-hero-desc{font-size:16px;color:rgba(255,255,255,0.5);max-width:520px;line-height:1.78;margin-bottom:44px;animation:fadeUp .55s .2s both}
+
+/* Hero stat chips */
+.hero-chips{display:flex;gap:10px;flex-wrap:wrap;animation:fadeUp .55s .28s both}
+.hero-chip{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:10px 16px}
+.hero-chip-icon{width:28px;height:28px;border-radius:8px;background:rgba(91,191,58,0.12);border:1px solid rgba(91,191,58,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hero-chip-icon svg{width:13px;height:13px;color:var(--green)}
+.hero-chip-val{font-family:var(--font-head);font-size:13px;font-weight:700;color:#fff;display:block;line-height:1.1}
+.hero-chip-lbl{font-size:10px;color:rgba(255,255,255,0.32);display:block;letter-spacing:.04em}
+
+/* Compare tier link */
+.tier-switch{display:inline-flex;align-items:center;gap:8px;margin-top:28px;font-family:var(--font-head);font-size:12.5px;font-weight:700;color:rgba(255,255,255,0.4);text-decoration:none;transition:color .22s;animation:fadeUp .55s .35s both}
+.tier-switch:hover{color:rgba(91,191,58,0.8)}
+.tier-switch svg{width:14px;height:14px;transition:transform .2s}
+.tier-switch:hover svg{transform:translateX(4px)}
+
+/* ── Sticky asset nav ── */
+.sticky-nav{position:sticky;top:68px;z-index:90;background:rgba(255,255,255,0.97);backdrop-filter:blur(8px);border-bottom:1px solid var(--border)}
+.sticky-nav-inner{max-width:1100px;margin:0 auto;padding:0 40px;display:flex;align-items:center;overflow-x:auto;scrollbar-width:none}
+.sticky-nav-inner::-webkit-scrollbar{display:none}
+.sn-link{display:inline-flex;align-items:center;gap:7px;font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--muted);text-decoration:none;padding:14px 18px;border-bottom:2.5px solid transparent;white-space:nowrap;transition:color .22s,border-color .22s}
+.sn-link svg{width:13px;height:13px;flex-shrink:0}
+.sn-link:hover{color:var(--green-dark);border-bottom-color:rgba(91,191,58,0.3)}
+.sn-link.active{color:var(--green-dark);border-bottom-color:var(--green)}
+
+/* ── Disclaimer ── */
+.disclaimer-wrap{max-width:1100px;margin:0 auto;padding:48px 40px 0}
+.disclaimer-box{background:rgba(212,168,39,0.06);border:1px solid rgba(212,168,39,0.20);border-radius:14px;padding:16px 22px;display:flex;gap:12px;align-items:flex-start}
+.disc-icon{width:32px;height:32px;border-radius:9px;background:rgba(212,168,39,0.12);border:1px solid rgba(212,168,39,0.20);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.disc-icon svg{width:14px;height:14px;color:#d4a827}
+.disc-text{font-size:12.5px;color:var(--ink-soft);line-height:1.65}
+.disc-text strong{color:var(--ink);font-weight:600}
+
+/* ── Asset Blocks ── */
+.assets-wrap{max-width:1100px;margin:0 auto;padding:0 40px 100px}
+
+.asset-block{padding-top:80px}
+.asset-block-header{display:grid;grid-template-columns:auto 1fr;gap:22px;align-items:center;margin-bottom:36px;padding-bottom:28px;border-bottom:1px solid var(--border)}
+
+/* Asset icon disk */
+.asset-icon-disk{width:64px;height:64px;border-radius:18px;background:var(--green-pale);border:1.5px solid rgba(91,191,58,0.25);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .3s}
+.asset-icon-disk svg{width:30px;height:30px;color:var(--green-dark)}
+
+.asset-avail{display:inline-flex;align-items:center;gap:5px;background:var(--green-pale);border:1px solid rgba(91,191,58,0.25);border-radius:var(--r-btn);padding:3px 11px;font-family:var(--font-head);font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--green-dark);margin-bottom:7px}
+.asset-avail::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green);flex-shrink:0}
+.asset-avail.soon{background:rgba(107,124,101,0.08);border-color:rgba(107,124,101,0.18);color:var(--muted)}.asset-avail.soon::before{background:var(--muted)}
+.asset-block-title{font-family:var(--font-head);font-size:1rem;font-weight:600;color:var(--ink);line-height:1.1;margin-bottom:6px}
+.asset-block-sub{font-size:13.5px;color:var(--muted);line-height:1.65;max-width:520px}
+
+/* Variant tabs */
+.vtabs{display:inline-flex;background:rgba(91,191,58,0.07);border:1.5px solid var(--border);border-radius:var(--r-btn);padding:4px;gap:0;margin-bottom:32px}
+.vtab{font-family:var(--font-head);font-size:11px;font-weight:700;padding:7px 18px;border-radius:var(--r-btn);border:none;cursor:pointer;background:transparent;color:var(--muted);transition:background .22s,color .22s;display:flex;align-items:center;gap:6px}
+.vtab svg{width:11px;height:11px;flex-shrink:0}
+.vtab.active{background:var(--green);color:#fff;box-shadow:0 2px 10px rgba(91,191,58,0.28)}
+
+/* ── Plan Card ── */
+.plan-card{background:var(--surface);border-radius:22px;border:1.5px solid var(--border);overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,0.04);transition:transform .35s cubic-bezier(.22,1,.36,1),box-shadow .35s,border-color .3s;max-width:680px}
+.plan-card:hover{transform:translateY(-5px);box-shadow:0 18px 48px rgba(91,191,58,0.11);border-color:var(--border-mid)}
+
+/* Card header */
+.pc-head{background:linear-gradient(135deg,var(--ink) 0%,#1a3a10 100%);padding:28px 32px;position:relative;overflow:hidden}
+.pc-head::after{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);background-size:22px 22px;pointer-events:none}
+.pc-tier-lbl{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(91,191,58,0.6);margin-bottom:8px;position:relative;z-index:1}
+.pc-name{font-family:var(--font-head);font-size:1rem;font-weight:00;color:#fff;margin-bottom:4px;position:relative;z-index:1}
+.pc-tagline{font-size:13px;color:rgba(255,255,255,0.38);position:relative;z-index:1}
+
+/* Return badge — top right */
+.pc-return{position:absolute;top:24px;right:28px;z-index:2;background:rgba(91,191,58,0.14);border:1px solid rgba(91,191,58,0.25);border-radius:12px;padding:10px 14px;text-align:center}
+.pc-return-val{font-family:var(--font-head);font-size:1.35rem;font-weight:800;color:var(--green);display:block;line-height:1}
+.pc-return-lbl{font-size:9px;color:rgba(255,255,255,0.3);display:block;margin-top:2px;letter-spacing:.06em;text-transform:uppercase}
+
+/* Card body */
+.pc-body{padding:28px 32px 32px}
+
+/* Duration row */
+.duration-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px}
+.dur-chip{display:flex;flex-direction:column;gap:2px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px 14px;min-width:130px}
+.dur-chip-lbl{font-size:9.5px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-weight:600}
+.dur-chip-val{font-family:var(--font-head);font-size:13.5px;font-weight:700;color:var(--ink)}
+
+/* Financial breakdown table */
+.breakdown-table{width:100%;border-collapse:collapse;margin-bottom:24px}
+.breakdown-table tr{border-bottom:1px solid var(--border)}
+.breakdown-table tr:last-child{border-bottom:none}
+.breakdown-table td{padding:13px 4px;vertical-align:middle;font-size:14px}
+.breakdown-table td:first-child{color:var(--muted);font-weight:400;padding-right:16px}
+.breakdown-table td:last-child{font-family:var(--font-head);font-weight:700;color:var(--ink);text-align:right}
+.breakdown-table tr.hl td:last-child{color:var(--green-dark)}
+.breakdown-table tr.total{border-top:2px solid var(--border-mid)}
+.breakdown-table tr.total td:first-child{font-family:var(--font-head);font-weight:700;color:var(--ink);font-size:13.5px}
+.breakdown-table tr.total td:last-child{font-size:15.5px;color:var(--green-dark)}
+
+/* Features */
+.pc-features{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:26px}
+.pc-features li{display:flex;align-items:flex-start;gap:10px;font-size:13.5px;color:var(--ink-soft);line-height:1.5}
+.chk{flex-shrink:0;width:18px;height:18px;background:var(--green);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;margin-top:1px}
+.chk svg{width:9px;height:9px}
+
+/* CTA */
+.pc-cta{display:block;width:100%;text-align:center;font-family:var(--font-head);font-size:14px;font-weight:700;background:var(--green);color:#fff;border:none;border-radius:var(--r-btn);padding:14px 24px;cursor:pointer;text-decoration:none;transition:background .22s,transform .18s,box-shadow .22s;box-shadow:0 4px 16px rgba(91,191,58,0.32)}
+.pc-cta:hover{background:var(--green-dark);transform:translateY(-2px);box-shadow:0 7px 24px rgba(91,191,58,0.40)}
+
+/* Coming soon card */
+.coming-card{background:rgba(107,124,101,0.06);border:1.5px dashed rgba(107,124,101,0.20);border-radius:22px;padding:52px 44px;text-align:center;max-width:680px; margin-bottom:60px }
+.coming-icon-wrap{width:56px;height:56px;border-radius:16px;background:rgba(107,124,101,0.10);border:1px solid rgba(107,124,101,0.18);display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+.coming-icon-wrap svg{width:22px;height:22px;color:var(--muted)}
+.coming-card h3{font-family:var(--font-head);font-size:1.35rem;font-weight:800;color:var(--ink-soft);margin-bottom:12px}
+.coming-card p{font-size:14px;color:var(--muted);line-height:1.75;max-width:440px;margin:0 auto 28px}
+.btn-soft{display:inline-flex;align-items:center;gap:7px;font-family:var(--font-head);font-size:13px;font-weight:700;background:var(--green);color:#fff;border:none;border-radius:var(--r-btn);padding:12px 24px;cursor:pointer;text-decoration:none;transition:background .22s}
+.btn-soft:hover{background:var(--green-dark)}
+
+/* Divider between assets */
+.asset-sep{height:1px;background:var(--border);margin-top:72px}
+
+/* ── CTA Banner ── */
+.cta-banner{background:linear-gradient(120deg,var(--green-dark) 0%,var(--green) 100%);padding:80px 40px;text-align:center;position:relative;overflow:hidden}
+.cta-banner::before{content:'';position:absolute;top:-80px;right:-80px;width:320px;height:320px;border-radius:50%;background:rgba(255,255,255,0.06);pointer-events:none}
+.cta-banner h2{font-family:var(--font-head);font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:800;color:#fff;margin-bottom:14px;position:relative;z-index:1}
+.cta-banner p{font-size:16px;color:rgba(255,255,255,0.78);max-width:480px;margin:0 auto 32px;line-height:1.7;position:relative;z-index:1}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1}
+.btn-white{font-family:var(--font-head);font-size:14px;font-weight:700;background:#fff;color:var(--green-dark);border:none;border-radius:var(--r-btn);padding:14px 28px;cursor:pointer;transition:transform .2s,box-shadow .2s;text-decoration:none;display:inline-block;box-shadow:0 4px 18px rgba(0,0,0,0.12)}
+.btn-white:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 8px 28px rgba(0,0,0,0.2)}
+.btn-outline-white{font-family:var(--font-head);font-size:14px;font-weight:700;background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,0.45);border-radius:var(--r-btn);padding:12px 26px;cursor:pointer;transition:background .22s,border-color .22s;text-decoration:none;display:inline-block}
+.btn-outline-white:hover{background:rgba(255,255,255,0.12);border-color:#fff}
+
+/* ── Footer ── */
+footer{background:var(--ink);padding:60px 40px 0}
+.footer-grid{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;padding-bottom:48px;border-bottom:1px solid rgba(255,255,255,0.08);margin-bottom:24px}
+.f-logo{font-family:var(--font-head);font-size:20px;font-weight:800;color:#fff;margin-bottom:10px}.f-logo span{color:var(--green)}
+.f-tag{font-size:12px;color:rgba(255,255,255,0.32);line-height:1.75;max-width:260px;margin-bottom:18px}
+.f-contact{display:flex;flex-direction:column;gap:9px}
+.f-contact-row{display:flex;align-items:flex-start;gap:8px}
+.f-contact-row svg{width:13px;height:13px;color:var(--green);margin-top:2px;flex-shrink:0}
+.f-contact-row a,.f-contact-row span{font-size:12px;color:rgba(255,255,255,0.36);text-decoration:none;transition:color .2s}
+.f-contact-row a:hover{color:var(--green)}
+.footer-col h5{font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--green);margin-bottom:16px}
+.footer-col a{display:block;font-size:12px;color:rgba(255,255,255,0.36);text-decoration:none;margin-bottom:10px;transition:color .2s}
+.footer-col a:hover{color:var(--green)}
+.footer-bottom{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;padding:20px 0;font-size:12px;color:rgba(255,255,255,0.22)}
+.footer-bottom a{color:rgba(255,255,255,0.3);text-decoration:none;transition:color .2s}.footer-bottom a:hover{color:var(--green)}
+.f-dot{margin:0 6px}
+.disclaimer-strip{background:rgba(255,255,255,0.03);border-top:1px solid rgba(255,255,255,0.05);padding:16px 40px;text-align:center;font-size:11px;color:rgba(255,255,255,0.18);line-height:1.65}
+
+/* ── Responsive ── */
+@media(max-width:1024px){.footer-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){
+  .header{padding:0 20px}.nav{display:none}.cta-group{display:none}.menu-toggle{display:flex}
+  .page-hero{padding:60px 20px 80px}
+  .disclaimer-wrap{padding:36px 20px 0}
+  .assets-wrap{padding:0 20px 60px}
+  .sticky-nav-inner{padding:0 20px}
+  .cta-banner{padding:60px 20px}
+  footer{padding:44px 20px 0}.footer-grid{grid-template-columns:1fr;gap:28px}
+  .disclaimer-strip{padding:14px 20px}
+  .pc-return{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="top-bar">
+  <div class="top-bar-item">
+    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 010 1.17 2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>
+    +234 800 000 0000
+  </div>
+  <div class="top-bar-item">
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="1" y="3" width="14" height="10" rx="1.5"/><path d="M1 3l7 5.5L15 3"/></svg>
+    invest@enigmatransport.com
+  </div>
+  <div class="top-bar-item">Abuja, FCT, Nigeria</div>
+</div>
+
+<!-- Header -->
+<header class="header">
+  <a href="index.html" class="logo-link"><span class="logo-wordmark">Enigma<span>.</span></span></a>
+  <nav class="nav">
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="opportunities.html" class="active">Overview</a>
+    <a href="how-it-works.html">How It Works</a>
+
+  </nav>
+  <div class="cta-group">
+    <a href="invest.html"  class="nav-cta">Request Investment Brief</a>
+    <a href="contact.html" class="nav-cta-secondary">Become a Driver</a>
+
+  </div>
+  <button class="menu-toggle" id="menuToggle"><span></span><span></span><span></span></button>
+</header>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobileNav">
+  <button class="close-btn" id="closeNav"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  <a href="index.html">Home</a><a href="about.html">About</a><a href="opportunities.html">Overview</a><a href="how-it-works.html">How It Works</a><a href="contact.html">Contact</a>
+  <div class="mobile-nav-ctas">
+    <a href="invest.html" class="mn-p">Request Investment Brief</a>
+    <a href="contact.html" class="mn-g">Become a Driver</a>
+  </div>
+</div>
+
+<!-- ════ HERO ════ -->
+<section class="page-hero">
+  <div class="page-hero-grid"></div>
+  <div class="page-hero-inner">
+    <div class="breadcrumb">
+      <a href="index.html">Home</a> <span>›</span>
+      <a href="opportunities.html">Overview</a> <span>›</span>
+      <span>Standard Plan</span>
+    </div>
+    <div class="tier-hero-badge">
+      <div class="tier-hero-badge-dot"></div>
+      <span>Tier 1 — Standard Investment</span>
+    </div>
+    <h1>Standard Plan.<br><span class="accent">Full Breakdown.</span></h1>
+    <p class="page-hero-desc">Entry-level capital deployment into real transport assets across Abuja. Every figure below is a placeholder — your confirmed brief will contain the exact numbers for your chosen asset and duration.</p>
+    <div class="hero-chips">
+      <div class="hero-chip">
+        <div class="hero-chip-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <div><span class="hero-chip-val">Weekly</span><span class="hero-chip-lbl">Payout Cycle</span></div>
+      </div>
+      <div class="hero-chip">
+        <div class="hero-chip-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+        <div><span class="hero-chip-val">Single Asset</span><span class="hero-chip-lbl">Per Deployment</span></div>
+      </div>
+      <div class="hero-chip">
+        <div class="hero-chip-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+        <div><span class="hero-chip-val">Written</span><span class="hero-chip-lbl">Formal Agreement</span></div>
+      </div>
+      <div class="hero-chip">
+        <div class="hero-chip-icon"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <div><span class="hero-chip-val">Monthly</span><span class="hero-chip-lbl">Reporting</span></div>
+      </div>
+    </div>
+    <a href="premium-tier.html" class="tier-switch">
+      Looking for the Premium Plan?
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- Sticky nav -->
+<div class="sticky-nav" id="stickyNav">
+  <div class="sticky-nav-inner">
+    <a class="sn-link active" href="#motorcycles" data-sec="motorcycles">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6l2 5H5.5M15 6h3l3 5"/></svg>Motorcycles
+    </a>
+    <a class="sn-link" href="#cars" data-sec="cars">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h2l2-3h8l2 3h2a2 2 0 012 2v6a2 2 0 01-2 2h-2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>Cars
+    </a>
+    <a class="sn-link" href="#tricycles" data-sec="tricycles">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="5" cy="18" r="3"/><circle cx="15" cy="18" r="3"/><circle cx="21" cy="18" r="3"/><path d="M5 18V9l5-5h7l2 4H5"/></svg>Tricycles (Keke)
+    </a>
+    <a class="sn-link" href="#interstate" data-sec="interstate">
+      <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="1" y="6" width="22" height="12" rx="2"/><circle cx="5" cy="18" r="2"/><circle cx="19" cy="18" r="2"/></svg>Interstate
+    </a>
+  </div>
+</div>
+
+<!-- Disclaimer -->
+<div class="disclaimer-wrap">
+  <div class="disclaimer-box">
+    <div class="disc-icon"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+    <div class="disc-text"><strong>Note:</strong> All investment figures are indicative and subject to change without prior notice. Final pricing, durations, fees, and return structures are disclosed exclusively within the formal investor brief. Returns are performance-based and not guaranteed.</div>
+  </div>
+</div>
+
+<!-- ════ ASSETS ════ -->
+<div class="assets-wrap">
+
+<!-- ══ ASSET 1: MOTORCYCLES ══ -->
+<div class="asset-block" id="motorcycles">
+  <div class="asset-block-header">
+    <div class="asset-icon-disk">
+      <svg fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6l2 5H5.5M15 6h3l3 5"/></svg>
+    </div>
+    <div class="asset-block-title-wrap">
+      <div class="asset-avail">Available on Request</div>
+      <div class="asset-block-title">Motorcycles (Bikes)</div>
+      <div class="asset-block-sub">High-frequency urban asset deployed across dispatch, delivery, and commuter routes. Multiple trips per day make this one of the fastest revenue-cycle assets in the fleet.</div>
+    </div>
+  </div>
+
+  <!-- Fuel variant -->
+  <div class="vtabs" id="moto-vtabs">
+    <button class="vtab active" onclick="switchVariant('moto','fuel',this)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 18a1 1 0 001 1h1a1 1 0 001-1v-1h8v1a1 1 0 001 1h1a1 1 0 001-1V7l-2-4H5L3 7v11z"/><path d="M5 10h14"/></svg>Fuel-Based
+    </button>
+    <button class="vtab" onclick="switchVariant('moto','electric',this)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Electric
+    </button>
+  </div>
+
+  <div id="moto-fuel">
+    <div class="plan-card">
+      <div class="pc-head">
+        <div class="pc-return"><span class="pc-return-val">XX%</span><span class="pc-return-lbl">Return Rate</span></div>
+        <div class="pc-tier-lbl">Standard Investment · Tier 1</div>
+        <div class="pc-name">Standard Plan — Fuel Motorcycle</div>
+        <div class="pc-tagline">Single fuel-based motorcycle · Entry-level capital</div>
+      </div>
+      <div class="pc-body">
+        <div class="duration-row">
+          <div class="dur-chip"><span class="dur-chip-lbl">Duration</span><span class="dur-chip-val">X – X Months</span></div>
+          <div class="dur-chip"><span class="dur-chip-lbl">Payout Cycle</span><span class="dur-chip-val">Weekly</span></div>
+          <div class="dur-chip"><span class="dur-chip-lbl">Reporting</span><span class="dur-chip-val">Monthly Summary</span></div>
+        </div>
+        <table class="breakdown-table">
+          <tr><td>Total Investment</td><td>₦ XX,XXX,XXX</td></tr>
+          <tr><td>Service Charge</td><td>₦ X,XXX,XXX</td></tr>
+          <tr><td>Management Fee</td><td>₦ X,XXX,XXX</td></tr>
+          <tr><td>Weekly Return</td><td class="hl">₦ XX,XXX</td></tr>
+          <tr class="total"><td>Total Return Over Duration</td><td>₦ XX,XXX,XXX</td></tr>
+        </table>
+        <ul class="pc-features">
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Single fuel motorcycle deployed on active Abuja route</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>GPS tracking installed before deployment</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Formal written agreement before capital received</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>All operations managed by Enigma from day one</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Monthly performance summary report</li>
+        </ul>
+        <a href="invest.html?tier=standard&asset=bike" class="pc-cta">Request Standard Brief — Motorcycle</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="moto-electric" style="display:none">
+    <div class="plan-card">
+      <div class="pc-head">
+        <div class="pc-return"><span class="pc-return-val">XX%</span><span class="pc-return-lbl">Return Rate</span></div>
+        <div class="pc-tier-lbl">Standard Investment · Tier 1</div>
+        <div class="pc-name">Standard Plan — Electric Motorcycle</div>
+        <div class="pc-tagline">Single electric motorcycle · Lower running cost</div>
+      </div>
+      <div class="pc-body">
+        <div class="duration-row">
+          <div class="dur-chip"><span class="dur-chip-lbl">Duration</span><span class="dur-chip-val">X – X Months</span></div>
+          <div class="dur-chip"><span class="dur-chip-lbl">Payout Cycle</span><span class="dur-chip-val">Weekly</span></div>
+          <div class="dur-chip"><span class="dur-chip-lbl">Reporting</span><span class="dur-chip-val">Monthly Summary</span></div>
+        </div>
+        <table class="breakdown-table">
+          <tr><td>Total Investment</td><td>₦ XX,XXX,XXX</td></tr>
+          <tr><td>Service Charge</td><td>₦ X,XXX,XXX</td></tr>
+          <tr><td>Management Fee</td><td>₦ X,XXX,XXX</td></tr>
+          <tr><td>Weekly Return</td><td class="hl">₦ XX,XXX</td></tr>
+          <tr class="total"><td>Total Return Over Duration</td><td>₦ XX,XXX,XXX</td></tr>
+        </table>
+        <ul class="pc-features">
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Electric motorcycle — zero fuel running cost</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Lower operating cost improves net return margins</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>GPS tracking installed before deployment</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Formal written agreement before capital received</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Monthly performance summary report</li>
+        </ul>
+        <a href="invest.html?tier=standard&asset=electric-bike" class="pc-cta">Request Standard Brief — Electric Motorcycle</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="asset-sep"></div>
+
+<!-- ══ ASSET 2: CARS ══ -->
+<div class="asset-block" id="cars">
+  <div class="asset-block-header">
+    <div class="asset-icon-disk">
+      <svg fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M5 17H3a2 2 0 01-2-2V9a2 2 0 012-2h2l2-3h8l2 3h2a2 2 0 012 2v6a2 2 0 01-2 2h-2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+    </div>
+    <div class="asset-block-title-wrap">
+      <div class="asset-avail">Available on Request</div>
+      <div class="asset-block-title">Cars (Fleet Vehicles)</div>
+      <div class="asset-block-sub">Structured fleet vehicles serving ride-hailing platforms, corporate transport contracts, and logistics operations. Individually sourced, registered, GPS-fitted, and managed by Enigma from the first day.</div>
+    </div>
+  </div>
+
+  <div class="vtabs">
+    <button class="vtab active" onclick="switchVariant('cars','fuel',this)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 18a1 1 0 001 1h1a1 1 0 001-1v-1h8v1a1 1 0 001 1h1a1 1 0 001-1V7l-2-4H5L3 7v11z"/><path d="M5 10h14"/></svg>Fuel-Based
+    </button>
+   <!-- <button class="vtab" onclick="switchVariant('cars','electric',this)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Electric
+    </button>-->
+  </div>
+
+  <div id="cars-fuel">
+    <div class="plan-card">
+      <div class="pc-head">
+        <div class="pc-return"><span class="pc-return-val">XX%</span><span class="pc-return-lbl">Return Rate</span></div>
+        <div class="pc-tier-lbl">Standard Investment · Tier 1</div>
+        <div class="pc-name">Standard Plan — Fuel Vehicle</div>
+        <div class="pc-tagline">Single fuel vehicle · Ride-hailing or logistics route</div>
+      </div>
+      <div class="pc-body">
+        <div class="duration-row">
+          <div class="dur-chip"><span class="dur-chip-lbl">Duration</span><span class="dur-chip-val">X – X Months</span></div>
+          <div class="dur-chip"><span class="dur-chip-lbl">Payout Cycle</span><span class="dur-chip-val">Weekly</span></div>
+          <div class="dur-chip"><span class="dur-chip-lbl">Reporting</span><span class="dur-chip-val">Monthly Summary</span></div>
+        </div>
+        <table class="breakdown-table">
+          <tr><td>Total Investment</td><td>₦ XX,XXX,XXX</td></tr>
+          <tr><td>Service Charge</td><td>₦ X,XXX,XXX</td></tr>
+          <tr><td>Management Fee</td><td>₦ X,XXX,XXX</td></tr>
+          <tr><td>Weekly Return</td><td class="hl">₦ XX,XXX</td></tr>
+          <tr class="total"><td>Total Return Over Duration</td><td>₦ XX,XXX,XXX</td></tr>
+        </table>
+        <ul class="pc-features">
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Single vehicle — sourced, registered, GPS-fitted</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Deployed on ride-hailing or logistics operation</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>All driver management handled by Enigma</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Formal written agreement before capital received</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Monthly performance summary report</li>
+        </ul>
+        <a href="invest.html?tier=standard&asset=car" class="pc-cta">Request Standard Brief — Car</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="cars-electric" style="display:none">
+    <div class="plan-card">
+      <div class="pc-head">
+        <div class="pc-return"><span class="pc-return-val">XX%</span><span class="pc-return-lbl">Return Rate</span></div>
+        <div class="pc-tier-lbl">Standard Investment · Tier 1</div>
+        <div class="pc-name">Standard Plan — Electric Vehicle</div>
+        <div class="pc-tagline">Single EV · Lower per-km running cost</div>
+      </div>
+      <div class="pc-body">
+        <div class="duration-row">
+          <div class="dur-chip"><span class="dur-chip-lbl">Duration</span><span class="dur-chip-val">X – X Months</span></div>
+          <div class="dur-chip"><span class="dur-chip-lbl">Payout Cycle</span><span class="dur-chip-val">Weekly</span></div>
+          <div class="dur-chip"><span class="dur-chip-lbl">Reporting</span><span class="dur-chip-val">Monthly Summary</span></div>
+        </div>
+        <table class="breakdown-table">
+          <tr><td>Total Investment</td><td>₦ XX,XXX,XXX</td></tr>
+          <tr><td>Service Charge</td><td>₦ X,XXX,XXX</td></tr>
+          <tr><td>Management Fee</td><td>₦ X,XXX,XXX</td></tr>
+          <tr><td>Weekly Return</td><td class="hl">₦ XX,XXX</td></tr>
+          <tr class="total"><td>Total Return Over Duration</td><td>₦ XX,XXX,XXX</td></tr>
+        </table>
+        <ul class="pc-features">
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Electric vehicle — zero fuel running cost</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Suited to structured corporate and contract routes</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Sourced, registered, GPS-fitted before deployment</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Formal written agreement before capital received</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Monthly performance summary report</li>
+        </ul>
+        <a href="invest.html" class="pc-cta">Request Standard Brief — Electric Car</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="asset-sep"></div>
+
+<!-- ══ ASSET 3: TRICYCLES ══ -->
+<div class="asset-block" id="tricycles">
+  <div class="asset-block-header">
+    <div class="asset-icon-disk">
+      <svg fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><circle cx="5" cy="18" r="3"/><circle cx="15" cy="18" r="3"/><circle cx="21" cy="18" r="3"/><path d="M5 18V9l5-5h7l2 4H5"/></svg>
+    </div>
+    <div class="asset-block-title-wrap">
+      <div class="asset-avail">Available on Request</div>
+      <div class="asset-block-title">Tricycles (Keke Napep)</div>
+      <div class="asset-block-sub">Consistent income from short, high-density routes across Abuja's estates, markets, and neighbourhood connectors. Strong daily demand with low operating costs — earnings come from volume of trips.</div>
+    </div>
+  </div>
+
+  <div class="vtabs">
+    <button class="vtab active" onclick="switchVariant('keke','fuel',this)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 18a1 1 0 001 1h1a1 1 0 001-1v-1h8v1a1 1 0 001 1h1a1 1 0 001-1V7l-2-4H5L3 7v11z"/><path d="M5 10h14"/></svg>Fuel-based
+    </button>
+   <!-- <button class="vtab" onclick="switchVariant('keke','electric',this)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Electric
+    </button>-->
+  </div>
+
+  <div id="keke-fuel">
+    <div class="plan-card">
+      <div class="pc-head">
+        <div class="pc-return"><span class="pc-return-val">XX%</span><span class="pc-return-lbl">Return Rate</span></div>
+        <div class="pc-tier-lbl">Standard Investment · Tier 1</div>
+        <div class="pc-name">Standard Plan — Fuel Tricycle</div>
+        <div class="pc-tagline"> keke · mostly deployed for conveyence of heavy duty materials</div>
+      </div>
+      <div class="pc-body">
+        <div class="duration-row">
+          <div class="dur-chip"><span class="dur-chip-lbl">Duration</span><span class="dur-chip-val">X – X Months</span></div>
+          <div class="dur-chip"><span class="dur-chip-lbl">Payout Cycle</span><span class="dur-chip-val">Weekly</span></div>
+          <div class="dur-chip"><span class="dur-chip-lbl">Reporting</span><span class="dur-chip-val">Monthly Summary</span></div>
+        </div>
+        <table class="breakdown-table">
+          <tr><td>Total Investment</td><td>₦ XX,XXX,XXX</td></tr>
+          <tr><td>Service Charge</td><td>₦ X,XXX,XXX</td></tr>
+          <tr><td>Management Fee</td><td>₦ X,XXX,XXX</td></tr>
+          <tr><td>Weekly Return</td><td class="hl">₦ XX,XXX</td></tr>
+          <tr class="total"><td>Total Return Over Duration</td><td>₦ XX,XXX,XXX</td></tr>
+        </table>
+        <ul class="pc-features">
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Single keke deployed on high-density FCT route</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>GPS tracking installed before deployment</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Driver assignment and route management by Enigma</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Formal written agreement before capital received</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Monthly performance summary report</li>
+        </ul>
+        <a href="invest.html?tier=standard&asset=keke" class="pc-cta">Request Standard Brief — Keke Napep</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="keke-electric" style="display:none">
+    <div class="plan-card">
+      <div class="pc-head">
+        <div class="pc-return"><span class="pc-return-val">XX%</span><span class="pc-return-lbl">Return Rate</span></div>
+        <div class="pc-tier-lbl">Standard Investment · Tier 1</div>
+        <div class="pc-name">Standard Plan — Electric Tricycle</div>
+        <div class="pc-tagline">Single electric keke · Reduced running cost</div>
+      </div>
+      <div class="pc-body">
+        <div class="duration-row">
+          <div class="dur-chip"><span class="dur-chip-lbl">Duration</span><span class="dur-chip-val">X – X Months</span></div>
+          <div class="dur-chip"><span class="dur-chip-lbl">Payout Cycle</span><span class="dur-chip-val">Weekly</span></div>
+          <div class="dur-chip"><span class="dur-chip-lbl">Reporting</span><span class="dur-chip-val">Monthly Summary</span></div>
+        </div>
+        <table class="breakdown-table">
+          <tr><td>Total Investment</td><td>₦ XX,XXX,XXX</td></tr>
+          <tr><td>Service Charge</td><td>₦ X,XXX,XXX</td></tr>
+          <tr><td>Management Fee</td><td>₦ X,XXX,XXX</td></tr>
+          <tr><td>Weekly Return</td><td class="hl">₦ XX,XXX</td></tr>
+          <tr class="total"><td>Total Return Over Duration</td><td>₦ XX,XXX,XXX</td></tr>
+        </table>
+        <ul class="pc-features">
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Electric keke — no fuel cost on short daily routes</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>GPS tracking installed before deployment</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Driver assignment and route management by Enigma</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Formal written agreement before capital received</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Monthly performance summary report</li>
+        </ul>
+        <a href="invest.html" class="pc-cta">Request Standard Brief — Electric Keke</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="asset-sep"></div>
+<!-- ══ ASSET 4: KEKE TRUCK ══ -->
+<div class="asset-block" id="tricycles">
+  <div class="asset-block-header">
+    <div class="asset-icon-disk">
+      <svg fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><circle cx="5" cy="18" r="3"/><circle cx="15" cy="18" r="3"/><circle cx="21" cy="18" r="3"/><path d="M5 18V9l5-5h7l2 4H5"/></svg>
+    </div>
+    <div class="asset-block-title-wrap">
+      <div class="asset-avail">Available on Request</div>
+      <div class="asset-block-title">Tricycles (Truck)</div>
+      <div class="asset-block-sub">Consistent income from short, high-density routes across Abuja's estates, markets, and neighbourhood connectors. Strong daily demand with low operating costs — earnings come from volume of trips.</div>
+    </div>
+  </div>
+
+  <div class="vtabs">
+    <button class="vtab active" onclick="switchVariant('keke','fuel',this)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 18a1 1 0 001 1h1a1 1 0 001-1v-1h8v1a1 1 0 001 1h1a1 1 0 001-1V7l-2-4H5L3 7v11z"/><path d="M5 10h14"/></svg>Fuel-based
+    </button>
+   <!-- <button class="vtab" onclick="switchVariant('keke','electric',this)">
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Electric
+    </button>-->
+  </div>
+
+  <div id="keke-fuel">
+    <div class="plan-card">
+      <div class="pc-head">
+        <div class="pc-return"><span class="pc-return-val">XX%</span><span class="pc-return-lbl">Return Rate</span></div>
+        <div class="pc-tier-lbl">Standard Investment · Tier 1</div>
+        <div class="pc-name">Standard Plan — Fuel Tricycle</div>
+        <div class="pc-tagline">Single keke · High-density route deployment</div>
+      </div>
+      <div class="pc-body">
+        <div class="duration-row">
+          <div class="dur-chip"><span class="dur-chip-lbl">Duration</span><span class="dur-chip-val">X – X Months</span></div>
+          <div class="dur-chip"><span class="dur-chip-lbl">Payout Cycle</span><span class="dur-chip-val">Weekly</span></div>
+          <div class="dur-chip"><span class="dur-chip-lbl">Reporting</span><span class="dur-chip-val">Monthly Summary</span></div>
+        </div>
+        <table class="breakdown-table">
+          <tr><td>Total Investment</td><td>₦ XX,XXX,XXX</td></tr>
+          <tr><td>Service Charge</td><td>₦ X,XXX,XXX</td></tr>
+          <tr><td>Management Fee</td><td>₦ X,XXX,XXX</td></tr>
+          <tr><td>Weekly Return</td><td class="hl">₦ XX,XXX</td></tr>
+          <tr class="total"><td>Total Return Over Duration</td><td>₦ XX,XXX,XXX</td></tr>
+        </table>
+        <ul class="pc-features">
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Single keke deployed on high-density FCT route</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>GPS tracking installed before deployment</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Driver assignment and route management by Enigma</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Formal written agreement before capital received</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Monthly performance summary report</li>
+        </ul>
+        <a href="invest.html?tier=standard&asset=keke-truck" class="pc-cta">Request Standard Brief — Keke Napep</a>
+      </div>
+    </div>
+  </div>
+<!--
+  <div id="keke-electric" style="display:none">
+    <div class="plan-card">
+      <div class="pc-head">
+        <div class="pc-return"><span class="pc-return-val">XX%</span><span class="pc-return-lbl">Return Rate</span></div>
+        <div class="pc-tier-lbl">Standard Investment · Tier 1</div>
+        <div class="pc-name">Standard Plan — Electric Tricycle</div>
+        <div class="pc-tagline">Single electric keke · Reduced running cost</div>
+      </div>
+      <div class="pc-body">
+        <div class="duration-row">
+          <div class="dur-chip"><span class="dur-chip-lbl">Duration</span><span class="dur-chip-val">X – X Months</span></div>
+          <div class="dur-chip"><span class="dur-chip-lbl">Payout Cycle</span><span class="dur-chip-val">Weekly</span></div>
+          <div class="dur-chip"><span class="dur-chip-lbl">Reporting</span><span class="dur-chip-val">Monthly Summary</span></div>
+        </div>
+        <table class="breakdown-table">
+          <tr><td>Total Investment</td><td>₦ XX,XXX,XXX</td></tr>
+          <tr><td>Service Charge</td><td>₦ X,XXX,XXX</td></tr>
+          <tr><td>Management Fee</td><td>₦ X,XXX,XXX</td></tr>
+          <tr><td>Weekly Return</td><td class="hl">₦ XX,XXX</td></tr>
+          <tr class="total"><td>Total Return Over Duration</td><td>₦ XX,XXX,XXX</td></tr>
+        </table>
+        <ul class="pc-features">
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Electric keke — no fuel cost on short daily routes</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>GPS tracking installed before deployment</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Driver assignment and route management by Enigma</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Formal written agreement before capital received</li>
+          <li><span class="chk"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>Monthly performance summary report</li>
+        </ul>
+        <a href="invest.html" class="pc-cta">Request Standard Brief — Electric Keke</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="asset-sep"></div>
+-->
+
+<!-- ══ ASSET 4: INTERSTATE (coming soon) ══ -->
+<div class="asset-block" id="interstate">
+  <div class="asset-block-header">
+    <div class="asset-icon-disk" style="background:rgba(107,124,101,0.10);border-color:rgba(107,124,101,0.18);">
+      <svg fill="none" stroke="var(--muted)" stroke-width="1.6" viewBox="0 0 24 24"><rect x="1" y="6" width="22" height="12" rx="2"/><circle cx="5" cy="18" r="2"/><circle cx="19" cy="18" r="2"/><line x1="9" y1="6" x2="9" y2="18"/><line x1="15" y1="6" x2="15" y2="18"/></svg>
+    </div>
+    <div class="asset-block-title-wrap">
+      <div class="asset-avail soon">Coming Soon</div>
+      <div class="asset-block-title" style="color:var(--ink-soft);">Interstate Transport</div>
+      <div class="asset-block-sub">Long-distance passenger buses and intercity freight vehicles on structured routes connecting Abuja to major destinations across Nigeria. Not yet open for investment.</div>
+    </div>
+  </div>
+  <div class="coming-card">
+    <div class="coming-icon-wrap"><svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+    <h3>Tier breakdown not yet available</h3>
+    <p>The Standard Plan for Interstate Transport will be published here when this asset class opens for investment. This follows the stabilisation and performance validation of current urban fleet operations. Register your interest below to be notified ahead of the formal launch.</p>
+    <a href="invest.html" class="btn-soft">
+      Register Interest
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="13" height="13"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+  </div>
+</div>
+
+</div><!-- /assets-wrap -->
+
+<!-- CTA Banner -->
+<section class="cta-banner">
+  <h2>Ready to proceed?</h2>
+  <p>Request a Standard Plan investment brief and our team will confirm exact figures, asset availability, and walk you through the formal agreement process.</p>
+  <div class="cta-btns">
+    <a class="btn-white" href="invest.html">Request Standard Brief</a>
+    <a class="btn-outline-white" href="premium-tier.html">View Premium Plan Instead</a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="f-logo">Enigma<span>.</span></div>
+      <p class="f-tag">A structured asset-backed investment platform focused on transport income generation in Abuja. Founded 2026.</p>
+      <div class="f-contact">
+        <div class="f-contact-row"><svg fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 010 1.17 2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg><a href="tel:+2348000000000">+234 800 000 0000</a></div>
+        <div class="f-contact-row"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="1" y="3" width="14" height="10" rx="1.5"/><path d="M1 3l7 5.5L15 3"/></svg><a href="mailto:invest@enigmatransport.com">invest@enigmatransport.com</a></div>
+        <div class="f-contact-row"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M8 1.5A4.5 4.5 0 0112.5 6c0 3.5-4.5 8.5-4.5 8.5S3.5 9.5 3.5 6A4.5 4.5 0 018 1.5z"/><circle cx="8" cy="6" r="1.5"/></svg><span>Abuja, FCT, Nigeria</span></div>
+      </div>
+    </div>
+    <div class="footer-col"><h5>Company</h5><a href="index.html">Home</a><a href="about.html">About Us</a><a href="opportunities.html">Opportunities</a><a href="contact.html">Contact</a></div>
+    <div class="footer-col"><h5>Investment Plans</h5><a href="standard-tier.html">Standard Plan (Tier 1)</a><a href="premium-tier.html">Premium Plan (Tier 2)</a><a href="investment-details.html">Full Breakdown</a><a href="invest.html">Request Brief</a></div>
+    <div class="footer-col"><h5>Legal</h5><a href="terms.html">Terms &amp; Conditions</a><a href="privacy.html">Privacy Policy</a><a href="risk.html">Risk Disclosure</a></div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2026 Enigma Transport Services. All rights reserved.</span>
+    <span><a href="terms.html">Terms</a><span class="f-dot">&middot;</span><a href="privacy.html">Privacy</a><span class="f-dot">&middot;</span><a href="risk.html">Risk Disclosure</a></span>
+  </div>
+  <div class="disclaimer-strip">All figures on this page are illustrative placeholders. Returns are performance-based and not guaranteed. Capital is only received after a formal written agreement is fully executed. This page does not constitute financial advice.</div>
+</footer>
+
+<script>
+const menuToggle=document.getElementById('menuToggle'),mobileNav=document.getElementById('mobileNav'),closeNav=document.getElementById('closeNav');
+if(menuToggle)menuToggle.addEventListener('click',()=>mobileNav.classList.add('open'));
+if(closeNav)closeNav.addEventListener('click',()=>mobileNav.classList.remove('open'));
+
+function switchVariant(asset,type,btn){
+  btn.closest('.vtabs').querySelectorAll('.vtab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  const f=document.getElementById(asset+'-fuel'),e=document.getElementById(asset+'-electric');
+  if(f)f.style.display=type==='fuel'?'block':'none';
+  if(e)e.style.display=type==='electric'?'block':'none';
+}
+
+// Scrollspy
+const secs=['motorcycles','cars','tricycles','interstate'];
+const snLinks=document.querySelectorAll('.sn-link');
+function spy(){
+  let cur='motorcycles';
+  secs.forEach(id=>{const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<=140)cur=id;});
+  snLinks.forEach(l=>l.classList.toggle('active',l.dataset.sec===cur));
+}
+window.addEventListener('scroll',spy,{passive:true});
+
+// Scroll reveal
+const revEls=document.querySelectorAll('.plan-card,.asset-block-header,.coming-card');
+const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)';io.unobserve(e.target);}});},{threshold:.10});
+revEls.forEach((el,i)=>{el.style.opacity='0';el.style.transform='translateY(16px)';el.style.transition=`opacity .5s ${(i%5)*.08}s ease,transform .5s ${(i%5)*.08}s ease`;io.observe(el);});
+</script>
+</body>
+</html>

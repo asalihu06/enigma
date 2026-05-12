@@ -104,6 +104,9 @@ body { font-family: var(--font-body); background: var(--surface); color: var(--i
 }
 
 /* ── Top Bar ── */
+.coming-soon-badge{
+  font-size: 10px; font-weight: 600; color: #fff;
+}
 .top-bar {
   display: flex; justify-content: flex-end; align-items: center;
   gap: 24px; background: var(--ink); padding: 7px 40px;
@@ -123,13 +126,16 @@ body { font-family: var(--font-body); background: var(--surface); color: var(--i
   display: flex; align-items: center; gap: 40px;
   height: 68px; animation: slideDown 0.5s ease both;
 }
-
-.logo-link { text-decoration: none; display: flex; align-items: center; flex-shrink: 0; }
-.logo-wordmark {
-  font-family: var(--font-head); font-size: 1.25rem; font-weight: 800;
-  color: var(--ink); letter-spacing: -0.01em;
+.logo-link {
+  display: inline-block;
+  text-decoration: none;
 }
-.logo-wordmark span { color: var(--green); }
+
+.logo-image {
+  height: 60px;   
+  width: 80px;
+  display: block;
+}
 
 .nav {
   display: flex; align-items: center; gap: 0;
@@ -261,13 +267,14 @@ body { font-family: var(--font-body); background: var(--surface); color: var(--i
 .hero-slide.active { opacity: 1; }
 .hero-slide img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
 
+
 /* Hero placeholder backgrounds when no images */
 .hero-slide:nth-child(1) { background: linear-gradient(135deg, #0a1605 0%, #1a3a10 50%, #0d2206 100%); }
 .hero-slide:nth-child(2) { background: linear-gradient(135deg, #0d2206 0%, #163a0d 50%, #0a1605 100%); }
 .hero-slide:nth-child(3) { background: linear-gradient(135deg, #163a0d 0%, #0a1605 50%, #1a3a10 100%); }
 
 .hero-dots {
-  position: absolute; bottom: 168px; left: 40px; z-index: 4;
+  position: absolute; bottom: 200px; left: 100px; z-index: 4;
   display: flex; gap: 8px; align-items: center;
 }
 .hero-dot {
@@ -276,7 +283,11 @@ body { font-family: var(--font-body); background: var(--surface); color: var(--i
   transition: background 0.35s, width 0.35s cubic-bezier(.22,1,.36,1);
 }
 .hero-dot.active { background: var(--green); width: 26px; }
-.hero-content { position: relative; z-index: 3; padding: 80px 40px 200px; max-width: 640px; }
+.hero-content { position: relative; z-index: 3; padding: 40px 40px 100px; margin-top: 40px; margin-left: 12px; margin-bottom: 40px; margin-right: 40px; max-width: 640px; backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(12px);
+  border: none;
+  border-radius: 16px;
+}
 .hero-badge {
   display: inline-flex; align-items: center; gap: 8px;
   background: rgba(91,191,58,0.15); border: 1px solid rgba(91,191,58,0.35);
@@ -286,7 +297,7 @@ body { font-family: var(--font-body); background: var(--surface); color: var(--i
 }
 .hero-badge::before { content: ''; width: 6px; height: 6px; background: var(--green); border-radius: 50%; }
 .hero-title {
-  font-family: var(--font-head); font-size: clamp(2.4rem, 5.5vw, 4rem);
+  font-family: var(--font-head); font-size: clamp(1.6rem, 5vw, 4.4rem);
   font-weight: 800; line-height: 1.08; color: #fff;
   margin-bottom: 22px; animation: fadeUp 0.6s 0.2s both;
 }
@@ -480,38 +491,181 @@ body { font-family: var(--font-body); background: var(--surface); color: var(--i
 .testi-role { font-size: 12px; color: var(--muted); }
 
 /* ── Footer ── */
-footer { background: var(--ink); padding: 64px 40px 0; }
-.footer-grid {
-  max-width: 1100px; margin: 0 auto;
-  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 48px; padding-bottom: 52px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  margin-bottom: 28px; align-items: start;
+footer {
+  background: var(--ink);
+  padding: 64px 40px 0;
 }
-.footer-brand { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
-.footer-logo-text { font-family: var(--font-head); font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 4px; }
-.footer-logo-text span { color: var(--green); }
-.footer-tagline { font-size: 12px; color: rgba(255,255,255,0.38); line-height: 1.75; max-width: 280px; margin-bottom: 16px; }
-.footer-contact-block { display: flex; flex-direction: column; gap: 10px; }
-.footer-contact-item { display: flex; align-items: flex-start; gap: 10px; }
-.footer-contact-icon { width: 14px; height: 14px; flex-shrink: 0; color: var(--green); margin-top: 2px; }
-.footer-contact-item a,
-.footer-contact-item span { font-size: 12px; color: rgba(255,255,255,0.45); text-decoration: none; line-height: 1.5; transition: color 0.2s; }
-.footer-contact-item a:hover { color: var(--green); }
-.footer-col h5 { font-family: var(--font-head); font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--green); margin-bottom: 16px; }
-.footer-col a { display: block; font-size: 12px; color: rgba(255,255,255,0.45); text-decoration: none; margin-bottom: 10px; transition: color 0.2s; }
-.footer-col a:hover { color: var(--green); }
-.footer-bottom {
-  max-width: 1100px; margin: 0 auto;
-  display: flex; justify-content: space-between; align-items: center;
-  flex-wrap: wrap; gap: 10px; padding: 20px 0;
-  font-size: 12px; color: rgba(255,255,255,0.22);
-}
-.footer-bottom a { color: rgba(255,255,255,0.3); text-decoration: none; transition: color 0.2s; }
-.footer-bottom a:hover { color: var(--green); }
-.footer-dot { margin: 0 6px; }
 
-/* ── Disclaimer strip ── */
+.footer-grid {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 48px;
+  padding-bottom: 52px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  margin-bottom: 28px;
+  align-items: start;
+}
+
+/* ── Brand Column ── */
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.footer-logo {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.footer-logo-text {
+  font-family: var(--font-head);
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.footer-logo-text span {
+  color: var(--green);
+}
+
+.footer-tagline {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.38);
+  line-height: 1.75;
+  max-width: 280px;
+  margin-bottom: 16px;
+}
+
+/* ── Contact Block ── */
+.footer-contact-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.footer-contact-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: var(--green);
+  margin-top: 2px;
+}
+
+.footer-contact-item a,
+.footer-contact-item span {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.45);
+  text-decoration: none;
+  line-height: 1.5;
+  transition: color 0.2s;
+}
+
+.footer-contact-item a:hover {
+  color: var(--green);
+}
+
+/* ── Nav Columns ── */
+.footer-col h5 {
+  font-family: var(--font-head);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 16px;
+}
+
+.footer-col a {
+  display: block;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.45);
+  text-decoration: none;
+  margin-bottom: 10px;
+  transition: color 0.2s;
+}
+
+.footer-col a:hover {
+  color: var(--green);
+}
+
+/* ── Footer Bottom Bar ── */
+.footer-bottom {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 20px 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.22);
+}
+
+.footer-bottom a {
+  color: rgba(255, 255, 255, 0.3);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-bottom a:hover {
+  color: var(--green);
+}
+
+.footer-dot {
+  margin: 0 6px;
+}
+
+.disclaimer-strip {
+  background: rgba(255, 255, 255, 0.04);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 16px 40px;
+  text-align: center;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.2);
+  line-height: 1.6;
+  max-width: 100%;
+}
+
+/* FOOTER — RESPONSIVE */
+@media (max-width: 1024px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  footer {
+    padding: 48px 20px 0;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .footer-logo {
+    height: 40px;
+  }
+
+  .disclaimer-strip {
+    padding: 16px 20px;
+  }
+}
 .disclaimer-strip {
   background: rgba(255,255,255,0.04);
   border-top: 1px solid rgba(255,255,255,0.06);
@@ -527,22 +681,21 @@ footer { background: var(--ink); padding: 64px 40px 0; }
 .mobile-nav {
   display: none;
   position: fixed; 
-  /* Using 0 ensures it snaps to the edges of the viewport exactly */
-  top: 0;
+   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   width: 100%;
   height: 100%;
-  
-  background: var(--ink); 
+
+background: rgba(255, 255, 255, 0.15);
+backdrop-filter: blur(4px);
+-webkit-backdrop-filter: blur(4px);
+
   z-index: 200;
   flex-direction: column; 
-  /* Adjusted padding: 80px top to clear the 'X' button better */
   padding: 80px 40px 40px; 
   animation: fadeIn 0.25s ease;
-  
-  /* Critical: prevents horizontal scrolling within the menu */
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -553,17 +706,13 @@ footer { background: var(--ink); padding: 64px 40px 0; }
 
 .mobile-nav a {
   font-family: var(--font-head); 
-  /* Reduced font size slightly so long words don't overflow */
   font-size: 1rem; 
   font-weight: 600;
   color: rgba(255,255,255,0.7); 
   text-decoration: none; 
-  /* Reduced vertical padding to fit more items on small screens */
   padding: 12px 0;
   border-bottom: 1px solid rgba(255,255,255,0.06);
   transition: color 0.2s;
-  
-  /* Helps with the wide font style */
   letter-spacing: -0.02em;
   line-height: 1.1;
 }
@@ -580,13 +729,12 @@ footer { background: var(--ink); padding: 64px 40px 0; }
   border: none; 
   cursor: pointer; 
   color: rgba(255,255,255,0.6);
-  /* Increase hit area for thumbs */
   padding: 8px;
   z-index: 201;
 }
 
 .mobile-nav-ctas { 
-  margin-top: auto; /* Pushes the 'Request' button to the bottom of the list */
+  margin-top: auto; 
   padding-top: 32px;
   display: flex; 
   flex-direction: column; 
@@ -655,13 +803,13 @@ footer { background: var(--ink); padding: 64px 40px 0; }
 
 <!-- Header -->
 <header class="header">
-  <a href="index.html" class="logo-link">
-    <span class="logo-wordmark">Enigma<span>.</span></span>
-  </a>
+<a href="index.html" class="logo-link">
+  <img src="images/transport_logo.png" alt="Enigma Logo" class="logo-image">
+</a>
   <nav class="nav">
     <a href="index.html" class="active">Home</a>
     <a href="about.html">About</a>
-    <a href="opportunities.html">Opportunities</a>
+    <a href="opportunities.html">Overview</a>
     <a href="how-it-works.html">How It Works</a>
     
   </nav>
@@ -682,7 +830,7 @@ footer { background: var(--ink); padding: 64px 40px 0; }
   </button>
   <a href="index.html">Home</a>
   <a href="about.html">About</a>
-  <a href="opportunities.html">Opportunities</a>
+  <a href="opportunities.html">Overview</a>
   <a href="how-it-works.html">How It Works</a>
   <div class="mobile-nav-ctas">
     <a href="invest.html" class="btn-primary" style="text-align:center;">Request Investment Brief</a>
@@ -694,22 +842,27 @@ footer { background: var(--ink); padding: 64px 40px 0; }
 <!-- Hero -->
 <section class="hero">
   <div class="hero-slides">
-    <div class="hero-slide active"></div>
-    <div class="hero-slide"></div>
-    <div class="hero-slide"></div>
+    <div class="hero-slide active">
+      <img src="images/enigma1.png" alt="Enigma transport fleet on Abuja roads">
+    </div>
+    <div class="hero-slide">
+      <img src="images/enigma2.png" alt="Drivers in Abuja city">
+    </div>
+    <div class="hero-slide">
+      <img src="images/kekeman.png" alt="Transport assets generating returns">
+    </div>
   </div>
   <div class="hero-bg"></div>
   <div class="hero-content">
     <div class="hero-badge">Asset-Backed Investment Platform</div>
-    <h1 class="hero-title">
-      Deploy Capital Into<br/>
+    <h1 class="hero-title"> Deploy Capital Into<br/>
       <span class="accent">Real Transport Assets</span>
     </h1>
     <p class="hero-desc">
-      Your capital is deployed directly into income-generating transport assets across Abuja. Enigma manages all operations — routing, maintenance, and dispatch — while you receive structured, performance-based weekly returns.
+      Your capital is deployed directly into income-generating transport assets across Nigeria. Enigma manages all operations — routing, maintenance, and dispatch — while you receive structured, performance-based weekly returns.
     </p>
     <div class="hero-actions">
-      <a href="invest.html" class="btn-primary">Request Investment Brief</a>
+      <a href="dashboard.html" class="btn-primary">Investor Portal<span class="coming-soon-badge"> (Coming Soon)</span></a>
       <a href="opportunities.html" class="btn-ghost">View Investment Opportunities</a>
     </div>
   </div>
@@ -731,21 +884,12 @@ footer { background: var(--ink); padding: 64px 40px 0; }
     <!-- Card 1 -->
     <div class="card">
       <div class="card-img-wrap">
-       <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-  <circle cx="11" cy="28" r="4"/>
-  <circle cx="29" cy="28" r="4"/>
-  <path d="M15 28l5-8h5"/>
-  <path d="M20 20l4 8"/>
-  <path d="M25 20l3-3"/>
-  <path d="M20 20l-3-2"/>
-
-  <path d="M16 24h6"/>
-</svg>
+       <svg version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve" fill="#5bbf3a" stroke="#5bbf3a" transform="matrix(1, 0, 0, 1, 0, 0)"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <style type="text/css"> </style> <g> <path class="st0" d="M417.975,226.338c-5.966,0-11.764,0.618-17.404,1.684l-33.048-100.841 c-5.781-17.644-22.258-29.577-40.822-29.577h-45.506v24.414h45.506c8.038-0.008,15.147,5.155,17.636,12.768l6.028,18.433h-60.684 c-31.084,0-54.424,15.542-54.424,15.542v45.358h135.064l7.064,21.54c-31.579,15.163-53.42,47.345-53.435,84.704 c0.016,51.936,42.09,94.018,94.026,94.033c51.92-0.015,94.01-42.097,94.025-94.033 C511.985,268.435,469.895,226.353,417.975,226.338z M461.456,363.844c-11.175,11.144-26.462,18.007-43.48,18.007 c-17.034,0-32.29-6.862-43.466-18.007c-11.144-11.176-18.008-26.447-18.008-43.481c0-17.026,6.863-32.29,18.008-43.465 c3.88-3.88,8.409-7.01,13.185-9.754l11.114,33.928c-4.962,4.931-8.037,11.748-8.037,19.29c0,15.032,12.18,27.22,27.204,27.22 c15.024,0,27.204-12.188,27.204-27.22c0-13.633-10.062-24.809-23.14-26.787l-11.128-33.974c2.35-0.278,4.637-0.711,7.064-0.711 c17.018,0,32.305,6.855,43.48,18.008c11.144,11.175,17.977,26.439,18.008,43.465C479.432,337.397,472.6,352.668,461.456,363.844z"></path> <path class="st0" d="M94.01,226.338C42.074,226.353,0.016,268.435,0,320.363c0.016,51.936,42.074,94.018,94.01,94.033 c51.936-0.015,94.01-42.097,94.026-94.033C188.02,268.435,145.946,226.353,94.01,226.338z M137.491,363.844 c-11.176,11.144-26.447,18.007-43.481,18.007c-17.034,0-32.29-6.862-43.466-18.007c-11.16-11.176-18.008-26.447-18.008-43.481 c0-17.026,6.848-32.29,18.008-43.465C61.72,265.745,76.976,258.89,94.01,258.89c17.034,0,32.306,6.855,43.481,18.008 c11.144,11.175,17.992,26.439,18.008,43.465C155.483,337.397,148.636,352.668,137.491,363.844z"></path> <path class="st0" d="M94.01,293.167c-15.024,0-27.204,12.172-27.204,27.196c0,15.032,12.18,27.22,27.204,27.22 c15.025,0,27.22-12.188,27.22-27.22C121.23,305.339,109.035,293.167,94.01,293.167z"></path> <path class="st0" d="M439.074,207.55v-65.855c-27.854,0-45.583,18.997-45.583,18.997v27.854 C393.491,188.546,411.22,207.55,439.074,207.55z"></path> <rect x="450.868" y="141.68" class="st0" width="13.525" height="65.847"></rect> <path class="st0" d="M70.5,214.119H220.17v-42.762h-45.52c-12.212,0-24.345-1.932-35.954-5.742l-16.261-5.34 c-11.592-3.81-23.742-5.758-35.953-5.758H70.5c-8.47,0-15.348,6.886-15.348,15.372v28.858 C55.151,207.233,62.029,214.119,70.5,214.119z"></path> <path class="st0" d="M343.302,232.111v-1.352H167.03c26.029,21.161,42.708,53.435,42.708,89.636c0,3.246,1.112,9.761,10.433,9.761 h69.928c8.888,0,12.118-6.515,12.118-9.761C302.217,284.998,318.199,253.272,343.302,232.111z"></path> </g> </g></svg>
       </div>
       <div class="card-title">Motorcycles</div>
       <div class="card-sub">Fast-moving urban transport for delivery, dispatch, and short-distance routes.</div>
       <a href="how-it-works.html#motorcycles" class="card-btn">
-        View Details
+        Explore Asset
         <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
       </a>
     </div>
@@ -753,26 +897,13 @@ footer { background: var(--ink); padding: 64px 40px 0; }
   
     <div class="card">
       <div class="card-img-wrap">
-      <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-
-  <circle cx="10" cy="28" r="4"/>
-  <circle cx="30" cy="28" r="4"/>
-  <circle cx="20" cy="28" r="4"/>
-
-
-  <path d="M10 28l5-10h10l5 10"/>
-
-
-  <path d="M15 18h10l3 6H12l3-6z"/>
-  <path d="M20 18v-4"/>
-
-</svg> 
+     <svg fill="#5bbf3a" height="200px" width="200px" version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 470 470" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 470 470" stroke="#5bbf3a"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path d="m235,163.545c-12.406,0-22.5,10.094-22.5,22.5v261.455c0,12.406 10.094,22.5 22.5,22.5s22.5-10.094 22.5-22.5v-261.455c0-12.406-10.094-22.5-22.5-22.5zm7.5,283.955c0,4.136-3.364,7.5-7.5,7.5s-7.5-3.364-7.5-7.5v-261.455c0-4.136 3.364-7.5 7.5-7.5s7.5,3.364 7.5,7.5v261.455z"></path> <path d="m395,233.545c-2.629,0-5.153,0.458-7.5,1.29v-48.79c0-4.143-3.357-7.5-7.5-7.5h-93.044c-2.538-17.662-13.895-32.511-29.456-39.924v-45.109h22.5c4.136,0 7.5,3.364 7.5,7.5s-3.364,7.5-7.5,7.5c-4.143,0-7.5,3.357-7.5,7.5s3.357,7.5 7.5,7.5c12.406,0 22.5-10.094 22.5-22.5s-10.094-22.5-22.5-22.5h-37.5v-35h38.966c17.286,0 31.767-12.241 35.227-28.512h23.935c3.461,16.269 17.935,28.512 35.221,28.512h20.121c4.143,0 7.5-3.357 7.5-7.5s-3.357-7.5-7.5-7.5h-20.121c-8.941,0-16.575-5.624-19.604-13.512h39.725c4.143,0 7.5-3.357 7.5-7.5s-3.357-7.5-7.5-7.5h-85.991c-4.143,0-7.5,3.357-7.5,7.5 0,11.586-9.426,21.012-21.012,21.012h-38.967v-2.5c0-4.143-3.357-7.5-7.5-7.5s-7.5,3.357-7.5,7.5v2.5h-38.966c-11.586,0-21.012-9.426-21.012-21.012 0-4.143-3.357-7.5-7.5-7.5h-85.991c-4.143,0-7.5,3.357-7.5,7.5s3.357,7.5 7.5,7.5h39.725c-3.029,7.888-10.663,13.512-19.604,13.512h-20.121c-4.143,0-7.5,3.357-7.5,7.5s3.357,7.5 7.5,7.5h20.121c17.286,0 31.76-12.243 35.221-28.512h23.935c3.46,16.271 17.94,28.512 35.227,28.512h38.965v35h-37.5c-12.406,0-22.5,10.094-22.5,22.5s10.094,22.5 22.5,22.5c4.143,0 7.5-3.357 7.5-7.5s-3.357-7.5-7.5-7.5c-4.136,0-7.5-3.364-7.5-7.5s3.364-7.5 7.5-7.5h22.5v45.109c-15.561,7.413-26.917,22.262-29.456,39.924h-91.217c-4.143,0-7.5,3.357-7.5,7.5v49.533c-2.844-1.301-6.001-2.033-9.327-2.033-12.406,0-22.5,10.094-22.5,22.5v191.455c0,12.406 10.094,22.5 22.5,22.5s22.5-10.094 22.5-22.5v-153.228h62.5c4.143,0 7.5-3.357 7.5-7.5s-3.357-7.5-7.5-7.5h-60.673v-85.728h83.173v115.728h-32.5c-4.143,0-7.5,3.357-7.5,7.5s3.357,7.5 7.5,7.5h40c4.143,0 7.5-3.357 7.5-7.5v-130.727c0-16.189 10.313-30.013 24.714-35.253 0.023-0.007 0.045-0.016 0.068-0.023 3.974-1.437 8.256-2.224 12.719-2.224 4.463,0 8.745,0.787 12.719,2.224 0.023,0.007 0.045,0.016 0.068,0.023 14.401,5.239 24.714,19.063 24.714,35.253v130.728c0,4.143 3.357,7.5 7.5,7.5h40c4.143,0 7.5-3.357 7.5-7.5s-3.357-7.5-7.5-7.5h-32.5v-115.728h85v85.728h-62.502c-4.143,0-7.5,3.357-7.5,7.5s3.357,7.5 7.5,7.5h62.5v153.227c0,12.406 10.094,22.5 22.5,22.5s22.5-10.094 22.5-22.5v-191.455c0-12.406-10.094-22.5-22.5-22.5zm-312.5,213.955c0,4.136-3.364,7.5-7.5,7.5s-7.5-3.364-7.5-7.5v-191.455c0-4.136 3.364-7.5 7.5-7.5s7.5,3.364 7.5,7.5v191.455zm145-313.411v-40.577h15v40.577c-2.451-0.352-4.953-0.544-7.5-0.544s-5.049,0.192-7.5,0.544zm175,313.411c0,4.136-3.364,7.5-7.5,7.5s-7.5-3.364-7.5-7.5v-191.455c0-4.136 3.364-7.5 7.5-7.5s7.5,3.364 7.5,7.5v191.455z"></path> </g> </g></svg> 
       </div>
       <div class="card-title">Urban Tricycles (Keke)
 </div>
       <div class="card-sub">High-demand city-route tricycles built for short-distance transport across dense urban areas, generating consistent daily income from commuter, school, and market traffic.</div>
       <a href="how-it-works.html#tricycles" class="card-btn">
-        View Details
+        Explore Asset
         <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
       </a>
     </div>
@@ -780,27 +911,12 @@ footer { background: var(--ink); padding: 64px 40px 0; }
     <!-- Card 3 -->
     <div class="card">
       <div class="card-img-wrap">
-<svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-
-  <!-- Car body -->
-  <path d="M8 26h24l2 4H6l2-4z"/>
-
-  <!-- Roof -->
-  <path d="M12 26l4-8h8l4 8"/>
-
-  <!-- Windows -->
-  <path d="M16 18h8"/>
-
-  <!-- Wheels -->
-  <circle cx="12" cy="30" r="3"/>
-  <circle cx="28" cy="30" r="3"/>
-
-</svg>
+<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="#5bbf3a"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <path fill="none" d="M0 0h24v24H0z"></path> <path d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2zM8 13l-3.938.001A8.004 8.004 0 0 0 11 19.938V16a3 3 0 0 1-3-3zm11.938.001L16 13a3 3 0 0 1-3 3l.001 3.938a8.004 8.004 0 0 0 6.937-6.937zM12 4a8.001 8.001 0 0 0-7.938 7H8a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1h3.938A8.001 8.001 0 0 0 12 4z"></path> </g> </g></svg>
       </div>
       <div class="card-title">Cars (Ride & Fleet Vehicles)</div>
       <div class="card-sub">Reliable vehicle tier used for ride-hailing and daily transport operations across urban routes, generating steady income through consistent passenger demand and scheduled trips.</div>
       <a href="how-it-works.html#cars" class="card-btn">
-        View Details
+        Explore Asset
         <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
       </a>
     </div>
@@ -808,22 +924,13 @@ footer { background: var(--ink); padding: 64px 40px 0; }
     <!-- Card 4 -->
     <div class="card">
       <div class="card-img-wrap">
-        <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-  <rect x="6" y="14" width="28" height="16" rx="3"/>
-  <path d="M10 18h20"/>
-  <path d="M10 22h20"/>
-  <path d="M6 20h2"/>
-  <circle cx="12" cy="30" r="3"/>
-  <circle cx="28" cy="30" r="3"/>
-  <path d="M6 26h28"/>
-
-</svg>
+ <svg fill="#5bbf3a" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 506.812 506.812" xml:space="preserve" stroke="#5bbf3a"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <g> <g> <path d="M53.33,328.004c0,19.431,15.75,35.18,35.181,35.18c19.431,0,35.18-15.749,35.18-35.18c0-0.918-0.201-1.789-0.268-2.688 h16.247c-0.067,0.898-0.268,1.77-0.268,2.688c0,19.431,15.749,35.18,35.18,35.18s35.181-15.749,35.181-35.18 c0-0.918-0.201-1.789-0.268-2.688h92.747c-0.067,0.898-0.268,1.77-0.268,2.688c0,19.431,15.749,35.18,35.18,35.18 c19.432,0,35.181-15.749,35.181-35.18c0-0.918-0.2-1.789-0.268-2.688h16.247c-0.067,0.898-0.269,1.77-0.269,2.688 c0,19.431,15.75,35.18,35.181,35.18c19.432,0,35.181-15.749,35.181-35.18c0-0.918-0.201-1.789-0.268-2.688h48.673V224.441 l-44.265-80.812H53.827L0,224.441v100.875h53.598C53.531,326.215,53.33,327.086,53.33,328.004z M420.75,172.316h20.32 l27.492,57.375H420.75V172.316z M408.605,325.316c1.271-6.923,7.306-12.173,14.583-12.173s13.32,5.25,14.583,12.173 c0.162,0.87,0.268,1.77,0.268,2.688c0,8.204-6.655,14.859-14.86,14.859c-8.204,0-14.86-6.655-14.86-14.859 C408.338,327.086,408.443,326.187,408.605,325.316z M344.25,172.316h57.375v57.375H344.25V172.316z M337.126,313.144 c7.286,0,13.32,5.25,14.583,12.173c0.162,0.87,0.268,1.77,0.268,2.688c0,8.204-6.655,14.859-14.86,14.859 c-8.204,0-14.86-6.655-14.86-14.859c0-0.918,0.115-1.817,0.269-2.688C323.814,318.394,329.839,313.144,337.126,313.144z M267.75,172.316h57.375v57.375H267.75V172.316z M191.25,172.316h57.375v57.375H191.25V172.316z M189.156,325.316 c0.163,0.87,0.268,1.77,0.268,2.688c0,8.204-6.655,14.859-14.86,14.859s-14.86-6.655-14.86-14.859 c0-0.918,0.115-1.817,0.268-2.688c1.271-6.923,7.306-12.173,14.583-12.173C181.831,313.144,187.884,318.394,189.156,325.316z M114.75,172.316h57.375v57.375H114.75V172.316z M103.093,325.316c0.163,0.87,0.268,1.77,0.268,2.688 c0,8.204-6.655,14.859-14.86,14.859s-14.86-6.655-14.86-14.859c0-0.918,0.115-1.817,0.268-2.688 c1.271-6.923,7.306-12.173,14.583-12.173C95.769,313.144,101.821,318.394,103.093,325.316z M44.953,229.691l37.055-57.375h13.617 v57.375H44.953z"></path> </g> </g> </g></svg>
       </div>
       
       <div class="card-title">Interstate Transport (Coming Soon)</div>
       <div class="card-sub">Long-distance passenger and logistics transport connecting major cities through structured intercity routes, designed for scalable movement of people and goods across regions.</div>
       <a href="how-it-works.html#interstate" class="card-btn">
-        View Details
+        Explore Asset
         <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
       </a>
     </div>
@@ -858,7 +965,7 @@ footer { background: var(--ink); padding: 64px 40px 0; }
       <div class="section-eyebrow">Why It Works</div>
       <h2 class="section-title" style="color:var(--ink);">Built on <span class="accent">Daily Demand</span></h2>
       <p>
-        Transport in Abuja operates daily at scale. Vehicles generate revenue from consistent passenger movement and logistics demand. Enigma captures this through structured deployment and managed operations.
+        Transport in Nigeria operates daily at scale. Vehicles generate revenue from consistent passenger movement and logistics demand. Enigma captures this through structured deployment and managed operations.
       </p>
       <ul class="why-list">
         <li>
@@ -1089,8 +1196,9 @@ footer { background: var(--ink); padding: 64px 40px 0; }
 <footer>
   <div class="footer-grid">
     <div class="footer-brand">
-      <div class="footer-logo-text">Enigma<span>.</span></div>
-      <p class="footer-tagline">A structured asset-backed investment platform focused on transport income generation in Abuja.</p>
+      
+      <img src="images/transport_logo.png" alt="Enigma Transport Services Logo" class="footer-logo">
+      <p class="footer-tagline">A structured asset-backed investment platform focused on transport income generation in Nigeria.</p>
       <div class="footer-contact-block">
         <div class="footer-contact-item">
           <svg class="footer-contact-icon" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 010 1.17 2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>

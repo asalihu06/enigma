@@ -1,183 +1,661 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ownership Plans — Enigma Transport Services</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Standard Tier — Enigma Transport</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --green:#5bbf3a; --green-dark:#3a9e1f; --green-dim:rgba(91,191,58,0.15);
+  --green-pale:#eaf7e4; --ink:#0e1a0a; --ink-soft:#3d4d38; --muted:#6b7c65;
+  --surface:#ffffff; --bg:#f3f7f0; --border:rgba(91,191,58,0.22);
+  --font-head:'Syne',sans-serif; --font-body:'DM Sans',sans-serif;
+  --radius:18px; --radius-btn:100px;
+}
+html { scroll-behavior:smooth; }
+body { font-family:var(--font-body); background:var(--surface); color:var(--ink); overflow-x:hidden; }
 
-  <link rel="stylesheet" href="style.css"/>
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+@keyframes slideDown { from{transform:translateY(-100%);opacity:0} to{transform:translateY(0);opacity:1} }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+
+/* ── Top Bar ── */
+.top-bar { display:flex;justify-content:flex-end;align-items:center;gap:24px;background:var(--ink);padding:7px 40px;font-size:12px;color:rgba(255,255,255,0.5); }
+.top-bar-item { display:flex;align-items:center;gap:7px; }
+@media(max-width:760px){.top-bar{display:none}}
+
+/* ── Header ── */
+.header { position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.96);backdrop-filter:blur(12px);border-bottom:1.5px solid var(--border);padding:0 40px;display:flex;align-items:center;gap:40px;height:68px;animation:slideDown 0.5s ease both; }
+.logo-link { text-decoration:none;display:flex;align-items:center;flex-shrink:0; }
+.logo-wordmark { font-family:var(--font-head);font-size:1.25rem;font-weight:800;color:var(--ink); }
+.logo-wordmark span { color:var(--green); }
+.nav { display:flex;align-items:center;position:absolute;left:50%;transform:translateX(-50%); }
+.nav a { font-size:14px;font-weight:500;color:var(--ink-soft);text-decoration:none;padding:8px 16px;position:relative;transition:color 0.22s;white-space:nowrap; }
+.nav a::after { content:'';position:absolute;bottom:0;left:50%;right:50%;height:2.5px;background:var(--green);border-radius:2px;transition:left 0.28s cubic-bezier(.22,1,.36,1),right 0.28s cubic-bezier(.22,1,.36,1); }
+.nav a:hover,.nav a.active { color:var(--green-dark); }
+.nav a:hover::after,.nav a.active::after { left:12px;right:12px; }
+.nav a.active { font-weight:600; }
+.cta-group { margin-left:auto;display:flex;align-items:center;gap:8px; }
+.nav-cta { font-family:var(--font-head);font-size:12px;font-weight:700;background:var(--green);color:#fff!important;padding:10px 22px;border-radius:var(--radius-btn);border:none;cursor:pointer;text-decoration:none;display:inline-block;transition:background 0.2s,transform 0.2s; }
+.nav-cta:hover { background:var(--green-dark)!important;transform:scale(1.04)!important; }
+.nav-cta::after { display:none!important; }
+.nav-cta-secondary { font-family:var(--font-body);font-size:12px;font-weight:600;color:var(--green-dark);background:transparent;border:2px solid var(--green);border-radius:var(--radius-btn);padding:8px 16px;cursor:pointer;transition:background 0.25s,color 0.25s,transform 0.2s;white-space:nowrap;text-decoration:none;display:inline-block; }
+.nav-cta-secondary:hover { background:var(--green);color:#fff;transform:scale(1.04); }
+.nav-cta-secondary::after { display:none!important; }
+.menu-toggle { display:none;background:none;border:none;cursor:pointer;padding:4px;flex-direction:column;gap:5px;margin-left:auto; }
+.menu-toggle span { display:block;width:22px;height:2px;background:var(--ink);border-radius:2px; }
+
+/* ── Mobile Nav ── */
+.mobile-nav { display:none;position:fixed;inset:0;background:var(--ink);z-index:200;flex-direction:column;padding:80px 40px 40px;animation:fadeIn 0.22s ease; }
+.mobile-nav.open { display:flex; }
+.mobile-nav a { font-family:var(--font-head);font-size:1rem;font-weight:600;color:rgba(255,255,255,0.7);text-decoration:none;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.06);transition:color 0.2s; }
+.mobile-nav a:hover { color:var(--green); }
+.mobile-nav .close-btn { position:absolute;top:20px;right:24px;background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.6); }
+.mobile-nav-ctas { margin-top:32px;display:flex;flex-direction:column;gap:12px; }
+.mn-btn-primary { font-family:var(--font-head);font-size:14px;font-weight:700;background:var(--green);color:#fff;border:none;border-radius:var(--radius-btn);padding:14px 28px;text-decoration:none;text-align:center;display:block; }
+.mn-btn-ghost { font-family:var(--font-head);font-size:14px;font-weight:700;background:rgba(255,255,255,0.08);color:#fff;border:1.5px solid rgba(255,255,255,0.25);border-radius:var(--radius-btn);padding:12px 28px;text-decoration:none;text-align:center;display:block; }
+
+/* ── PAGE HERO ── */
+.page-hero { background:var(--ink);padding:80px 40px 120px;position:relative;overflow:hidden; }
+.page-hero::before { content:'';position:absolute;top:-160px;right:-100px;width:600px;height:600px;border-radius:50%;border:1.5px solid rgba(91,191,58,0.08);pointer-events:none; }
+.page-hero::after { content:'';position:absolute;bottom:-120px;left:4%;width:450px;height:450px;border-radius:50%;border:1px solid rgba(91,191,58,0.05);pointer-events:none; }
+.page-hero-inner { max-width:1100px;margin:0 auto;position:relative;z-index:2; }
+.breadcrumb { font-size:12px;color:rgba(255,255,255,0.3);margin-bottom:22px;display:flex;align-items:center;gap:8px; }
+.breadcrumb a { color:var(--green);text-decoration:none; }
+
+/* Tier badge in hero */
+.tier-hero-badge {
+  display:inline-flex;align-items:center;gap:10px;
+  background:rgba(91,191,58,0.12);border:1.5px solid rgba(91,191,58,0.28);
+  border-radius:var(--radius-btn);padding:8px 18px;
+  font-family:var(--font-head);font-size:11px;font-weight:700;
+  letter-spacing:0.18em;text-transform:uppercase;color:var(--green);
+  margin-bottom:24px;animation:fadeUp 0.5s 0.1s both;
+}
+.tier-hero-badge::before { content:'';width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite; }
+
+.page-hero h1 { font-family:var(--font-head);font-size:clamp(2.2rem,5vw,3.8rem);font-weight:800;color:#fff;line-height:1.06;margin-bottom:20px;animation:fadeUp 0.55s 0.2s both; }
+.page-hero h1 .accent { color:var(--green); }
+.page-hero .hero-sub { font-size:16px;color:rgba(255,255,255,0.52);max-width:540px;line-height:1.78;animation:fadeUp 0.55s 0.3s both; }
+
+/* Hero stats row */
+.hero-stats { display:flex;align-items:center;gap:32px;margin-top:40px;animation:fadeUp 0.55s 0.4s both;flex-wrap:wrap; }
+.hero-stat { display:flex;flex-direction:column;gap:4px; }
+.hero-stat-val { font-family:var(--font-head);font-size:1.6rem;font-weight:800;color:#fff;line-height:1; }
+.hero-stat-val .hs-accent { color:var(--green); }
+.hero-stat-label { font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:0.08em;text-transform:uppercase; }
+.hero-stat-div { width:1px;height:36px;background:rgba(255,255,255,0.1); }
+
+/* Scroll indicator */
+.hero-scroll { display:flex;align-items:center;gap:10px;margin-top:40px;animation:fadeUp 0.55s 0.5s both;cursor:pointer;width:fit-content; }
+.hero-scroll span { font-size:12px;color:rgba(255,255,255,0.3);letter-spacing:0.1em;text-transform:uppercase; }
+.hero-scroll-line { width:40px;height:1px;background:rgba(91,191,58,0.35); }
+
+/* ── TIER EXPLAINER ── */
+.tier-explainer { background:var(--bg);padding:0 40px;margin-top:-60px;position:relative;z-index:10; }
+.tier-explainer-inner { max-width:1100px;margin:0 auto; }
+.tier-exp-card {
+  background:var(--surface);border:1.5px solid var(--border);border-radius:24px;
+  padding:40px 48px;box-shadow:0 4px 40px rgba(0,0,0,0.06);
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;
+  animation:fadeUp 0.6s 0.2s both;
+}
+.tier-exp-block { padding:0 32px;border-right:1.5px solid var(--border); }
+.tier-exp-block:first-child { padding-left:0; }
+.tier-exp-block:last-child { border-right:none; }
+.teb-label { font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);margin-bottom:10px; }
+.teb-value { font-family:var(--font-head);font-size:1.1rem;font-weight:800;color:var(--ink);line-height:1.2;margin-bottom:6px; }
+.teb-note { font-size:12.5px;color:var(--muted);line-height:1.6; }
+
+/* ── SECTION COMMON ── */
+.section-tag { display:inline-flex;align-items:center;gap:8px;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:var(--green-dark);margin-bottom:14px; }
+.section-tag::before { content:'';width:20px;height:2px;background:var(--green);border-radius:2px; }
+.section-h2 { font-family:var(--font-head);font-size:clamp(1.8rem,3vw,2.4rem);font-weight:800;color:var(--ink);line-height:1.12;margin-bottom:14px; }
+.section-h2 .accent { color:var(--green); }
+.section-intro { font-size:15px;color:var(--muted);line-height:1.75;max-width:560px; }
+
+/* ── ASSET SECTIONS ── */
+.assets-section { background:var(--bg);padding:80px 40px; }
+.assets-inner { max-width:1100px;margin:0 auto; }
+.assets-head { margin-bottom:60px; }
+
+/* Quick-jump nav */
+.asset-jumps { display:flex;gap:10px;flex-wrap:wrap;margin-top:24px; }
+.asset-jump {
+  font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.08em;
+  text-transform:uppercase;color:var(--ink-soft);background:var(--surface);
+  border:1.5px solid var(--border);border-radius:var(--radius-btn);
+  padding:7px 16px;text-decoration:none;
+  transition:background 0.22s,color 0.22s,border-color 0.22s,transform 0.18s;
+  display:inline-flex;align-items:center;gap:6px;
+}
+.asset-jump:hover { background:var(--green);color:#fff;border-color:var(--green);transform:translateY(-2px); }
+.asset-jump-dot { width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0; }
+
+/* Asset cards */
+.asset-card {
+  background:var(--surface);border:1.5px solid var(--border);border-radius:24px;
+  overflow:hidden;margin-bottom:28px;
+  transition:box-shadow 0.3s,border-color 0.3s;
+}
+.asset-card:hover { box-shadow:0 16px 48px rgba(91,191,58,0.10);border-color:rgba(91,191,58,0.38); }
+.asset-card:last-child { margin-bottom:0; }
+
+.asset-card-inner { display:grid;grid-template-columns:340px 1fr;min-height:340px; }
+.asset-card.reverse .asset-card-inner { direction:rtl; }
+.asset-card.reverse .asset-card-inner > * { direction:ltr; }
+
+/* Image pane */
+.asset-card-img {
+  background:var(--ink);position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;
+}
+.asset-card-img::before {
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(rgba(91,191,58,0.09) 1px, transparent 1px);
+  background-size:22px 22px;
+}
+.asset-svg-wrap {
+  position:relative;z-index:1;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:14px;padding:32px;width:100%;
+  transition:transform 0.4s cubic-bezier(.22,1,.36,1);
+}
+.asset-card:hover .asset-svg-wrap { transform:scale(1.05) translateY(-4px); }
+.asset-svg-label { font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(91,191,58,0.25);text-align:center; }
+
+/* Status badge on image */
+.asset-img-status {
+  position:absolute;top:18px;left:18px;z-index:2;
+  display:inline-flex;align-items:center;gap:6px;
+  border-radius:var(--radius-btn);padding:5px 12px;
+  font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;
+}
+.status-active { background:var(--green);color:#fff; }
+.status-request { background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.12); }
+
+/* Body pane */
+.asset-card-body { padding:40px 44px;display:flex;flex-direction:column;justify-content:center; }
+.asset-who { font-size:11.5px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--green-dark);margin-bottom:10px; }
+.asset-card-body h2 { font-family:var(--font-head);font-size:clamp(1.4rem,2.2vw,1.9rem);font-weight:800;color:var(--ink);line-height:1.15;margin-bottom:12px; }
+.asset-card-body > p { font-size:14px;color:var(--muted);line-height:1.78;margin-bottom:28px;max-width:440px; }
+
+/* Pricing grid */
+.pricing-grid { display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px; }
+.pricing-card { background:var(--bg);border:1.5px solid var(--border);border-radius:14px;padding:18px 16px; }
+.pricing-card.tier-a { border-left:3px solid var(--green); }
+.pricing-card.tier-b { border-left:3px solid var(--ink-soft); }
+.pricing-label { font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:12px; }
+.pricing-card.tier-a .pricing-label { color:var(--green-dark); }
+.pricing-card.tier-b .pricing-label { color:var(--ink-soft); }
+.pricing-row { display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:5px 0;border-bottom:1px solid var(--border); }
+.pricing-row:last-child { border-bottom:none; }
+.pricing-row .pk { color:var(--muted); }
+.pricing-row .pv { font-family:var(--font-head);font-weight:700;color:var(--ink);font-size:12px; }
+.pricing-row .pv.green { color:var(--green-dark); }
+
+/* Features list */
+.asset-features { list-style:none;display:flex;flex-direction:column;gap:8px;margin-bottom:24px; }
+.asset-features li { display:flex;align-items:flex-start;gap:9px;font-size:13px;color:var(--ink-soft);line-height:1.5; }
+.feat-check { width:18px;height:18px;border-radius:50%;background:var(--green-pale);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center; }
+.feat-check svg { width:9px;height:9px; }
+
+/* CTA row */
+.asset-actions { display:flex;gap:10px;flex-wrap:wrap; }
+.btn-primary {
+  font-family:var(--font-head);font-size:13px;font-weight:700;
+  background:var(--green);color:#fff;border:none;border-radius:var(--radius-btn);
+  padding:12px 24px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;
+  box-shadow:0 4px 16px rgba(91,191,58,0.3);
+  transition:background 0.22s,transform 0.18s,box-shadow 0.22s;text-decoration:none;
+}
+.btn-primary:hover { background:var(--green-dark);transform:translateY(-2px);box-shadow:0 7px 22px rgba(91,191,58,0.38); }
+.btn-primary svg { width:13px;height:13px;transition:transform 0.2s; }
+.btn-primary:hover svg { transform:translateX(3px); }
+.btn-ghost {
+  font-family:var(--font-head);font-size:13px;font-weight:700;
+  background:transparent;color:var(--ink-soft);
+  border:1.5px solid var(--border);border-radius:var(--radius-btn);
+  padding:10px 22px;cursor:pointer;text-decoration:none;display:inline-block;
+  transition:border-color 0.22s,color 0.22s,background 0.22s;
+}
+.btn-ghost:hover { border-color:var(--green);color:var(--green-dark);background:var(--green-pale); }
+
+/* ── TIER COMPARISON TABLE ── */
+.comparison-section { background:var(--surface);padding:80px 40px; }
+.comparison-inner { max-width:1100px;margin:0 auto; }
+.comparison-head { margin-bottom:48px; }
+
+.comparison-table {
+  width:100%;border-collapse:separate;border-spacing:0;
+  border:1.5px solid var(--border);border-radius:18px;overflow:hidden;
+  box-shadow:0 4px 32px rgba(0,0,0,0.05);
+}
+.comparison-table thead th {
+  font-family:var(--font-head);font-size:11px;font-weight:700;
+  letter-spacing:0.14em;text-transform:uppercase;
+  padding:20px 24px;background:var(--bg);text-align:left;
+  border-bottom:1.5px solid var(--border);
+}
+.comparison-table thead th:first-child { color:var(--muted); }
+.comparison-table thead th.col-a { color:var(--green-dark);background:var(--green-pale); }
+.comparison-table thead th.col-b { color:var(--ink-soft); }
+.comparison-table tbody tr:last-child td { border-bottom:none; }
+.comparison-table tbody td {
+  font-size:13px;padding:16px 24px;border-bottom:1px solid var(--border);
+  color:var(--ink-soft);vertical-align:middle;
+}
+.comparison-table tbody td:first-child { color:var(--muted);font-size:12px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase; }
+.comparison-table tbody td.col-a { background:rgba(234,247,228,0.3);font-family:var(--font-head);font-weight:700;color:var(--ink); }
+.comparison-table tbody td.col-b { font-family:var(--font-head);font-weight:700;color:var(--ink); }
+.comparison-table tbody tr:hover td { background:rgba(91,191,58,0.03); }
+.comparison-table tbody tr:hover td.col-a { background:rgba(91,191,58,0.07); }
+.comparison-asset-row td:first-child {
+  font-family:var(--font-head);font-size:13px;font-weight:800;
+  color:var(--ink);text-transform:none;letter-spacing:0;
+  background:var(--bg);border-top:2px solid var(--border);
+  padding-top:20px;
+}
+.comparison-asset-row td { border-top:2px solid var(--border);background:var(--bg)!important; }
+
+/* ── HOW IT WORKS ── */
+.hiw-section { background:var(--bg);padding:80px 40px; }
+.hiw-inner { max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center; }
+.hiw-steps { display:flex;flex-direction:column;gap:0; }
+.hiw-step { display:flex;gap:18px;align-items:flex-start;padding:20px 0;border-bottom:1px solid var(--border); }
+.hiw-step:last-child { border-bottom:none; }
+.hiw-step-num {
+  width:38px;height:38px;border-radius:50%;
+  background:var(--green-dim);border:2px solid rgba(91,191,58,0.3);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--green-dark);
+  flex-shrink:0;margin-top:2px;
+  transition:background 0.25s,border-color 0.25s,transform 0.25s;
+}
+.hiw-step:hover .hiw-step-num { background:var(--green);border-color:var(--green);color:#fff;transform:scale(1.08); }
+.hiw-step-body h4 { font-family:var(--font-head);font-size:15px;font-weight:700;color:var(--ink);margin-bottom:5px; }
+.hiw-step-body p { font-size:13.5px;color:var(--muted);line-height:1.7; }
+
+.hiw-visual { position:relative; }
+.hiw-img-frame {
+  width:100%;height:420px;border-radius:20px;overflow:hidden;
+  background:var(--ink);display:flex;align-items:center;justify-content:center;position:relative;
+}
+.hiw-img-frame::before {
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(rgba(91,191,58,0.09) 1px, transparent 1px);
+  background-size:24px 24px;
+}
+.hiw-img-content { position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:14px; }
+.hiw-img-content svg { opacity:0.25; }
+.hiw-img-content span { font-family:var(--font-head);font-size:9px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(91,191,58,0.25); }
+.hiw-overlay {
+  position:absolute;bottom:-18px;right:-18px;
+  background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:20px 24px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.10);
+}
+.hiw-ov-label { font-size:10px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px; }
+.hiw-ov-val { font-family:var(--font-head);font-size:2rem;font-weight:800;color:var(--green);line-height:1; }
+.hiw-ov-sub { font-size:11px;color:var(--muted);margin-top:4px; }
+
+/* ── PROTECTIONS ── */
+.protections { background:var(--surface);padding:80px 40px; }
+.protections-inner { max-width:1100px;margin:0 auto; }
+.protections-head { margin-bottom:48px; }
+.protections-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:20px; }
+.protection-card {
+  background:var(--bg);border:1.5px solid var(--border);border-radius:var(--radius);
+  padding:28px 24px;
+  transition:transform 0.3s cubic-bezier(.22,1,.36,1),box-shadow 0.3s,border-color 0.3s;
+}
+.protection-card:hover { transform:translateY(-5px);box-shadow:0 14px 36px rgba(91,191,58,0.10);border-color:rgba(91,191,58,0.38); }
+.protection-icon { width:44px;height:44px;background:var(--green-pale);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:16px; }
+.protection-icon svg { width:22px;height:22px;color:var(--green-dark); }
+.protection-card h4 { font-family:var(--font-head);font-size:14px;font-weight:800;color:var(--ink);margin-bottom:8px; }
+.protection-card p { font-size:13px;color:var(--muted);line-height:1.65; }
+
+/* ── CTA BANNER ── */
+.cta-banner {
+  background:linear-gradient(120deg,var(--green-dark) 0%,var(--green) 100%);
+  padding:80px 40px;text-align:center;position:relative;overflow:hidden;
+}
+.cta-banner::before { content:'';position:absolute;top:-80px;right:-80px;width:320px;height:320px;border-radius:50%;background:rgba(255,255,255,0.06);pointer-events:none; }
+.cta-banner::after { content:'';position:absolute;bottom:-60px;left:-40px;width:250px;height:250px;border-radius:50%;background:rgba(255,255,255,0.04);pointer-events:none; }
+.cta-banner h2 { font-family:var(--font-head);font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:800;color:#fff;margin-bottom:14px;position:relative;z-index:1; }
+.cta-banner p { font-size:16px;color:rgba(255,255,255,0.78);max-width:480px;margin:0 auto 32px;line-height:1.7;position:relative;z-index:1; }
+.cta-btns { display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1; }
+.btn-white { font-family:var(--font-head);font-size:14px;font-weight:700;background:#fff;color:var(--green-dark);border:none;border-radius:var(--radius-btn);padding:14px 28px;cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;text-decoration:none;display:inline-block;box-shadow:0 4px 18px rgba(0,0,0,0.12); }
+.btn-white:hover { transform:translateY(-2px) scale(1.03);box-shadow:0 8px 28px rgba(0,0,0,0.2); }
+.btn-outline-white { font-family:var(--font-head);font-size:14px;font-weight:700;background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,0.45);border-radius:var(--radius-btn);padding:12px 26px;cursor:pointer;transition:background 0.22s,border-color 0.22s;text-decoration:none;display:inline-block; }
+.btn-outline-white:hover { background:rgba(255,255,255,0.12);border-color:#fff; }
+
+/* ── FOOTER ── */
+footer { background:var(--ink);padding:64px 40px 0; }
+.footer-grid { max-width:1100px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;padding-bottom:48px;border-bottom:1px solid rgba(255,255,255,0.08); }
+.footer-logo-text { font-family:var(--font-head);font-size:20px;font-weight:800;color:#fff;margin-bottom:10px; }
+.footer-logo-text span { color:var(--green); }
+.footer-tagline { font-size:12px;color:rgba(255,255,255,0.35);line-height:1.75;max-width:270px;margin-bottom:20px; }
+.footer-contact-block { display:flex;flex-direction:column;gap:10px; }
+.footer-contact-item { display:flex;align-items:flex-start;gap:9px; }
+.footer-contact-icon { width:13px;height:13px;flex-shrink:0;color:var(--green);margin-top:2px; }
+.footer-contact-item a,.footer-contact-item span { font-size:12px;color:rgba(255,255,255,0.38);text-decoration:none;transition:color 0.2s; }
+.footer-contact-item a:hover { color:var(--green); }
+.footer-col h5 { font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:var(--green);margin-bottom:16px; }
+.footer-col a { display:block;font-size:12px;color:rgba(255,255,255,0.38);text-decoration:none;margin-bottom:10px;transition:color 0.2s; }
+.footer-col a:hover { color:var(--green); }
+.footer-bottom { max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;padding:20px 0;font-size:12px;color:rgba(255,255,255,0.22); }
+.footer-bottom a { color:rgba(255,255,255,0.3);text-decoration:none;transition:color 0.2s; }
+.footer-bottom a:hover { color:var(--green); }
+.footer-dot { margin:0 6px; }
+.disclaimer-strip { background:rgba(255,255,255,0.03);border-top:1px solid rgba(255,255,255,0.05);padding:16px 40px;text-align:center;font-size:11px;color:rgba(255,255,255,0.18);line-height:1.65; }
+
+/* ── RESPONSIVE ── */
+@media(max-width:1024px){
+  .tier-exp-card { grid-template-columns:1fr;gap:24px; }
+  .tier-exp-block { padding:0 0 24px;border-right:none;border-bottom:1.5px solid var(--border); }
+  .tier-exp-block:last-child { border-bottom:none;padding-bottom:0; }
+  .asset-card-inner { grid-template-columns:1fr; }
+  .asset-card.reverse .asset-card-inner { direction:ltr; }
+  .asset-card-img { min-height:260px; }
+  .hiw-inner { grid-template-columns:1fr; }
+  .hiw-visual { display:none; }
+  .protections-grid { grid-template-columns:1fr 1fr; }
+  .footer-grid { grid-template-columns:1fr 1fr; }
+  .comparison-table { font-size:12px; }
+}
+@media(max-width:760px){
+  .header { padding:0 20px; }
+  .nav,.cta-group { display:none; }
+  .menu-toggle { display:flex; }
+  .page-hero { padding:60px 20px 90px; }
+  .tier-explainer { padding:0 20px; }
+  .tier-exp-card { padding:28px 24px; }
+  .assets-section,.comparison-section,.hiw-section,.protections-section,.cta-banner { padding:60px 20px; }
+  .asset-card-body { padding:28px 24px; }
+  .pricing-grid { grid-template-columns:1fr; }
+  .protections-grid { grid-template-columns:1fr; }
+  .footer-grid { grid-template-columns:1fr;gap:28px; }
+  footer { padding:44px 20px 0; }
+  .disclaimer-strip { padding:14px 20px; }
+  .hero-stats { gap:20px; }
+  .comparison-table { display:block;overflow-x:auto; }
+}
+</style>
 </head>
 <body>
 
-  <div class="top-bar">
-    <span>+234 800 000 0000</span>
-        <div class="top-bar-item">
-      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="1" y="3" width="14" height="10" rx="1.5"/><path d="M1 3l7 5.5L15 3"/></svg>
-      enigmatransport@gmail.com
-    </div>
-    <span>Abuja, Nigeria</span>
+<!-- Top Bar -->
+<div class="top-bar">
+  <div class="top-bar-item">
+    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 010 1.17 2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>
+    +234 (0) 800 000 0000
   </div>
- <header class="header">
-  <a href="home.html" class="logo-link">
-    <div class="logo-img-wrap">
-      <img src="images/transport_logo.png" alt="Enigma Transport Services">
-    </div>
+  <div class="top-bar-item">
+    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+    invest@enigmatransport.com
+  </div>
+  <div class="top-bar-item">Abuja, FCT, Nigeria</div>
+</div>
+
+<!-- Header -->
+<header class="header">
+  <a href="index.html" class="logo-link">
+    <span class="logo-wordmark">Enigma<span>.</span></span>
   </a>
-
   <nav class="nav">
-    <a href="home.html">Home</a>
+    <a href="index.html">Home</a>
     <a href="about.html">About</a>
-    <a href="services.html">Services</a>
-    <a href="contact.html">Contact</a>
-
-    <a href="invest.html" class="nav-cta">Invest</a>
-    <a href="quote.html" class="nav-cta-secondary">Get a Quote</a>
+    <a href="opportunities.html" class="active">Opportunities</a>
+    <a href="how-it-works.html">How It Works</a>
   </nav>
-
   <div class="cta-group">
-    <a href="invest.html" class="nav-cta">Invest</a>
-    <a href="quote.html" class="nav-cta-secondary">Get a Quote</a>
+    <a href="invest.html?tier=standard" class="nav-cta">Start Your Investment</a>
+    <a href="contact.html" class="nav-cta-secondary">Become a Driver</a>
   </div>
-
-  <button class="menu-toggle" aria-label="Toggle menu"
-    onclick="this.previousElementSibling.previousElementSibling.classList.toggle('open')">
+  <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
     <span></span><span></span><span></span>
   </button>
 </header>
-  <section class="page-hero">
-    <div class="page-hero-inner">
-      <div class="breadcrumb">
-        <a href="index.html">Home</a> <span>›</span>
-        <a href="services.html">Services</a> <span>›</span>
-        <span>Ownership Plans</span>
-      </div>
-      <div class="section-tag">Full Plan Details</div>
-      <h1>Every asset.<br><span class="accent">Every tier. Every figure.</span></h1>
-      <p>This page contains the complete pricing, plan structure, and eligibility details for all four assets. No figures are hidden here — what you see is exactly what you sign for.</p>
-    </div>
-  </section>
 
-  <div class="tier-strip" id="tiers">
-    <div style="max-width:1100px; margin:0 auto;">
-      <p style="font-family:var(--font-head); font-size:11px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--green); margin-bottom:12px;">Understanding Your Options</p>
-      <h2 style="font-family:var(--font-head); font-size:1.5rem; font-weight:800; color:var(--ink); margin-bottom:6px;">Tier A or Tier B — <span style="color:var(--green);">same destination.</span></h2>
-      <p style="font-size:14.5px; color:var(--muted); line-height:1.75; max-width:620px; margin-bottom:32px;">Both tiers end with you owning the asset outright. The difference is your entry deposit and how long your contract runs. Choose based on what you can put down upfront — nothing else.</p>
-      <div class="tier-strip-inner">
-        <div class="tier-card tier-a-card">
-          <div class="tier-pill">Tier A</div>
-          <h3>Higher Deposit. Shorter Contract.</h3>
-          <p>Pay more upfront, complete sooner, and pay slightly less overall. Best for clients who can commit a larger deposit from the start.</p>
-          <div class="tier-rows">
-            <div class="tier-row"><span class="tr-k">Entry deposit</span><span class="tr-v">Higher</span></div>
-            <div class="tier-row"><span class="tr-k">Weekly remittance</span><span class="tr-v">Higher</span></div>
-            <div class="tier-row"><span class="tr-k">Contract duration</span><span class="tr-v">Shorter</span></div>
-            <div class="tier-row"><span class="tr-k">Total contract value</span><span class="tr-v">Slightly lower</span></div>
-          </div>
-          <p class="tier-note">* Full figures per asset in the sections below.</p>
-        </div>
-        <div class="tier-card featured">
-          <div class="tier-pill">Tier B</div>
-          <h3>Lower Deposit. Longer Contract.</h3>
-          <p>Start with a lower upfront commitment. Your weekly remittance is smaller and your contract runs longer — paying slightly more overall.</p>
-          <div class="tier-rows">
-            <div class="tier-row"><span class="tr-k">Entry deposit</span><span class="tr-v">Lower</span></div>
-            <div class="tier-row"><span class="tr-k">Weekly remittance</span><span class="tr-v">Lower</span></div>
-            <div class="tier-row"><span class="tr-k">Contract duration</span><span class="tr-v">Longer</span></div>
-            <div class="tier-row"><span class="tr-k">Total contract value</span><span class="tr-v">Slightly higher</span></div>
-          </div>
-          <p class="tier-note">* Full figures per asset in the sections below.</p>
-        </div>
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobileNav">
+  <button class="close-btn" id="closeNav">
+    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+  <a href="index.html">Home</a>
+  <a href="about.html">About</a>
+  <a href="opportunities.html">Opportunities</a>
+  <a href="how-it-works.html">How It Works</a>
+  <div class="mobile-nav-ctas">
+    <a href="invest.html?tier=standard" class="mn-btn-primary">Start Your Investment</a>
+    <a href="contact.html" class="mn-btn-ghost">Become a Driver</a>
+  </div>
+</div>
+
+<!-- ═══ PAGE HERO ═══ -->
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div class="breadcrumb">
+      <a href="index.html">Home</a>
+      <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      <a href="opportunities.html">Opportunities</a>
+      <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      Standard Tier
+    </div>
+    <div class="tier-hero-badge">Tier 1 — Standard Investment</div>
+    <h1>Every asset.<br><span class="accent">Every figure.</span><br>No surprises.</h1>
+    <p class="hero-sub">The Standard Tier gives you full access to all five asset classes with complete pricing, plan structure, and entry requirements laid out clearly. What you see here is exactly what you sign for.</p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-val">5<span class="hs-accent"> assets</span></div>
+        <div class="hero-stat-label">Available classes</div>
+      </div>
+      <div class="hero-stat-div"></div>
+      <div class="hero-stat">
+        <div class="hero-stat-val"><span class="hs-accent">2</span> tiers</div>
+        <div class="hero-stat-label">A &amp; B per asset</div>
+      </div>
+      <div class="hero-stat-div"></div>
+      <div class="hero-stat">
+        <div class="hero-stat-val">Weekly<span class="hs-accent">.</span></div>
+        <div class="hero-stat-label">Remittance cycle</div>
+      </div>
+      <div class="hero-stat-div"></div>
+      <div class="hero-stat">
+        <div class="hero-stat-val">Full<span class="hs-accent"> ownership</span></div>
+        <div class="hero-stat-label">On final remittance</div>
       </div>
     </div>
   </div>
+</section>
 
-  <div class="assets-wrap">
+<!-- ═══ TIER EXPLAINER ═══ -->
+<section class="tier-explainer">
+  <div class="tier-explainer-inner">
+    <div class="tier-exp-card">
+      <div class="tier-exp-block">
+        <div class="teb-label">What is the Standard Tier?</div>
+        <div class="teb-value">Entry-level asset ownership</div>
+        <div class="teb-note">The Standard Tier is our accessible starting point — real asset ownership through a structured hire purchase plan. No guarantees beyond the contract. No opaque processes.</div>
+      </div>
+      <div class="tier-exp-block">
+        <div class="teb-label">Tier A vs Tier B</div>
+        <div class="teb-value">Same destination. Different path.</div>
+        <div class="teb-note">Both tiers end in full ownership. Tier A has a higher deposit and shorter contract. Tier B has a lower deposit and a longer run. You choose based on what you can put down upfront.</div>
+      </div>
+      <div class="tier-exp-block">
+        <div class="teb-label">What happens after?</div>
+        <div class="teb-value">Asset title transfers to you.</div>
+        <div class="teb-note">On your final weekly remittance, the asset becomes yours outright. No further obligations. Excess payments are credited and shorten your contract automatically.</div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <div class="asset-section" id="Electric_Mobility">
-      <div class="asset-grid">
-        <div class="asset-img">
-        <img src="images/wheelbarrowl.png" alt="Electric Bike" style="width:100%;height:100%;object-fit:cover;display:block;">
-           
+<!-- ═══ ASSET SECTIONS ═══ -->
+<section class="assets-section" id="assets">
+  <div class="assets-inner">
+    <div class="assets-head">
+      <div class="section-tag">Standard Tier — Asset Classes</div>
+      <h2 class="section-h2">Five assets. <span class="accent">Complete figures.</span></h2>
+      <p class="section-intro">Full plan data for every asset available under the Standard Tier. Select an asset to jump straight to its plan details.</p>
+      <div class="asset-jumps">
+        <a class="asset-jump" href="#wheelbarrow"><span class="asset-jump-dot"></span>Wheelbarrow</a>
+        <a class="asset-jump" href="#keke-napep"><span class="asset-jump-dot"></span>Keke Napep</a>
+        <a class="asset-jump" href="#keke-truck"><span class="asset-jump-dot"></span>Keke Truck</a>
+        <a class="asset-jump" href="#motorbike"><span class="asset-jump-dot"></span>Motorbike</a>
+        <a class="asset-jump" href="#automobile"><span class="asset-jump-dot"></span>Automobile</a>
+      </div>
+    </div>
+
+    <!-- ── 1. WHEELBARROW ── -->
+    <div class="asset-card" id="bike">
+      <div class="asset-card-inner">
+        <div class="asset-card-img">
+          <div class="asset-img-status status-active">● Currently Active</div>
+          <div class="asset-svg-wrap">
+            <svg width="200" height="140" viewBox="0 0 200 140" fill="none">
+              <!-- Wheelbarrow body -->
+              <path d="M30 60 L60 40 L150 40 L170 60 L160 95 L40 95 Z" fill="rgba(91,191,58,0.07)" stroke="rgba(91,191,58,0.35)" stroke-width="1.8"/>
+              <!-- Tray detail lines -->
+              <line x1="60" y1="40" x2="50" y2="95" stroke="rgba(91,191,58,0.15)" stroke-width="1"/>
+              <line x1="95" y1="40" x2="92" y2="95" stroke="rgba(91,191,58,0.12)" stroke-width="1"/>
+              <line x1="130" y1="40" x2="133" y2="95" stroke="rgba(91,191,58,0.12)" stroke-width="1"/>
+              <!-- Front support leg -->
+              <line x1="40" y1="95" x2="28" y2="120" stroke="rgba(91,191,58,0.4)" stroke-width="2.2" stroke-linecap="round"/>
+              <line x1="160" y1="95" x2="172" y2="120" stroke="rgba(91,191,58,0.4)" stroke-width="2.2" stroke-linecap="round"/>
+              <!-- Handles -->
+              <line x1="40" y1="70" x2="8" y2="50" stroke="rgba(91,191,58,0.45)" stroke-width="2.4" stroke-linecap="round"/>
+              <line x1="160" y1="70" x2="192" y2="50" stroke="rgba(91,191,58,0.45)" stroke-width="2.4" stroke-linecap="round"/>
+              <circle cx="8" cy="50" r="3.5" fill="rgba(91,191,58,0.4)"/>
+              <circle cx="192" cy="50" r="3.5" fill="rgba(91,191,58,0.4)"/>
+              <!-- Wheel -->
+              <circle cx="100" cy="118" r="20" fill="rgba(10,22,5,0.9)" stroke="rgba(91,191,58,0.4)" stroke-width="1.8"/>
+              <circle cx="100" cy="118" r="12" fill="none" stroke="rgba(91,191,58,0.2)" stroke-width="1.4"/>
+              <circle cx="100" cy="118" r="4" fill="rgba(91,191,58,0.5)"/>
+              <line x1="100" y1="98" x2="100" y2="107" stroke="rgba(91,191,58,0.3)" stroke-width="1.3"/>
+              <line x1="100" y1="129" x2="100" y2="138" stroke="rgba(91,191,58,0.3)" stroke-width="1.3"/>
+              <line x1="80" y1="118" x2="88" y2="118" stroke="rgba(91,191,58,0.3)" stroke-width="1.3"/>
+              <line x1="112" y1="118" x2="120" y2="118" stroke="rgba(91,191,58,0.3)" stroke-width="1.3"/>
+              <!-- Axle -->
+              <line x1="28" y1="120" x2="172" y2="120" stroke="rgba(91,191,58,0.25)" stroke-width="1.8"/>
+              <!-- Shadow -->
+              <ellipse cx="100" cy="136" rx="72" ry="3.5" fill="rgba(0,0,0,0.3)"/>
+            </svg>
+            <span class="asset-svg-label">Image placeholder — Wheelbarrow</span>
+          </div>
         </div>
-        <div class="asset-content">
-          <div class="asset-status status-request">● Available Upon Request</div>
-          <p class="who">Market traders · Delivery riders · Logistics operators · Small business owners · Urban transport workers</p>
-          <h2>Electric Bike</h2>
-          <p>
-          For approved logistics riders, delivery operators, and short-distance transport services. Ideal for daily commercial movement in markets, urban routes, and business operations requiring fast and reliable mobility. </p>
-
+        <div class="asset-card-body">
+          <div class="asset-who">For: Dispatch operators · Delivery riders · Urban logistics demand
+Motorbike (Dispatch Asset)</div>
+          <h2>Motorcycles</h2>
+          <p>The Motorbike Dispatch Asset is a high-frequency urban transport unit designed for last-mile delivery and intra-city logistics. It operates within Nigeria’s active courier and dispatch network, generating consistent daily revenue through structured deployment and managed operations.</p>
           <div class="pricing-grid">
-            <div class="pricing-card tier-a-card">
+            <div class="pricing-card tier-a">
               <div class="pricing-label">Tier A</div>
-              <div class="pricing-row"><span class="pk">Initial Deposit</span><span class="pv green">x</span></div>
-              <div class="pricing-row"><span class="pk">Total Contract</span><span class="pv">x</span></div>
-              <div class="pricing-row"><span class="pk">Weekly Remittance</span><span class="pv">x</span></div>
-              <div class="pricing-row"><span class="pk">Duration</span><span class="pv">x</span></div>
-              <div class="pricing-row"><span class="pk">ROI</span><span class="pv">X</span></div>
+              <div class="pricing-row"><span class="pk">Cost of Asset</span><span class="pv green">₦1,700,000</span></div>
+              <div class="pricing-row"><span class="pk">Service Fee</span><span class="pv">₦200,000</span></div>
+              <div class="pricing-row"><span class="pk">Management Fee</span><span class="pv">₦300,000</span></div>
+              <div class="pricing-row"><span class="pk">Total Investment</span><span class="pv green">₦2,200,000</span></div>
+              <div class="pricing-row"><span class="pk">Weekly Return</span><span class="pv">₦50,000</span></div>
+              <div class="pricing-row"><span class="pk">Duration</span><span class="pv">55 Weeks</span></div>
+              <div class="pricing-row"><span class="pk">ROI</span><span class="pv green">₦2,750,000</span></div>
             </div>
-            <div class="pricing-card tier-b-card">
+            <div class="pricing-card tier-b">
               <div class="pricing-label">Tier B</div>
-              <div class="pricing-row"><span class="pk">Initial Deposit</span><span class="pv green">x</span></div>
-              <div class="pricing-row"><span class="pk">Total Contract</span><span class="pv">x</span></div>
-              <div class="pricing-row"><span class="pk">Weekly Remittance</span><span class="pv">x</span></div>
-              <div class="pricing-row"><span class="pk">Duration</span><span class="pv">x</span></div>
-              <div class="pricing-row"><span class="pk">ROI</span><span class="pv">X</span></div>
+              <div class="pricing-row"><span class="pk">Capital Deployment</span><span class="pv green">₦1,500,000</span></div>
+              <div class="pricing-row"><span class="pk">Weekly Return</span><span class="pv">₦1,500</span></div>
+              <div class="pricing-row"><span class="pk">Duration</span><span class="pv">35 Weeks</span></div>
+              <div class="pricing-row"><span class="pk">Total Contract</span><span class="pv">₦67,500</span></div>
+              <div class="pricing-row"><span class="pk">ROI</span><span class="pv green">50%</span></div>
             </div>
           </div>
-
           <ul class="asset-features">
-            <li><span class="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Standard approval requirements apply</li>
-            <li><span class="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Durable, commercial-use electric bike</li>
-            <li><span class="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Fast approval process, same-day possible</li>
-            <li><span class="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Flexible payments reduce contract duration</li>
-            <li><span class="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Full ownership transfer upon completion of payments</li>
+            <li><span class="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>No collateral required</li>
+            <li><span class="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Heavy-duty construction grade</li>
+            <li><span class="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Same-day approval possible</li>
+            <li><span class="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Excess payments shorten contract automatically</li>
+            <li><span class="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Full ownership on final remittance</li>
           </ul>
           <div class="asset-actions">
-            <button class="btn-primary" onclick="window.location.href='quote.html'">
-              Get a Quote
+            <a class="btn-primary" href="invest.html?tier=standard&asset=wheelbarrow">
+              Apply for This Plan
               <svg viewBox="0 0 13 13" fill="none"><path d="M2 6.5h9M7 3l3.5 3.5L7 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <button class="btn-outline" onclick="window.location.href='contact.html'">Ask a Question</button>
+            </a>
+            <a class="btn-ghost" href="contact.html">Ask a Question</a>
           </div>
         </div>
       </div>
     </div>
 
-
-    <div class="asset-section" id="keke">
-      <div class="asset-grid reverse">
-        <div class="asset-img">
-        <img src="images/keke.png" alt="Keke Napep" style="width:100%;height:100%;object-fit:cover;display:block;">
-          
+    <!-- ── 2. KEKE NAPEP ── -->
+    <div class="asset-card reverse" id="keke-napep">
+      <div class="asset-card-inner">
+        <div class="asset-card-img">
+          <div class="asset-img-status status-request">Available on Request</div>
+          <div class="asset-svg-wrap">
+            <svg width="230" height="130" viewBox="0 0 230 130" fill="none">
+              <path d="M34 88 L34 76 Q36 65 50 61 L80 55 L168 55 L182 61 Q196 66 198 76 L198 88 Z" fill="rgba(91,191,58,0.07)" stroke="rgba(91,191,58,0.28)" stroke-width="1.6"/>
+              <path d="M78 55 Q80 37 116 36 Q152 36 154 55" fill="rgba(91,191,58,0.06)" stroke="rgba(91,191,58,0.20)" stroke-width="1.4"/>
+              <path d="M80 55 Q84 42 116 40 Q96 40 86 50 L80 55 Z" fill="rgba(91,191,58,0.09)" stroke="rgba(91,191,58,0.18)" stroke-width="1"/>
+              <path d="M116 40 Q148 40 152 50 L144 55 L116 55 Z" fill="rgba(91,191,58,0.07)" stroke="rgba(91,191,58,0.16)" stroke-width="1"/>
+              <line x1="78" y1="55" x2="78" y2="88" stroke="rgba(91,191,58,0.14)" stroke-width="1"/>
+              <line x1="154" y1="55" x2="154" y2="88" stroke="rgba(91,191,58,0.14)" stroke-width="1"/>
+              <rect x="88" y="60" width="66" height="26" rx="4" fill="rgba(91,191,58,0.04)" stroke="rgba(91,191,58,0.13)" stroke-width="1"/>
+              <rect x="96" y="68" width="14" height="12" rx="3" fill="rgba(91,191,58,0.07)" stroke="rgba(91,191,58,0.14)" stroke-width="0.8"/>
+              <rect x="116" y="68" width="14" height="12" rx="3" fill="rgba(91,191,58,0.07)" stroke="rgba(91,191,58,0.14)" stroke-width="0.8"/>
+              <rect x="136" y="68" width="10" height="12" rx="3" fill="rgba(91,191,58,0.07)" stroke="rgba(91,191,58,0.14)" stroke-width="0.8"/>
+              <rect x="48" y="58" width="26" height="20" rx="4" fill="rgba(91,191,58,0.07)" stroke="rgba(91,191,58,0.20)" stroke-width="1.1"/>
+              <path d="M54 58 Q62 49 70 58" stroke="rgba(91,191,58,0.28)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+              <ellipse cx="62" cy="80" rx="6" ry="4" fill="rgba(255,240,100,0.12)" stroke="rgba(255,240,100,0.38)" stroke-width="1"/>
+              <rect x="34" y="84" width="164" height="4" rx="0" fill="rgba(91,191,58,0.18)"/>
+              <text x="160" y="80" font-family="'Syne',sans-serif" font-size="7" font-weight="800" fill="rgba(91,191,58,0.28)" letter-spacing="1.5">KEKE</text>
+              <circle cx="62" cy="104" r="20" fill="rgba(10,22,5,0.9)" stroke="rgba(91,191,58,0.38)" stroke-width="1.8"/>
+              <circle cx="62" cy="104" r="12" fill="none" stroke="rgba(91,191,58,0.18)" stroke-width="1.4"/>
+              <circle cx="62" cy="104" r="4" fill="rgba(91,191,58,0.5)"/>
+              <line x1="62" y1="92" x2="62" y2="99" stroke="rgba(91,191,58,0.28)" stroke-width="1.3"/>
+              <line x1="62" y1="109" x2="62" y2="116" stroke="rgba(91,191,58,0.28)" stroke-width="1.3"/>
+              <line x1="50" y1="104" x2="57" y2="104" stroke="rgba(91,191,58,0.28)" stroke-width="1.3"/>
+              <line x1="67" y1="104" x2="74" y2="104" stroke="rgba(91,191,58,0.28)" stroke-width="1.3"/>
+              <circle cx="140" cy="104" r="20" fill="rgba(10,22,5,0.9)" stroke="rgba(91,191,58,0.38)" stroke-width="1.8"/>
+              <circle cx="140" cy="104" r="12" fill="none" stroke="rgba(91,191,58,0.18)" stroke-width="1.4"/>
+              <circle cx="140" cy="104" r="4" fill="rgba(91,191,58,0.5)"/>
+              <circle cx="184" cy="104" r="20" fill="rgba(10,22,5,0.9)" stroke="rgba(91,191,58,0.38)" stroke-width="1.8"/>
+              <circle cx="184" cy="104" r="12" fill="none" stroke="rgba(91,191,58,0.18)" stroke-width="1.4"/>
+              <circle cx="184" cy="104" r="4" fill="rgba(91,191,58,0.5)"/>
+              <line x1="130" y1="88" x2="194" y2="88" stroke="rgba(91,191,58,0.18)" stroke-width="1.8" stroke-linecap="round"/>
+              <ellipse cx="124" cy="126" rx="100" ry="4" fill="rgba(0,0,0,0.28)"/>
+            </svg>
+            <span class="asset-svg-label">Image placeholder — Keke Napep</span>
+          </div>
         </div>
-        <div class="asset-content">
-          <div class="asset-status status-request">Available on Request</div>
-          <p class="who">For: City route drivers · School run operators · Market commuters</p>
+        <div class="asset-card-body">
+          <div class="asset-who">For: City route drivers · School run operators · Market commuters</div>
           <h2>Keke Napep (Tricycle)</h2>
-          <p>One of Abuja's most consistent income-generating assets. Keke drivers across the FCT earn daily from school runs, market trips, and short commutes — high fare potential, low fuel consumption, and strong year-round demand. Sourced and deployed immediately upon confirmed deposit. GPS tracking fitted before delivery.</p>
-
+          <p>One of Nigeria's most consistent income-generating assets. High fare potential, low fuel consumption, and strong year-round demand from school runs, market trips, and short commutes. GPS tracking fitted before delivery. Sourced and deployed immediately upon confirmed deposit.</p>
           <div class="pricing-grid">
-            <div class="pricing-card tier-a-card">
+            <div class="pricing-card tier-a">
               <div class="pricing-label">Tier A</div>
               <div class="pricing-row"><span class="pk">Initial Deposit</span><span class="pv green">₦1,400,000</span></div>
-              <div class="pricing-row"><span class="pk">Total Contract</span><span class="pv">₦5,400,000</span></div>
               <div class="pricing-row"><span class="pk">Weekly Remittance</span><span class="pv">₦77,000</span></div>
-              <div class="pricing-row"><span class="pk">Duration</span><span class="pv">12 Months (52 Weeks)</span></div>
-              <div class="pricing-row"><span class="pk">ROI</span><span class="pv">35%</span></div>
+              <div class="pricing-row"><span class="pk">Duration</span><span class="pv">52 Weeks</span></div>
+              <div class="pricing-row"><span class="pk">Total Contract</span><span class="pv">₦5,400,000</span></div>
+              <div class="pricing-row"><span class="pk">ROI</span><span class="pv green">35%</span></div>
             </div>
-            <div class="pricing-card tier-b-card">
+            <div class="pricing-card tier-b">
               <div class="pricing-label">Tier B</div>
               <div class="pricing-row"><span class="pk">Initial Deposit</span><span class="pv green">₦1,000,000</span></div>
-              <div class="pricing-row"><span class="pk">Total Contract</span><span class="pv">₦5,600,000</span></div>
               <div class="pricing-row"><span class="pk">Weekly Remittance</span><span class="pv">₦60,500</span></div>
-              <div class="pricing-row"><span class="pk">Duration</span><span class="pv">18 Months (76 Weeks)</span></div>
-              <div class="pricing-row"><span class="pk">ROI</span><span class="pv">40%</span></div>
+              <div class="pricing-row"><span class="pk">Duration</span><span class="pv">76 Weeks</span></div>
+              <div class="pricing-row"><span class="pk">Total Contract</span><span class="pv">₦5,600,000</span></div>
+              <div class="pricing-row"><span class="pk">ROI</span><span class="pv green">40%</span></div>
             </div>
           </div>
-
           <ul class="asset-features">
             <li><span class="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>GPS tracking fitted on delivery</li>
             <li><span class="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Fuel-efficient engine</li>
@@ -186,47 +664,155 @@
             <li><span class="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Guarantor-backed contract</li>
           </ul>
           <div class="asset-actions">
-            <button class="btn-primary" onclick="window.location.href='quote.html'">
-              Get a Quote
+            <a class="btn-primary" href="invest.html?tier=standard&asset=keke">
+              Apply for This Plan
               <svg viewBox="0 0 13 13" fill="none"><path d="M2 6.5h9M7 3l3.5 3.5L7 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <button class="btn-outline" onclick="window.location.href='contact.html'">Ask a Question</button>
+            </a>
+            <a class="btn-ghost" href="contact.html">Ask a Question</a>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="asset-section" id="motorbike">
-      <div class="asset-grid">
-        <div class="asset-img">
-          <img src="images/bike.png" alt="Motorbike" style="width:100%;height:100%;object-fit:cover;display:block;"> -->
-        
+    <!-- ── 3. KEKE TRUCK ── -->
+    <div class="asset-card" id="keke-truck">
+      <div class="asset-card-inner">
+        <div class="asset-card-img">
+          <div class="asset-img-status status-request">Available on Request</div>
+          <div class="asset-svg-wrap">
+            <svg width="230" height="130" viewBox="0 0 230 130" fill="none">
+              <!-- Keke Truck — cargo variant with flatbed -->
+              <path d="M34 88 L34 76 Q36 65 50 61 L80 55 L168 55 L182 61 Q196 66 198 76 L198 88 Z" fill="rgba(91,191,58,0.07)" stroke="rgba(91,191,58,0.28)" stroke-width="1.6"/>
+              <!-- Cargo bed on top -->
+              <rect x="78" y="36" width="92" height="20" rx="3" fill="rgba(91,191,58,0.10)" stroke="rgba(91,191,58,0.30)" stroke-width="1.4"/>
+              <!-- Cargo slats -->
+              <line x1="100" y1="36" x2="100" y2="56" stroke="rgba(91,191,58,0.18)" stroke-width="1"/>
+              <line x1="120" y1="36" x2="120" y2="56" stroke="rgba(91,191,58,0.18)" stroke-width="1"/>
+              <line x1="140" y1="36" x2="140" y2="56" stroke="rgba(91,191,58,0.18)" stroke-width="1"/>
+              <line x1="160" y1="36" x2="160" y2="56" stroke="rgba(91,191,58,0.18)" stroke-width="1"/>
+              <!-- Cabin -->
+              <rect x="48" y="58" width="28" height="22" rx="4" fill="rgba(91,191,58,0.07)" stroke="rgba(91,191,58,0.20)" stroke-width="1.1"/>
+              <path d="M54 58 Q62 49 70 58" stroke="rgba(91,191,58,0.28)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+              <ellipse cx="62" cy="80" rx="6" ry="4" fill="rgba(255,240,100,0.12)" stroke="rgba(255,240,100,0.38)" stroke-width="1"/>
+              <text x="155" y="80" font-family="'Syne',sans-serif" font-size="7" font-weight="800" fill="rgba(91,191,58,0.28)" letter-spacing="1.5">CARGO</text>
+              <rect x="34" y="84" width="164" height="4" fill="rgba(91,191,58,0.18)"/>
+              <!-- Wheels -->
+              <circle cx="62" cy="104" r="20" fill="rgba(10,22,5,0.9)" stroke="rgba(91,191,58,0.38)" stroke-width="1.8"/>
+              <circle cx="62" cy="104" r="12" fill="none" stroke="rgba(91,191,58,0.18)" stroke-width="1.4"/>
+              <circle cx="62" cy="104" r="4" fill="rgba(91,191,58,0.5)"/>
+              <circle cx="140" cy="104" r="20" fill="rgba(10,22,5,0.9)" stroke="rgba(91,191,58,0.38)" stroke-width="1.8"/>
+              <circle cx="140" cy="104" r="12" fill="none" stroke="rgba(91,191,58,0.18)" stroke-width="1.4"/>
+              <circle cx="140" cy="104" r="4" fill="rgba(91,191,58,0.5)"/>
+              <circle cx="184" cy="104" r="20" fill="rgba(10,22,5,0.9)" stroke="rgba(91,191,58,0.38)" stroke-width="1.8"/>
+              <circle cx="184" cy="104" r="12" fill="none" stroke="rgba(91,191,58,0.18)" stroke-width="1.4"/>
+              <circle cx="184" cy="104" r="4" fill="rgba(91,191,58,0.5)"/>
+              <line x1="130" y1="88" x2="194" y2="88" stroke="rgba(91,191,58,0.18)" stroke-width="1.8" stroke-linecap="round"/>
+              <ellipse cx="124" cy="126" rx="100" ry="4" fill="rgba(0,0,0,0.28)"/>
+            </svg>
+            <span class="asset-svg-label">Image placeholder — Keke Truck</span>
+          </div>
         </div>
-        <div class="asset-content">
-          <div class="asset-status status-request">Available on Request</div>
-          <p class="who">For: Dispatch riders · Delivery operators · Independent logistics</p>
-          <h2>Motorbike</h2>
-          <p>If you are already earning from someone else's motorbike, this plan puts you on a path to owning yours. Built for dispatch riders, delivery platform operators, and anyone working in independent logistics. Fast, agile, and always in demand across Abuja. Sourced specifically for you upon confirmed deposit — GPS fitted before handover.</p>
-
+        <div class="asset-card-body">
+          <div class="asset-who">For: Goods movers · Market distributors · Small-scale logistics</div>
+          <h2>Keke Truck</h2>
+          <p>A cargo-adapted tricycle for goods movement and last-mile logistics. Suited for market traders, distributors, and logistics operators who need a compact, manoeuvrable load carrier. Same plan structure and pricing as the Keke Napep. GPS tracking fitted before delivery.</p>
           <div class="pricing-grid">
-            <div class="pricing-card tier-a-card">
+            <div class="pricing-card tier-a">
               <div class="pricing-label">Tier A</div>
-              <div class="pricing-row"><span class="pk">Initial Deposit</span><span class="pv green">₦520,000</span></div>
-              <div class="pricing-row"><span class="pk">Total Contract</span><span class="pv">₦1,820,000</span></div>
-              <div class="pricing-row"><span class="pk">Weekly Remittance</span><span class="pv">₦30,250</span></div>
-              <div class="pricing-row"><span class="pk">Duration</span><span class="pv">10 Months (43 Weeks)</span></div>
-              <div class="pricing-row"><span class="pk">ROI</span><span class="pv">40%</span></div>
+              <div class="pricing-row"><span class="pk">Initial Deposit</span><span class="pv green">₦1,400,000</span></div>
+              <div class="pricing-row"><span class="pk">Weekly Remittance</span><span class="pv">₦77,000</span></div>
+              <div class="pricing-row"><span class="pk">Duration</span><span class="pv">52 Weeks</span></div>
+              <div class="pricing-row"><span class="pk">Total Contract</span><span class="pv">₦5,400,000</span></div>
+              <div class="pricing-row"><span class="pk">ROI</span><span class="pv green">35%</span></div>
             </div>
-            <div class="pricing-card tier-b-card">
+            <div class="pricing-card tier-b">
               <div class="pricing-label">Tier B</div>
-              <div class="pricing-row"><span class="pk">Initial Deposit</span><span class="pv green">₦350,000</span></div>
-              <div class="pricing-row"><span class="pk">Total Contract</span><span class="pv">₦1,885,000</span></div>
-              <div class="pricing-row"><span class="pk">Weekly Remittance</span><span class="pv">₦25,600</span></div>
-              <div class="pricing-row"><span class="pk">Duration</span><span class="pv">14 Months (60 Weeks)</span></div>
-              <div class="pricing-row"><span class="pk">ROI</span><span class="pv">45%</span></div>
+              <div class="pricing-row"><span class="pk">Initial Deposit</span><span class="pv green">₦1,000,000</span></div>
+              <div class="pricing-row"><span class="pk">Weekly Remittance</span><span class="pv">₦60,500</span></div>
+              <div class="pricing-row"><span class="pk">Duration</span><span class="pv">76 Weeks</span></div>
+              <div class="pricing-row"><span class="pk">Total Contract</span><span class="pv">₦5,600,000</span></div>
+              <div class="pricing-row"><span class="pk">ROI</span><span class="pv green">40%</span></div>
             </div>
           </div>
+          <ul class="asset-features">
+            <li><span class="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>GPS tracking fitted on delivery</li>
+            <li><span class="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Cargo-grade load capacity</li>
+            <li><span class="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Roadworthy inspection before delivery</li>
+            <li><span class="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Asset insurance covered throughout plan</li>
+            <li><span class="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Guarantor-backed contract</li>
+          </ul>
+          <div class="asset-actions">
+            <a class="btn-primary" href="invest.html?tier=standard&asset=keke">
+              Apply for This Plan
+              <svg viewBox="0 0 13 13" fill="none"><path d="M2 6.5h9M7 3l3.5 3.5L7 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <a class="btn-ghost" href="contact.html">Ask a Question</a>
+          </div>
+        </div>
+      </div>
+    </div>
 
+    <!-- ── 4. MOTORBIKE ── -->
+    <div class="asset-card reverse" id="motorbike">
+      <div class="asset-card-inner">
+        <div class="asset-card-img">
+          <div class="asset-img-status status-request">Available on Request</div>
+          <div class="asset-svg-wrap">
+            <svg width="220" height="130" viewBox="0 0 220 130" fill="none">
+              <circle cx="42" cy="95" r="28" fill="rgba(10,22,5,0.9)" stroke="rgba(91,191,58,0.4)" stroke-width="1.8"/>
+              <circle cx="42" cy="95" r="17" fill="none" stroke="rgba(91,191,58,0.2)" stroke-width="1.4"/>
+              <circle cx="42" cy="95" r="5" fill="rgba(91,191,58,0.5)"/>
+              <line x1="42" y1="78" x2="42" y2="86" stroke="rgba(91,191,58,0.3)" stroke-width="1.3"/>
+              <line x1="42" y1="104" x2="42" y2="112" stroke="rgba(91,191,58,0.3)" stroke-width="1.3"/>
+              <line x1="25" y1="95" x2="33" y2="95" stroke="rgba(91,191,58,0.3)" stroke-width="1.3"/>
+              <line x1="51" y1="95" x2="59" y2="95" stroke="rgba(91,191,58,0.3)" stroke-width="1.3"/>
+              <line x1="30" y1="82" x2="36" y2="88" stroke="rgba(91,191,58,0.2)" stroke-width="1.1"/>
+              <line x1="48" y1="102" x2="54" y2="108" stroke="rgba(91,191,58,0.2)" stroke-width="1.1"/>
+              <line x1="30" y1="108" x2="36" y2="102" stroke="rgba(91,191,58,0.2)" stroke-width="1.1"/>
+              <line x1="48" y1="88" x2="54" y2="82" stroke="rgba(91,191,58,0.2)" stroke-width="1.1"/>
+              <path d="M42 95 L72 58 L118 54 L132 74" stroke="rgba(91,191,58,0.45)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+              <path d="M72 58 L88 95" stroke="rgba(91,191,58,0.22)" stroke-width="1.8" fill="none"/>
+              <path d="M118 54 L134 95" stroke="rgba(91,191,58,0.22)" stroke-width="1.8" fill="none"/>
+              <rect x="83" y="66" width="52" height="28" rx="6" fill="rgba(91,191,58,0.07)" stroke="rgba(91,191,58,0.28)" stroke-width="1.4"/>
+              <path d="M90 54 Q110 44 132 50 L132 66 L90 66 Z" fill="rgba(91,191,58,0.09)" stroke="rgba(91,191,58,0.28)" stroke-width="1.3"/>
+              <path d="M108 50 Q126 44 140 48 L140 56 Q126 52 108 58 Z" fill="rgba(91,191,58,0.14)" stroke="rgba(91,191,58,0.24)" stroke-width="1"/>
+              <line x1="152" y1="52" x2="166" y2="80" stroke="rgba(91,191,58,0.35)" stroke-width="2.2" stroke-linecap="round"/>
+              <path d="M146 46 Q152 42 158 46 L158 52 Q152 48 146 52 Z" fill="rgba(91,191,58,0.14)" stroke="rgba(91,191,58,0.3)" stroke-width="1"/>
+              <ellipse cx="164" cy="54" rx="4" ry="3" fill="rgba(255,240,100,0.2)" stroke="rgba(255,240,100,0.45)" stroke-width="1"/>
+              <circle cx="178" cy="95" r="28" fill="rgba(10,22,5,0.9)" stroke="rgba(91,191,58,0.4)" stroke-width="1.8"/>
+              <circle cx="178" cy="95" r="17" fill="none" stroke="rgba(91,191,58,0.2)" stroke-width="1.4"/>
+              <circle cx="178" cy="95" r="5" fill="rgba(91,191,58,0.5)"/>
+              <line x1="178" y1="78" x2="178" y2="86" stroke="rgba(91,191,58,0.3)" stroke-width="1.3"/>
+              <line x1="178" y1="104" x2="178" y2="112" stroke="rgba(91,191,58,0.3)" stroke-width="1.3"/>
+              <line x1="161" y1="95" x2="169" y2="95" stroke="rgba(91,191,58,0.3)" stroke-width="1.3"/>
+              <line x1="187" y1="95" x2="195" y2="95" stroke="rgba(91,191,58,0.3)" stroke-width="1.3"/>
+              <ellipse cx="110" cy="124" rx="80" ry="4" fill="rgba(0,0,0,0.3)"/>
+            </svg>
+            <span class="asset-svg-label">Image placeholder — Motorbike</span>
+          </div>
+        </div>
+        <div class="asset-card-body">
+          <div class="asset-who">For: Dispatch riders · Delivery operators · Independent logistics</div>
+          <h2>Motorbike</h2>
+          <p>If you are already earning from someone else's motorbike, this plan puts you on a path to owning yours. Built for dispatch riders, delivery platform operators, and independent logistics workers. Fast, agile, and always in demand across Nigeria. GPS fitted before handover.</p>
+          <div class="pricing-grid">
+            <div class="pricing-card tier-a">
+              <div class="pricing-label">Tier A</div>
+              <div class="pricing-row"><span class="pk">Initial Deposit</span><span class="pv green">₦520,000</span></div>
+              <div class="pricing-row"><span class="pk">Weekly Remittance</span><span class="pv">₦30,250</span></div>
+              <div class="pricing-row"><span class="pk">Duration</span><span class="pv">43 Weeks</span></div>
+              <div class="pricing-row"><span class="pk">Total Contract</span><span class="pv">₦1,820,000</span></div>
+              <div class="pricing-row"><span class="pk">ROI</span><span class="pv green">40%</span></div>
+            </div>
+            <div class="pricing-card tier-b">
+              <div class="pricing-label">Tier B</div>
+              <div class="pricing-row"><span class="pk">Initial Deposit</span><span class="pv green">₦350,000</span></div>
+              <div class="pricing-row"><span class="pk">Weekly Remittance</span><span class="pv">₦25,600</span></div>
+              <div class="pricing-row"><span class="pk">Duration</span><span class="pv">60 Weeks</span></div>
+              <div class="pricing-row"><span class="pk">Total Contract</span><span class="pv">₦1,885,000</span></div>
+              <div class="pricing-row"><span class="pk">ROI</span><span class="pv green">45%</span></div>
+            </div>
+          </div>
           <ul class="asset-features">
             <li><span class="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>GPS tracking and remote immobilization fitted</li>
             <li><span class="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Low fuel consumption</li>
@@ -235,50 +821,73 @@
             <li><span class="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Guarantor-backed contract</li>
           </ul>
           <div class="asset-actions">
-            <button class="btn-primary" onclick="window.location.href='quote.html'">
-              Get a Quote
+            <a class="btn-primary" href="invest.html?tier=standard&asset=bike">
+              Apply for This Plan
               <svg viewBox="0 0 13 13" fill="none"><path d="M2 6.5h9M7 3l3.5 3.5L7 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <button class="btn-outline" onclick="window.location.href='contact.html'">Ask a Question</button>
+            </a>
+            <a class="btn-ghost" href="contact.html">Ask a Question</a>
           </div>
         </div>
       </div>
     </div>
-    <div class="asset-section" id="automobile">
-      <div class="asset-grid reverse">
-        <div class="asset-img">
-          <img src="images/car.png" alt="Automobile" style="width:100%;height:100%;object-fit:cover;display:block;"> -->
-          
-        </div>
-        <div class="asset-content">
-          <div class="asset-status status-request">Available on Request</div>
-          <p class="who">For: Bolt &amp; InDrive drivers · Private hire · Commercial taxi operators</p>
-          <h2>Automobile</h2>
-          <p>Our highest-tier asset — built for experienced, professional drivers who are ready to operate independently on ride-hailing platforms or as private hire. Owning your car means every fare goes directly to you, with no daily remittance to a vehicle owner. Each automobile is individually sourced based on mechanical condition, fully serviced, and GPS-fitted before delivery. Contract value varies by model — confirmed at point of agreement.</p>
 
+    <!-- ── 5. AUTOMOBILE ── -->
+    <div class="asset-card" id="automobile">
+      <div class="asset-card-inner">
+        <div class="asset-card-img">
+          <div class="asset-img-status status-request">Available on Request</div>
+          <div class="asset-svg-wrap">
+            <svg width="230" height="130" viewBox="0 0 230 130" fill="none">
+              <path d="M22 90 L22 75 Q24 62 40 57 L68 50 Q90 40 115 40 Q140 40 162 50 L190 57 Q206 62 208 75 L208 90 Z" fill="rgba(91,191,58,0.07)" stroke="rgba(91,191,58,0.30)" stroke-width="1.6"/>
+              <path d="M66 57 Q84 34 115 33 Q146 33 164 57" fill="rgba(91,191,58,0.05)" stroke="rgba(91,191,58,0.20)" stroke-width="1.4"/>
+              <path d="M68 55 Q82 40 100 40 L100 57 Z" fill="rgba(91,191,58,0.07)" stroke="rgba(91,191,58,0.16)" stroke-width="1"/>
+              <rect x="103" y="40" width="24" height="17" rx="2" fill="rgba(91,191,58,0.07)" stroke="rgba(91,191,58,0.16)" stroke-width="1"/>
+              <path d="M129 40 L152 40 Q162 47 162 55 L129 57 Z" fill="rgba(91,191,58,0.07)" stroke="rgba(91,191,58,0.16)" stroke-width="1"/>
+              <path d="M24 72 L38 68 L42 78 L24 80 Z" fill="rgba(255,240,100,0.12)" stroke="rgba(255,240,100,0.38)" stroke-width="1"/>
+              <path d="M206 70 L192 66 L190 80 L206 80 Z" fill="rgba(255,60,60,0.16)" stroke="rgba(255,80,80,0.38)" stroke-width="1"/>
+              <line x1="100" y1="57" x2="100" y2="90" stroke="rgba(91,191,58,0.12)" stroke-width="1"/>
+              <line x1="130" y1="57" x2="130" y2="90" stroke="rgba(91,191,58,0.12)" stroke-width="1"/>
+              <rect x="84" y="75" width="12" height="4" rx="2" fill="rgba(91,191,58,0.18)" stroke="rgba(91,191,58,0.24)" stroke-width="0.7"/>
+              <rect x="134" y="75" width="12" height="4" rx="2" fill="rgba(91,191,58,0.18)" stroke="rgba(91,191,58,0.24)" stroke-width="0.7"/>
+              <text x="100" y="86" font-family="'Syne',sans-serif" font-size="8" font-weight="800" fill="rgba(91,191,58,0.28)" letter-spacing="2">ENIGMA</text>
+              <circle cx="60" cy="100" r="22" fill="rgba(10,22,5,0.9)" stroke="rgba(91,191,58,0.38)" stroke-width="1.8"/>
+              <circle cx="60" cy="100" r="13" fill="none" stroke="rgba(91,191,58,0.18)" stroke-width="1.4"/>
+              <circle cx="60" cy="100" r="4" fill="rgba(91,191,58,0.5)"/>
+              <line x1="60" y1="87" x2="60" y2="95" stroke="rgba(91,191,58,0.28)" stroke-width="1.3"/>
+              <line x1="60" y1="105" x2="60" y2="113" stroke="rgba(91,191,58,0.28)" stroke-width="1.3"/>
+              <circle cx="170" cy="100" r="22" fill="rgba(10,22,5,0.9)" stroke="rgba(91,191,58,0.38)" stroke-width="1.8"/>
+              <circle cx="170" cy="100" r="13" fill="none" stroke="rgba(91,191,58,0.18)" stroke-width="1.4"/>
+              <circle cx="170" cy="100" r="4" fill="rgba(91,191,58,0.5)"/>
+              <line x1="170" y1="87" x2="170" y2="95" stroke="rgba(91,191,58,0.28)" stroke-width="1.3"/>
+              <line x1="170" y1="105" x2="170" y2="113" stroke="rgba(91,191,58,0.28)" stroke-width="1.3"/>
+              <ellipse cx="115" cy="126" rx="92" ry="4" fill="rgba(0,0,0,0.3)"/>
+            </svg>
+            <span class="asset-svg-label">Image placeholder — Automobile</span>
+          </div>
+        </div>
+        <div class="asset-card-body">
+          <div class="asset-who">For: Bolt &amp; InDrive drivers · Private hire · Commercial taxi operators</div>
+          <h2>Used Automobile</h2>
+          <p>Our highest-tier asset — for experienced, professional drivers ready to operate independently on ride-hailing platforms or as private hire. Every fare goes directly to you. Each vehicle is individually sourced, fully serviced, and GPS-fitted before delivery. Contract value varies by model and is confirmed at point of agreement.</p>
           <div class="pricing-grid">
-            <div class="pricing-card tier-a-card">
+            <div class="pricing-card tier-a">
               <div class="pricing-label">Tier A</div>
               <div class="pricing-row"><span class="pk">Initial Deposit</span><span class="pv green">₦2,000,000</span></div>
-              <div class="pricing-row"><span class="pk">Total Contract</span><span class="pv">₦8,800,000</span></div>
               <div class="pricing-row"><span class="pk">Weekly Remittance</span><span class="pv">₦113,500</span></div>
-              <div class="pricing-row"><span class="pk">Duration</span><span class="pv">14 Months (60 Weeks)</span></div>
-              <div class="pricing-row"><span class="pk">ROI</span><span class="pv">25.7%</span></div>
+              <div class="pricing-row"><span class="pk">Duration</span><span class="pv">60 Weeks</span></div>
+              <div class="pricing-row"><span class="pk">Total Contract</span><span class="pv">₦8,800,000</span></div>
+              <div class="pricing-row"><span class="pk">ROI</span><span class="pv green">25.7%</span></div>
             </div>
-            <div class="pricing-card tier-b-card">
+            <div class="pricing-card tier-b">
               <div class="pricing-label">Tier B</div>
               <div class="pricing-row"><span class="pk">Initial Deposit</span><span class="pv green">₦1,500,000</span></div>
-              <div class="pricing-row"><span class="pk">Total Contract</span><span class="pv">₦9,100,000</span></div>
               <div class="pricing-row"><span class="pk">Weekly Remittance</span><span class="pv">₦97,500</span></div>
-              <div class="pricing-row"><span class="pk">Duration</span><span class="pv">18 Months (78 Weeks)</span></div>
-              <div class="pricing-row"><span class="pk">ROI</span><span class="pv">30%</span></div>
+              <div class="pricing-row"><span class="pk">Duration</span><span class="pv">78 Weeks</span></div>
+              <div class="pricing-row"><span class="pk">Total Contract</span><span class="pv">₦9,100,000</span></div>
+              <div class="pricing-row"><span class="pk">ROI</span><span class="pv green">30%</span></div>
             </div>
           </div>
-
-          <p style="font-size:12.5px; color:var(--muted); font-style:italic; margin-bottom:20px; line-height:1.6;">
-            * Contract value is based on a ₦7,000,000 purchase price. Final figures are confirmed at point of agreement depending on the specific vehicle sourced.
-          </p>
-
+          <p style="font-size:11.5px;color:var(--muted);font-style:italic;margin-bottom:18px;line-height:1.6;">* Based on a ₦7,000,000 purchase price. Final figures confirmed at point of agreement depending on the vehicle sourced.</p>
           <ul class="asset-features">
             <li><span class="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>GPS tracking and remote immobilization fitted</li>
             <li><span class="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Full mechanical service before delivery</li>
@@ -287,131 +896,301 @@
             <li><span class="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Guarantor-backed contract with Deed of Indemnity</li>
           </ul>
           <div class="asset-actions">
-            <button class="btn-primary" onclick="window.location.href='quote.html'">
-              Get a Quote
+            <a class="btn-primary" href="invest.html?tier=standard&asset=car">
+              Apply for This Plan
               <svg viewBox="0 0 13 13" fill="none"><path d="M2 6.5h9M7 3l3.5 3.5L7 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <button class="btn-outline" onclick="window.location.href='contact.html'">Ask a Question</button>
-          </div>
-        </div>
-      </div>
-    </div>
-<div class="asset-section" id="keke-truck">
-      <div class="asset-grid">
-        <div class="asset-img">
-          <img src="images/keke-truck.jpg" alt="Keke Truck" style="width:100%;height:100%;object-fit:cover;display:block;">
-          
-        </div>
-        <div class="asset-content">
-          <div class="asset-status status-request">Available on Request</div>
-          <p class="who">For: Goods haulage &middot; Market logistics &middot; Construction supply</p>
-          <h2>Keke Truck (Cargo Tricycle)</h2>
-          <p>The cargo-variant of the tricycle — built for moving goods, produce, and materials rather than passengers. Widely used across Abuja's markets, construction sites, and logistics operations. If you work in goods delivery or haulage, this plan puts you on a path to owning the vehicle that drives your income. GPS-fitted before delivery, sourced and deployed upon confirmed deposit.</p>
-          <div class="pricing-grid">
-            <div class="pricing-card tier-a-card">
-              <div class="pricing-label">Tier A</div>
-              <div class="pricing-row"><span class="pk">Initial Deposit</span><span class="pv green">&#8358;1,400,000</span></div>
-              <div class="pricing-row"><span class="pk">Total Contract</span><span class="pv">&#8358;5,400,000</span></div>
-              <div class="pricing-row"><span class="pk">Weekly Remittance</span><span class="pv">&#8358;77,000</span></div>
-              <div class="pricing-row"><span class="pk">Duration</span><span class="pv">12 Months (52 Weeks)</span></div>
-              <div class="pricing-row"><span class="pk">ROI</span><span class="pv">35%</span></div>
-            </div>
-            <div class="pricing-card tier-b-card">
-              <div class="pricing-label">Tier B</div>
-              <div class="pricing-row"><span class="pk">Initial Deposit</span><span class="pv green">&#8358;1,000,000</span></div>
-              <div class="pricing-row"><span class="pk">Total Contract</span><span class="pv">&#8358;5,600,000</span></div>
-              <div class="pricing-row"><span class="pk">Weekly Remittance</span><span class="pv">&#8358;60,500</span></div>
-              <div class="pricing-row"><span class="pk">Duration</span><span class="pv">18 Months (76 Weeks)</span></div>
-              <div class="pricing-row"><span class="pk">ROI</span><span class="pv">40%</span></div>
-            </div>
-          </div>
-          <ul class="asset-features">
-            <li><span class="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>GPS tracking fitted on delivery</li>
-            <li><span class="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>High cargo capacity for goods and produce</li>
-            <li><span class="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Roadworthy inspection before delivery</li>
-            <li><span class="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Asset insurance covered throughout plan</li>
-            <li><span class="feat-check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Guarantor-backed contract</li>
-          </ul>
-          <div class="asset-actions">
-            <button class="btn-primary" onclick="window.location.href='quote.html'">
-              Get a Quote
-              <svg viewBox="0 0 13 13" fill="none"><path d="M2 6.5h9M7 3l3.5 3.5L7 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <button class="btn-outline" onclick="window.location.href='contact.html'">Ask a Question</button>
+            </a>
+            <a class="btn-ghost" href="contact.html">Ask a Question</a>
           </div>
         </div>
       </div>
     </div>
 
   </div>
-  
-  <!-- /assets-wrap -->
+</section>
 
-  <!-- CTA -->
-  <section class="cta-banner">
-    <h2>Found a plan that fits?</h2>
-    <p>Request a quote and we'll confirm availability, walk you through the plan, and give you a clear next step — no pressure.</p>
-    <div class="cta-btns">
-      <button class="btn-white" onclick="window.location.href='quote.html'">Get a Quote →</button>
-      <button class="btn-outline-white" onclick="window.location.href='contact.html'">Speak to the Team</button>
+<!-- ═══ COMPARISON TABLE ═══ -->
+<section class="comparison-section" id="comparison">
+  <div class="comparison-inner">
+    <div class="comparison-head">
+      <div class="section-tag">Side-by-Side</div>
+      <h2 class="section-h2">All assets. <span class="accent">All figures.</span></h2>
+      <p class="section-intro">Every deposit, every weekly remittance, and every contract value — all five assets compared across Tier A and Tier B in one place.</p>
     </div>
-  </section>
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Asset</th>
+          <th class="col-a">Tier A — Initial Deposit</th>
+          <th class="col-a">Tier A — Weekly</th>
+          <th class="col-a">Tier A — Duration</th>
+          <th class="col-b">Tier B — Initial Deposit</th>
+          <th class="col-b">Tier B — Weekly</th>
+          <th class="col-b">Tier B — Duration</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="comparison-asset-row">
+          <td>Wheelbarrow</td>
+          <td class="col-a">₦20,000</td>
+          <td class="col-a">₦2,050</td>
+          <td class="col-a">22 weeks</td>
+          <td class="col-b">₦15,000</td>
+          <td class="col-b">₦1,500</td>
+          <td class="col-b">35 weeks</td>
+        </tr>
+        <tr class="comparison-asset-row">
+          <td>Keke Napep</td>
+          <td class="col-a">₦1,400,000</td>
+          <td class="col-a">₦77,000</td>
+          <td class="col-a">52 weeks</td>
+          <td class="col-b">₦1,000,000</td>
+          <td class="col-b">₦60,500</td>
+          <td class="col-b">76 weeks</td>
+        </tr>
+        <tr class="comparison-asset-row">
+          <td>Keke Truck</td>
+          <td class="col-a">₦1,400,000</td>
+          <td class="col-a">₦77,000</td>
+          <td class="col-a">52 weeks</td>
+          <td class="col-b">₦1,000,000</td>
+          <td class="col-b">₦60,500</td>
+          <td class="col-b">76 weeks</td>
+        </tr>
+        <tr class="comparison-asset-row">
+          <td>Motorbike</td>
+          <td class="col-a">₦520,000</td>
+          <td class="col-a">₦30,250</td>
+          <td class="col-a">43 weeks</td>
+          <td class="col-b">₦350,000</td>
+          <td class="col-b">₦25,600</td>
+          <td class="col-b">60 weeks</td>
+        </tr>
+        <tr class="comparison-asset-row">
+          <td>Used Automobile</td>
+          <td class="col-a">₦2,000,000</td>
+          <td class="col-a">₦113,500</td>
+          <td class="col-a">60 weeks</td>
+          <td class="col-b">₦1,500,000</td>
+          <td class="col-b">₦97,500</td>
+          <td class="col-b">78 weeks</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
 
-  <!-- Footer -->
+<!-- ═══ HOW IT WORKS ═══ -->
+<section class="hiw-section" id="how-it-works">
+  <div class="hiw-inner">
+    <div>
+      <div class="section-tag">The Process</div>
+      <h2 class="section-h2">From deposit<br><span class="accent">to ownership.</span></h2>
+      <p class="section-intro" style="margin-bottom:36px;">A clear, four-step path from your first enquiry to your first remittance — and eventually full ownership.</p>
+      <div class="hiw-steps">
+        <div class="hiw-step">
+          <div class="hiw-step-num">1</div>
+          <div class="hiw-step-body">
+            <h4>Choose Your Asset &amp; Tier</h4>
+            <p>Pick the asset class that matches your work, and select Tier A or Tier B based on your deposit capacity. Both end in full ownership.</p>
+          </div>
+        </div>
+        <div class="hiw-step">
+          <div class="hiw-step-num">2</div>
+          <div class="hiw-step-body">
+            <h4>Submit Your Request</h4>
+            <p>Fill in the investment request form. Our team will contact you within 1–2 business days to verify eligibility and arrange the guarantor process.</p>
+          </div>
+        </div>
+        <div class="hiw-step">
+          <div class="hiw-step-num">3</div>
+          <div class="hiw-step-body">
+            <h4>Sign the Agreement &amp; Pay Deposit</h4>
+            <p>A formal written hire purchase agreement is issued and signed by both parties. Only after signing and receiving your deposit is the asset sourced and deployed.</p>
+          </div>
+        </div>
+        <div class="hiw-step">
+          <div class="hiw-step-num">4</div>
+          <div class="hiw-step-body">
+            <h4>Earn, Remit, Own</h4>
+            <p>The asset is handed over and you begin operations. Weekly remittances reduce your outstanding balance until final payment — when ownership transfers to you completely.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hiw-visual">
+      <div class="hiw-img-frame">
+        <div class="hiw-img-content">
+          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="rgba(91,191,58,0.4)" stroke-width="1.5">
+            <rect x="8" y="8" width="48" height="48" rx="8"/>
+            <circle cx="32" cy="32" r="12"/>
+            <line x1="32" y1="8" x2="32" y2="20"/>
+            <line x1="32" y1="44" x2="32" y2="56"/>
+            <line x1="8" y1="32" x2="20" y2="32"/>
+            <line x1="44" y1="32" x2="56" y2="32"/>
+          </svg>
+          <span>Image placeholder — Operations</span>
+        </div>
+      </div>
+      <div class="hiw-overlay">
+        <div class="hiw-ov-label">Ownership Timeline</div>
+        <div class="hiw-ov-val">5–18<span style="font-size:1rem;"> mo</span></div>
+        <div class="hiw-ov-sub">Depending on asset &amp; tier</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ PROTECTIONS ═══ -->
+<section class="protections" id="protections">
+  <div class="protections-inner">
+    <div class="protections-head" style="text-align:center;">
+      <div class="section-tag" style="justify-content:center;">Built-In Structure</div>
+      <h2 class="section-h2" style="text-align:center;">Every plan includes <span class="accent">these standards.</span></h2>
+      <p class="section-intro" style="text-align:center;margin:12px auto 0;">Not optional. Built into every Standard Tier agreement from day one.</p>
+    </div>
+    <div class="protections-grid" style="margin-top:48px;">
+      <div class="protection-card">
+        <div class="protection-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="7" y1="9" x2="17" y2="9"/><line x1="7" y1="13" x2="17" y2="13"/><line x1="7" y1="17" x2="12" y2="17"/></svg>
+        </div>
+        <h4>Formal Written Agreement</h4>
+        <p>Every plan is governed by a signed hire purchase contract covering the full schedule, deposit, remittance amounts, and ownership transfer. No verbal arrangements.</p>
+      </div>
+      <div class="protection-card">
+        <div class="protection-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5.22 5.22l2.12 2.12M16.66 16.66l2.12 2.12M5.22 18.78l2.12-2.12M16.66 7.34l2.12-2.12"/></svg>
+        </div>
+        <h4>GPS Tracking on All Assets</h4>
+        <p>Every vehicle is GPS-fitted before delivery. Bikes and cars include remote immobilization. Asset location is monitored continuously throughout the plan period.</p>
+      </div>
+      <div class="protection-card">
+        <div class="protection-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+        </div>
+        <h4>Guarantor-Backed Contract</h4>
+        <p>All hire purchase agreements above the Wheelbarrow tier require a guarantor. The guarantor is named in the agreement and is jointly responsible for the contract obligations.</p>
+      </div>
+      <div class="protection-card">
+        <div class="protection-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M12 2l9 4.5V11c0 5-3.5 9-9 11C6 20 3 16 3 11V6.5L12 2z"/><polyline points="9 12 11 14 15 10"/></svg>
+        </div>
+        <h4>Roadworthy Inspection</h4>
+        <p>All vehicles pass a roadworthy inspection before delivery. Keke, motorbike, and automobile assets are verified for mechanical soundness and safe operation prior to handover.</p>
+      </div>
+      <div class="protection-card">
+        <div class="protection-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>
+        </div>
+        <h4>Asset Insurance Included</h4>
+        <p>Insurance is maintained on the asset throughout the plan period for Keke, motorbike, and automobile tiers. Cover is included as part of the plan — not an optional add-on.</p>
+      </div>
+      <div class="protection-card">
+        <div class="protection-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 010 1.17 2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>
+        </div>
+        <h4>Direct Team Access</h4>
+        <p>Every plan comes with direct access to the Enigma team by phone and email. For automobile plans, a dedicated account officer is assigned to you for the contract duration.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA BANNER ═══ -->
+<section class="cta-banner">
+  <h2>Found your plan?</h2>
+  <p>Submit a request and our team will confirm availability, walk you through the next steps, and issue your agreement — no pressure, no obligation at this stage.</p>
+  <div class="cta-btns">
+    <a class="btn-white" href="invest.html?tier=standard">Apply for Standard Tier →</a>
+    <a class="btn-outline-white" href="contact.html">Speak to the Team</a>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
 <footer>
   <div class="footer-grid">
-    <div class="footer-brand">
-      <div class="footer-logo-wrap">
-        <img src="images/transport_logo.png" alt="Enigma Transport Services">
-      </div>
-      <p class="footer-tagline">A structured hire purchase platform helping transport workers in Abuja own their assets. Founded 2026.</p>
+    <div>
+      <div class="footer-logo-text">Enigma<span>.</span></div>
+      <p class="footer-tagline">A structured hire purchase platform helping transport workers in Nigeria own their assets. Founded 2026.</p>
       <div class="footer-contact-block">
         <div class="footer-contact-item">
-          <svg class="footer-contact-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 10.67v2a1.33 1.33 0 01-1.45 1.33 13.19 13.19 0 01-5.75-2.05 13 13 0 01-4-4A13.19 13.19 0 01.75 2.45 1.33 1.33 0 012.07 1h2a1.33 1.33 0 011.33 1.14 8.56 8.56 0 00.47 1.88 1.33 1.33 0 01-.3 1.41L4.59 6.4a10.67 10.67 0 004 4l.97-.97a1.33 1.33 0 011.41-.3 8.56 8.56 0 001.88.47A1.33 1.33 0 0114 10.67z"/></svg>
-          <a href="tel:+2348000000000">+234 800 000 0000</a>
+          <svg class="footer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 010 1.17 2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>
+          <a href="tel:+2348000000000">+234 (0) 800 000 0000</a>
         </div>
         <div class="footer-contact-item">
-          <svg class="footer-contact-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="14" height="10" rx="1.5"/><path d="M1 3l7 5.5L15 3"/></svg>
-          <a href="mailto:info@enigmatransport.com">info@enigmatransport.com</a>
+          <svg class="footer-contact-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="1" y="3" width="14" height="10" rx="1.5"/><path d="M1 3l7 5.5L15 3"/></svg>
+          <a href="mailto:invest@enigmatransport.com">invest@enigmatransport.com</a>
         </div>
         <div class="footer-contact-item">
-          <svg class="footer-contact-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 1.5A4.5 4.5 0 0112.5 6c0 3.5-4.5 8.5-4.5 8.5S3.5 9.5 3.5 6A4.5 4.5 0 018 1.5z"/><circle cx="8" cy="6" r="1.5"/></svg>
-          <span>8A Thaba Tseka Street, Wuse 2, Abuja</span>
+          <svg class="footer-contact-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><path d="M8 1.5A4.5 4.5 0 0112.5 6c0 3.5-4.5 8.5-4.5 8.5S3.5 9.5 3.5 6A4.5 4.5 0 018 1.5z"/><circle cx="8" cy="6" r="1.5"/></svg>
+          <span>Abuja, FCT, Nigeria</span>
         </div>
       </div>
+    </div>
+    <div class="footer-col">
+      <h5>Asset Plans</h5>
+      <a href="#wheelbarrow">Wheelbarrow</a>
+      <a href="#keke-napep">Keke Napep</a>
+      <a href="#keke-truck">Keke Truck</a>
+      <a href="#motorbike">Motorbike</a>
+      <a href="#automobile">Automobile</a>
     </div>
     <div class="footer-col">
       <h5>Company</h5>
       <a href="index.html">Home</a>
       <a href="about.html">About Us</a>
-      <a href="services.html">Services</a>
+      <a href="opportunities.html">Opportunities</a>
       <a href="contact.html">Contact</a>
-    </div>
-    <div class="footer-col">
-      <h5>Ownership Plans</h5>
-      <a href="plans.html#Electric_Mobility">Electric Mobility</a>
-      <a href="plans.html#keke">Keke Napep</a>
-      <a href="plans.html#keke-truck">Keke Truck</a>
-      <a href="plans.html#motorbike">Motorbike</a>
-      <a href="plans.html#automobile">Automobile</a>
-      <a href="plans.html#tiers">Tier A vs Tier B</a>
     </div>
     <div class="footer-col">
       <h5>Legal</h5>
       <a href="terms.html">Terms &amp; Conditions</a>
       <a href="privacy.html">Privacy Policy</a>
-      <a href="quote.html">Get a Quote</a>
+      <a href="risk.html">Risk Disclosure</a>
+      <a href="invest.html">Request a Brief</a>
     </div>
   </div>
   <div class="footer-bottom">
     <span>&copy; 2026 Enigma Transport Services. All rights reserved.</span>
     <span>
-      <a href="terms.html">Terms &amp; Conditions</a>
+      <a href="terms.html">Terms</a>
       <span class="footer-dot">&middot;</span>
-      <a href="privacy.html">Privacy Policy</a>
+      <a href="privacy.html">Privacy</a>
+      <span class="footer-dot">&middot;</span>
+      <a href="risk.html">Risk Disclosure</a>
     </span>
+  </div>
+  <div class="disclaimer-strip">
+    All figures shown are as at the time of publication and may be updated. Asset ownership is subject to a formal hire purchase agreement. Full terms disclosed at point of agreement. This page does not constitute financial advice.
   </div>
 </footer>
 
+<script>
+  // Mobile nav
+  const menuToggle = document.getElementById('menuToggle');
+  const mobileNav  = document.getElementById('mobileNav');
+  const closeNav   = document.getElementById('closeNav');
+  if (menuToggle) menuToggle.addEventListener('click', () => mobileNav.classList.add('open'));
+  if (closeNav)   closeNav.addEventListener('click',   () => mobileNav.classList.remove('open'));
+
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.asset-card, .protection-card, .hiw-step, .tier-exp-card');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+
+  revealEls.forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = `opacity 0.55s ${(i % 4) * 0.08}s ease, transform 0.55s ${(i % 4) * 0.08}s ease`;
+    io.observe(el);
+  });
+</script>
 </body>
 </html>

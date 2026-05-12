@@ -115,37 +115,97 @@ body { font-family: var(--font-body); background: var(--surface); color: var(--i
 }
 .menu-toggle span { display: block; width: 22px; height: 2px; background: var(--ink); border-radius: 2px; }
 
+
+
 /* ── Mobile Nav ── */
 .mobile-nav {
-  display: none; position: fixed; inset: 0;
-  background: var(--ink); z-index: 200;
-  flex-direction: column; padding: 80px 40px 40px;
-  animation: fadeIn 0.22s ease;
+  display: none;
+  position: fixed; 
+  /* Using 0 ensures it snaps to the edges of the viewport exactly */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  
+  background: var(--ink); 
+  z-index: 200;
+  flex-direction: column; 
+  /* Adjusted padding: 80px top to clear the 'X' button better */
+  padding: 80px 40px 40px; 
+  animation: fadeIn 0.25s ease;
+  
+  /* Critical: prevents horizontal scrolling within the menu */
+  overflow-x: hidden;
+  overflow-y: auto;
 }
-.mobile-nav.open { display: flex; }
+
+.mobile-nav.open { 
+  display: flex; 
+}
+
 .mobile-nav a {
-  font-family: var(--font-head); font-size: 1rem; font-weight: 600;
-  color: rgba(255,255,255,0.7); text-decoration: none;
-  padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.06); transition: color 0.2s;
+  font-family: var(--font-head); 
+  /* Reduced font size slightly so long words don't overflow */
+  font-size: 1rem; 
+  font-weight: 600;
+  color: rgba(255,255,255,0.7); 
+  text-decoration: none; 
+  /* Reduced vertical padding to fit more items on small screens */
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  transition: color 0.2s;
+  
+  /* Helps with the wide font style */
+  letter-spacing: -0.02em;
+  line-height: 1.1;
 }
-.mobile-nav a:hover { color: var(--green); }
+
+.mobile-nav a:hover { 
+  color: var(--green); 
+}
+
 .mobile-nav .close-btn {
-  position: absolute; top: 20px; right: 24px;
-  background: none; border: none; cursor: pointer; color: rgba(255,255,255,0.6);
+  position: absolute; 
+  top: 24px; 
+  right: 24px;
+  background: none; 
+  border: none; 
+  cursor: pointer; 
+  color: rgba(255,255,255,0.6);
+  /* Increase hit area for thumbs */
+  padding: 8px;
+  z-index: 201;
 }
-.mobile-nav-ctas { margin-top: 32px; display: flex; flex-direction: column; gap: 12px; }
+
+.mobile-nav-ctas { 
+  margin-top: auto; /* Pushes the 'Request' button to the bottom of the list */
+  padding-top: 32px;
+  display: flex; 
+  flex-direction: column; 
+  gap: 12px; 
+}
 .mn-btn-primary {
   font-family: var(--font-head); font-size: 14px; font-weight: 700;
   background: var(--green); color: #fff; border: none;
-  border-radius: var(--radius-btn); padding: 14px 28px;
-  text-decoration: none; text-align: center; display: block;
+  border-radius: 100px; padding: 14px 28px; cursor: pointer;
+  transition: background 0.25s, transform 0.2s, box-shadow 0.25s;
+  box-shadow: 0 4px 20px rgba(91,191,58,0.4); text-decoration: none;
+  display: inline-block; text-align: center;
 }
+.mn-btn-primary:hover { background: var(--green-dark); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(91,191,58,0.45); }
+
 .mn-btn-ghost {
   font-family: var(--font-head); font-size: 14px; font-weight: 700;
-  background: rgba(255,255,255,0.08); color: #fff;
-  border: 1.5px solid rgba(255,255,255,0.25); border-radius: var(--radius-btn);
-  padding: 12px 28px; text-decoration: none; text-align: center; display: block;
+  background: rgba(255,255,255,0.1); color: #fff;
+  border: 1.5px solid rgba(255,255,255,0.35); border-radius: 100px;
+  padding: 12px 24px; cursor: pointer; backdrop-filter: blur(6px);
+  transition: background 0.25s, border-color 0.25s, transform 0.2s;
+  text-decoration: none; display: inline-block; text-align: center;
 }
+.mn-btn-ghost:hover { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.7); transform: translateY(-2px); }
+
 
 /* ── Shared Utilities ── */
 .section-tag {
@@ -196,7 +256,7 @@ body { font-family: var(--font-body); background: var(--surface); color: var(--i
 .page-hero .section-tag { color: var(--green); margin-bottom: 18px; }
 .page-hero .section-tag::before { background: var(--green); }
 .page-hero h1 {
-  font-family: var(--font-head); font-size: clamp(2.4rem, 5vw, 4rem);
+  font-family: var(--font-head); font-size:48px;
   font-weight: 800; color: #fff; line-height: 1.06; margin-bottom: 20px;
   animation: fadeUp 0.55s 0.1s both;
 }
@@ -301,9 +361,9 @@ body { font-family: var(--font-body); background: var(--surface); color: var(--i
 .variant-pill-dot.fuel     { background: var(--green); }
 .variant-pill-dot.electric { background: #3dd6f5; }
 .variant-pill-dot.future   { background: var(--muted); }
-.variant-pill-text { }
-.variant-pill-name { font-family: var(--font-head); font-size: 12.5px; font-weight: 700; color: var(--ink); }
-.variant-pill-note { font-size: 11.5px; color: var(--muted); margin-top: 1px; }
+
+.variant-pill-name { font-family: var(--font-head); font-size: 12px; font-weight: 700; color: var(--ink); }
+.variant-pill-note { font-size: 12px; color: var(--muted); margin-top: 1px; }
 
 .asset-cta { display: flex; gap: 10px; flex-wrap: wrap; }
 
@@ -360,7 +420,7 @@ body { font-family: var(--font-body); background: var(--surface); color: var(--i
 /* Visual panel */
 .hp-visual { position: relative; }
 .hp-img-frame {
-  width: 100%; height: 440px; border-radius: 20px; overflow: hidden;
+  width: 700px; height: 440px; border-radius: 20px; overflow: hidden;
   background: var(--ink); display: flex; align-items: center; justify-content: center;
   position: relative;
 }
@@ -680,7 +740,7 @@ footer { background: var(--ink); padding: 64px 40px 0; }
   <nav class="nav">
     <a href="index.html">Home</a>
     <a href="about.html">About</a>
-    <a href="opportunities.html">Opportunities</a>
+    <a href="opportunities.html">Overview</a>
     <a href="how-it-works.html"  class="active">How It Works</a>
   </nav>
   <div class="cta-group">
@@ -700,9 +760,8 @@ footer { background: var(--ink); padding: 64px 40px 0; }
   </button>
   <a href="index.html">Home</a>
   <a href="about.html">About</a>
-  <a href="opportunities.html">Opportunities</a>
+  <a href="opportunities.html">Overview</a>
   <a href="how-it-works.html">How It Works</a>
-  <a href="contact.html">Contact</a>
   <div class="mobile-nav-ctas">
     <a href="invest.html" class="mn-btn-primary">Request Investment Brief</a>
     <a href="contact.html" class="mn-btn-ghost">Become a Driver</a>
@@ -720,7 +779,7 @@ footer { background: var(--ink); padding: 64px 40px 0; }
     </div>
     <div class="section-tag" style="color:var(--green);">Investment Plans</div>
     <h1>Choose your asset.<br><span class="accent">Put capital to work.</span></h1>
-    <p>Two structured investment tiers, performance-based weekly returns, and full operational management by Enigma — from the day your agreement is signed.</p>
+    <p>Two investment tiers, asset-backed deployment, and weekly performance-based returns with full operational management handled by Enigma from day one.</p>
   </div>
 </section>
 
@@ -731,7 +790,7 @@ footer { background: var(--ink); padding: 64px 40px 0; }
     <div class="catalogue-head">
       <div class="section-tag">Deployable Asset Classes</div>
       <h2 class="section-h2">One framework. <span class="accent">Multiple asset paths.</span></h2>
-      <p class="section-intro">All asset classes operate under the same investment structure — two tiers, weekly performance-based returns, and full operational management by Enigma.</p>
+      <p class="section-intro">All asset classes operate under the same investment structure two tiers, weekly performance-based returns, and full operational management by Enigma.</p>
     </div>
 
     <div class="asset-list">
@@ -740,7 +799,7 @@ footer { background: var(--ink); padding: 64px 40px 0; }
       <div class="asset-row" id="motorcycles">
         <div class="asset-img-wrap">
           <!-- Real image: set opacity:1 on .asset-real-img when src added -->
-          <img class="asset-real-img" src="" alt="Motorcycle"/>
+          <img src="images/Bike.png" alt="">
           <div class="asset-svg-frame">
             <svg width="220" height="130" viewBox="0 0 220 130" fill="none" xmlns="http://www.w3.org/2000/svg">
               <circle cx="42" cy="95" r="28" fill="rgba(10,22,5,0.9)" stroke="rgba(91,191,58,0.4)" stroke-width="1.8"/>
@@ -778,20 +837,20 @@ footer { background: var(--ink); padding: 64px 40px 0; }
         <div class="asset-body">
           <div class="asset-badge">Available on Request</div>
           <h3>Motorcycles (Bikes)</h3>
-          <p>For dispatch operators, food delivery networks, and urban commuter services. Motorcycles generate income across multiple trips per day, making them a high-frequency, short-cycle asset well suited to structured fleet investment in Abuja's dense urban corridors.</p>
+          <p>For dispatch operations, delivery networks, and urban transport services. Motorcycles are high-frequency assets, generating income across multiple trips daily — making them well suited for structured fleet deployment in dense urban areas.</p>
           <div class="asset-variants">
             <div class="variant-pill">
               <div class="variant-pill-dot fuel"></div>
               <div class="variant-pill-text">
                 <div class="variant-pill-name">Fuel-Based Motorcycles</div>
-                <div class="variant-pill-note">Reliable, widely deployed — easy to integrate into daily operations immediately.</div>
+                <div class="variant-pill-note">Widely deployed and easy to integrate into existing operations.</div>
               </div>
             </div>
             <div class="variant-pill">
               <div class="variant-pill-dot electric"></div>
               <div class="variant-pill-text">
                 <div class="variant-pill-name">Electric Motorcycles</div>
-                <div class="variant-pill-note">Lower running cost, growing urban adoption — improved net margin per trip.</div>
+                <div class="variant-pill-note">Lower running cost with improving adoption across urban routes.</div>
               </div>
             </div>
           </div>
@@ -800,7 +859,7 @@ footer { background: var(--ink); padding: 64px 40px 0; }
               Request Investment Brief
               <svg viewBox="0 0 13 13" fill="none"><path d="M2 6.5h9M7 3l3.5 3.5L7 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
-            <a class="btn-ghost-sm" href="opportunities.html#motorcycles">View Full Details</a>
+            <a class="btn-ghost-sm" href="opportunities.html#motorcycles">View Investment Options</a>
           </div>
         </div>
       </div>
@@ -808,7 +867,7 @@ footer { background: var(--ink); padding: 64px 40px 0; }
       <!-- Asset 2: Cars -->
       <div class="asset-row reverse" id="cars">
         <div class="asset-img-wrap">
-          <img class="asset-real-img" src="" alt="Car"/>
+         <img src="images/Car.png" alt="">
           <div class="asset-svg-frame">
             <svg width="230" height="130" viewBox="0 0 230 130" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M22 90 L22 75 Q24 62 40 57 L68 50 Q90 40 115 40 Q140 40 162 50 L190 57 Q206 62 208 75 L208 90 Z" fill="rgba(91,191,58,0.07)" stroke="rgba(91,191,58,0.30)" stroke-width="1.6"/>
@@ -851,20 +910,20 @@ footer { background: var(--ink); padding: 64px 40px 0; }
         <div class="asset-body">
           <div class="asset-badge">Available on Request</div>
           <h3>Cars (Fleet Vehicles)</h3>
-          <p>For ride-hailing platforms, corporate transport contracts, and logistics operations across Abuja. Cars are a structured, scalable fleet asset — individually sourced, registered, and GPS-fitted before deployment — generating consistent daily revenue from high-utilisation routes.</p>
+          <p>Deployed across ride-hailing, corporate transport, and logistics operations. Cars operate on structured, high-utilisation routes, delivering consistent daily revenue from passenger and contract-based movement.</p>
           <div class="asset-variants">
             <div class="variant-pill">
               <div class="variant-pill-dot fuel"></div>
               <div class="variant-pill-text">
                 <div class="variant-pill-name">Fuel-Based Vehicles</div>
-                <div class="variant-pill-note">Proven across Abuja's full road network — high-mileage daily operations with established servicing infrastructure.</div>
+                <div class="variant-pill-note">Proven reliability across all route types and operating conditions.</div>
               </div>
             </div>
             <div class="variant-pill">
               <div class="variant-pill-dot electric"></div>
               <div class="variant-pill-text">
                 <div class="variant-pill-name">Electric Vehicles</div>
-                <div class="variant-pill-note">Lower per-km running costs — well suited to structured corporate and contract routes.</div>
+                <div class="variant-pill-note">Lower per-kilometre cost, suited for structured and repeat routes.</div>
               </div>
             </div>
           </div>
@@ -873,7 +932,7 @@ footer { background: var(--ink); padding: 64px 40px 0; }
               Request Investment Brief
               <svg viewBox="0 0 13 13" fill="none"><path d="M2 6.5h9M7 3l3.5 3.5L7 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
-            <a class="btn-ghost-sm" href="opportunities.html#cars">View Full Details</a>
+            <a class="btn-ghost-sm" href="opportunities.html#cars">View Investment Options</a>
           </div>
         </div>
       </div>
@@ -881,7 +940,7 @@ footer { background: var(--ink); padding: 64px 40px 0; }
       <!-- Asset 3: Tricycles -->
       <div class="asset-row" id="tricycles">
         <div class="asset-img-wrap">
-          <img class="asset-real-img" src="" alt="Tricycle"/>
+          <img src="images/keke.png" alt="">
           <div class="asset-svg-frame">
             <svg width="230" height="130" viewBox="0 0 230 130" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M34 88 L34 76 Q36 65 50 61 L80 55 L168 55 L182 61 Q196 66 198 76 L198 88 Z" fill="rgba(91,191,58,0.07)" stroke="rgba(91,191,58,0.28)" stroke-width="1.6"/>
@@ -925,13 +984,13 @@ footer { background: var(--ink); padding: 64px 40px 0; }
         <div class="asset-body">
           <div class="asset-badge">Available on Request</div>
           <h3>Tricycles (Keke Napep)</h3>
-          <p>For high-density neighbourhood routes, market corridors, and estate connections across the FCT. Tricycles deliver consistent daily earnings from volume of short trips — with comparatively low operating costs and strong, stable local demand that persists regardless of wider economic conditions.</p>
+          <p>Built for high-density routes across markets, estates, and inner-city corridors. Tricycles generate steady daily income from short, high-volume trips with relatively low operating costs.</p>
           <div class="asset-variants">
             <div class="variant-pill">
               <div class="variant-pill-dot fuel"></div>
               <div class="variant-pill-text">
                 <div class="variant-pill-name">Standard (Fuel-Based) Tricycles</div>
-                <div class="variant-pill-note">The dominant form of intra-city transport in Abuja — widely operated, with ready servicing support across the FCT.</div>
+                <div class="variant-pill-note">The dominant form of intra-city transport in Nigeria — widely operated, with ready servicing support across the FCT.</div>
               </div>
             </div>
             <div class="variant-pill">
@@ -947,7 +1006,7 @@ footer { background: var(--ink); padding: 64px 40px 0; }
               Request Investment Brief
               <svg viewBox="0 0 13 13" fill="none"><path d="M2 6.5h9M7 3l3.5 3.5L7 10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </a>
-            <a class="btn-ghost-sm" href="opportunities.html#tricycles">View Full Details</a>
+            <a class="btn-ghost-sm" href="opportunities.html#tricycles">View Investment Options</a>
           </div>
         </div>
       </div>
@@ -996,7 +1055,7 @@ footer { background: var(--ink); padding: 64px 40px 0; }
         <div class="asset-body">
           <div class="asset-badge soon">Coming Soon</div>
           <h3>Interstate Transport</h3>
-          <p>The next phase of Enigma's expansion — long-distance passenger buses and intercity freight vehicles operating on structured routes connecting Abuja to major destinations across Nigeria. This tier will offer structured contract revenue from scheduled services. Not yet open for investment; existing investors will be notified ahead of launch.</p>
+          <p>The next phase of Enigma's expansion — long-distance passenger buses and intercity freight vehicles operating on structured routes connecting major destinations across Nigeria. This tier will offer structured contract revenue from scheduled services. Not yet open for investment; existing investors will be notified ahead of launch.</p>
           <div class="asset-variants">
             <div class="variant-pill">
               <div class="variant-pill-dot future"></div>
@@ -1054,7 +1113,7 @@ footer { background: var(--ink); padding: 64px 40px 0; }
           <div class="hp-step-num">3</div>
           <div class="hp-step-body">
             <h4>Asset Deployment &amp; Operations</h4>
-            <p>Your capital is deployed into the agreed asset class. Enigma manages all operations — driver assignment, route management, maintenance, and revenue collection — from day one.</p>
+            <p>Your capital is deployed into the agreed asset class. Enigma manages all operations driver assignment, route management, maintenance, and revenue collection  from day one.</p>
           </div>
         </div>
         <div class="hp-step">
@@ -1070,9 +1129,9 @@ footer { background: var(--ink); padding: 64px 40px 0; }
     <div class="hp-visual">
       <div class="hp-img-frame">
         <!-- Real image: set opacity:1 on .hp-real-img when src is added -->
-        <img class="hp-real-img" src="" alt="Operations"/>
+        <img src="Images/hire.png" alt="Operations"/>
         <div class="hp-img-placeholder">
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="rgba(91,191,58,0.4)" stroke-width="1.5">
+        <!--  <svg width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="rgba(91,191,58,0.4)" stroke-width="1.5">
             <rect x="8" y="8" width="48" height="48" rx="8"/>
             <circle cx="32" cy="32" r="12"/>
             <line x1="32" y1="8" x2="32" y2="20"/>
@@ -1080,7 +1139,7 @@ footer { background: var(--ink); padding: 64px 40px 0; }
             <line x1="8" y1="32" x2="20" y2="32"/>
             <line x1="44" y1="32" x2="56" y2="32"/>
           </svg>
-          <span>Image Placeholder — Operations</span>
+          <span>Image Placeholder — Operations</span>-->
         </div>
       </div>
       <div class="hp-overlay-card">
@@ -1106,7 +1165,7 @@ footer { background: var(--ink); padding: 64px 40px 0; }
       <div class="plan-card">
         <div class="plan-name">Tier 1</div>
         <div class="plan-title">Standard<br>Investment</div>
-        <div class="plan-sub">Entry-level capital. Single asset class. Straightforward and fully documented.</div>
+        <div class="plan-sub">Entry-level capital into a single asset class with structured returns and full documentation.</div>
         <div class="plan-divider"></div>
         <ul class="plan-features">
           <li><span class="check"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#3a9e1f" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Entry-level capital commitment</li>
@@ -1122,7 +1181,7 @@ footer { background: var(--ink); padding: 64px 40px 0; }
         <div class="featured-badge">Enhanced Returns</div>
         <div class="plan-name">Tier 2</div>
         <div class="plan-title">Premium<br>Investment</div>
-        <div class="plan-sub">Larger capital. Multiple asset classes. Priority payouts and enhanced reporting.</div>
+        <div class="plan-sub">Larger capital deployed across multiple assets with enhanced returns and reporting.</div>
         <div class="plan-divider"></div>
         <ul class="plan-features">
           <li><span class="check" style="background:#5bbf3a;"><svg viewBox="0 0 9 9" fill="none"><path d="M1.5 4.5l2 2 4-4" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Higher capital — multi-asset deployment</li>
@@ -1326,7 +1385,9 @@ footer { background: var(--ink); padding: 64px 40px 0; }
 <!-- ═══════ CTA BANNER ═══════ -->
 <section class="cta-banner">
   <h2>Ready to deploy capital?</h2>
-  <p>Request an investment brief and our team will prepare a tailored document covering asset classes, return parameters, capital thresholds, and the formal agreement process — at no obligation.</p>
+  <p>Request an investment brief and receive a structured document covering asset classes, return parameters, capital requirements, and the full agreement process.
+
+No obligation. No upfront commitment.</p>
   <div class="cta-btns">
     <a class="btn-white" href="invest.html">Request Investment Brief</a>
     <a class="btn-outline-white" href="contact.html">Speak to the Team</a>
@@ -1339,7 +1400,7 @@ footer { background: var(--ink); padding: 64px 40px 0; }
   <div class="footer-grid">
     <div>
       <div class="footer-logo-text">Enigma<span>.</span></div>
-      <p class="footer-tagline">A structured asset-backed investment platform focused on transport income generation in Abuja. Founded 2026.</p>
+      <p class="footer-tagline">A structured asset-backed investment platform focused on transport income generation in Nigeria. Founded 2026.</p>
       <div class="footer-contact-block">
         <div class="footer-contact-item">
           <svg class="footer-contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 010 1.17 2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>

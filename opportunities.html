@@ -139,19 +139,73 @@ body { font-family: var(--font-body); background: var(--surface); color: var(--i
 
 /* ── Mobile Nav ── */
 .mobile-nav {
-  display: none; position: fixed; inset: 0;
-  background: var(--ink); z-index: 200;
-  flex-direction: column; padding: 80px 40px 40px; animation: fadeIn 0.25s ease;
+  display: none;
+  position: fixed; 
+  /* Using 0 ensures it snaps to the edges of the viewport exactly */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  
+  background: var(--ink); 
+  z-index: 200;
+  flex-direction: column; 
+  /* Adjusted padding: 80px top to clear the 'X' button better */
+  padding: 80px 40px 40px; 
+  animation: fadeIn 0.25s ease;
+  
+  /* Critical: prevents horizontal scrolling within the menu */
+  overflow-x: hidden;
+  overflow-y: auto;
 }
-.mobile-nav.open { display: flex; }
+
+.mobile-nav.open { 
+  display: flex; 
+}
+
 .mobile-nav a {
-  font-family: var(--font-head); font-size: 1rem; font-weight: 600;
-  color: rgba(255,255,255,0.7); text-decoration: none; padding: 16px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.06); transition: color 0.2s;
+  font-family: var(--font-head); 
+  /* Reduced font size slightly so long words don't overflow */
+  font-size: 1rem; 
+  font-weight: 600;
+  color: rgba(255,255,255,0.7); 
+  text-decoration: none; 
+  /* Reduced vertical padding to fit more items on small screens */
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  transition: color 0.2s;
+  
+  /* Helps with the wide font style */
+  letter-spacing: -0.02em;
+  line-height: 1.1;
 }
-.mobile-nav a:hover { color: var(--green); }
-.mobile-nav .close-btn { position: absolute; top: 20px; right: 24px; background: none; border: none; cursor: pointer; color: rgba(255,255,255,0.6); }
-.mobile-nav-ctas { margin-top: 32px; display: flex; flex-direction: column; gap: 12px; }
+
+.mobile-nav a:hover { 
+  color: var(--green); 
+}
+
+.mobile-nav .close-btn {
+  position: absolute; 
+  top: 24px; 
+  right: 24px;
+  background: none; 
+  border: none; 
+  cursor: pointer; 
+  color: rgba(255,255,255,0.6);
+  /* Increase hit area for thumbs */
+  padding: 8px;
+  z-index: 201;
+}
+
+.mobile-nav-ctas { 
+  margin-top: auto; /* Pushes the 'Request' button to the bottom of the list */
+  padding-top: 32px;
+  display: flex; 
+  flex-direction: column; 
+  gap: 12px; 
+}
 
 /* ── Shared Button Styles ── */
 .btn-primary {
@@ -537,7 +591,7 @@ body { font-family: var(--font-body); background: var(--surface); color: var(--i
 .standard .plan-return-chip { background: rgba(91,191,58,0.15); border: 1px solid rgba(91,191,58,0.25); }
 .featured .plan-return-chip { background: rgba(212,168,39,0.15); border: 1px solid rgba(212,168,39,0.3); }
 .plan-return-pct {
-  font-family: var(--font-head); font-size: 1.3rem; font-weight: 800; display: block;  position: relative; line-height: 1;
+  font-family: var(--font-head); font-size: 1rem; font-weight: 600; display: block;  position: relative; line-height: 1;
 }
 .standard .plan-return-pct { color: var(--green); }
 .featured .plan-return-pct { color: #f0c040; }
@@ -583,6 +637,36 @@ body { font-family: var(--font-body); background: var(--surface); color: var(--i
   border: none; text-decoration: none;
   transition: transform 0.22s, box-shadow 0.22s, background 0.22s;
 }
+.plan-cta-secondary{   font-family: var(--font-head); font-size: 14px; font-weight: 700;
+  background: rgba(255,255,255,0.1); color: #5bbf3a;
+  border: 1.5px solid #5bbf3a; border-radius: 100px;
+  padding: 12px 28px; cursor: pointer; backdrop-filter: blur(6px);
+  transition: background 0.25s, border-color 0.25s, transform 0.2s;
+  text-decoration: none; display: inline-block;
+}
+
+.plan-cta-secondary:hover {
+  background: rgba(255,255,255,0.18);
+  border-color: rgba(255,255,255,0.65);
+  transform: translateY(-2px);
+  border: solid rgba(255,255,255,0.65);
+}
+
+.plan-cta-premium {
+    font-family: var(--font-head); font-size: 14px; font-weight: 700;
+  background: rgba(255,255,255,0.1); color: #d4a827;
+  border: 1.5px solid #d4a827; border-radius: 100px;
+  padding: 12px 28px; cursor: pointer; backdrop-filter: blur(6px);
+  transition: background 0.25s, border-color 0.25s, transform 0.2s;
+  text-decoration: none; display: inline-block;
+}
+.plan-cta-premium:hover {
+  background: rgba(255,255,255,0.18);
+  border-color: rgba(212,168,39,0.65);
+  transform: translateY(-2px);
+  border: solid rgba(212,168,39,0.65);
+}
+
 .standard .plan-cta {
   background: var(--green); color: #fff;
   box-shadow: 0 4px 20px rgba(91,191,58,0.35);
@@ -784,7 +868,7 @@ body { font-family: var(--font-body); background: var(--surface); color: var(--i
 }
 .risk-icon svg { width: 22px; height: 22px; color: var(--green-dark); }
 .risk-card h4 { font-family: var(--font-head); font-size: 14.5px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
-.risk-card p { font-size: 12.5px; color: var(--muted); line-height: 1.7; }
+.risk-card p { font-size: 12px; color: var(--muted); line-height: 1.7; }
 
 /* Risk disclosure banner */
 .risk-disclosure {
@@ -834,12 +918,12 @@ body { font-family: var(--font-body); background: var(--surface); color: var(--i
 }
 .returns-feat-icon svg { width: 19px; height: 19px; color: var(--green); }
 .returns-feat-text h4 { font-family: var(--font-head); font-size: 13px; font-weight: 700; color: #fff; margin-bottom: 5px; }
-.returns-feat-text p { font-size: 12.5px; color: rgba(255,255,255,0.38); line-height: 1.65; }
+.returns-feat-text p { font-size: 12px; color: rgba(255,255,255,0.38); line-height: 1.65; }
 
 /* Dashboard preview card */
 .dashboard-preview {
   background: rgba(255,255,255,0.04); border: 1.5px solid rgba(91,191,58,0.2);
-  border-radius: 24px; padding: 30px 28px; animation: fadeUp 0.6s 0.3s both;
+  border-radius: 24px; padding: 20px 20px; animation: fadeUp 0.6s 0.3s both;
 }
 .dash-header {
   display: flex; justify-content: space-between; align-items: center;
@@ -1052,13 +1136,13 @@ footer { background: var(--ink); padding: 52px 40px 0; }
   <nav class="nav">
     <a href="index.html">Home</a>
     <a href="about.html">About</a>
-    <a href="opportunities.html" class="active">Opportunities</a>
+    <a href="opportunities.html" class="active">Overview</a>
     <a href="how-it-works.html">How It Works</a>
 
   </nav>
   <div class="cta-group">
     <a href="invest.html" class="nav-cta">Request Investment Brief</a>
-    <a href="contact.html" class="nav-cta-secondary">Become a Driver</a>
+ 
 
   </div>
   <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
@@ -1073,12 +1157,11 @@ footer { background: var(--ink); padding: 52px 40px 0; }
   </button>
   <a href="index.html">Home</a>
   <a href="about.html">About</a>
-  <a href="opportunities.html" class="active">Opportunities</a>
+  <a href="opportunities.html" class="active">Overview</a>
   <a href="how-it-works.html">How It Works</a>
-  <a href="contact.html">Contact</a>
   <div class="mobile-nav-ctas">
     <a href="invest.html" class="btn-primary" style="text-align:center;">Request Investment Brief</a>
-    <a href="contact.html" class="btn-ghost" style="text-align:center;">Become a Driver</a>
+
   </div>
 </div>
 
@@ -1106,13 +1189,13 @@ footer { background: var(--ink); padding: 52px 40px 0; }
       <h1 class="hero-title">
         Capital Deployed Into<br/>
         <span class="accent">Real Transport</span><br/>
-        <span class="line-muted">Assets That Earn</span>
+        Assets in Nigeria
       </h1>
       <p class="hero-desc">
-        Enigma Transport deploys investor capital directly into income-producing vehicles across Abuja's transport network. We manage all operations — routing, maintenance, and dispatch — while investors receive structured, performance-based weekly returns.
+        Enigma Transport offers structured investment opportunities backed by real transport assets operating across Nigeria. Select a plan and deploy capital through a formal, documented process.
       </p>
       <div class="hero-actions">
-        <a href="invest.html" class="btn-primary">Request Investor Brief</a>
+       
         <a href="#plans" class="btn-ghost">View Investment Plans</a>
       </div>
       <div class="hero-metrics">
@@ -1175,11 +1258,7 @@ footer { background: var(--ink); padding: 52px 40px 0; }
               <div class="status-dot"></div>
               Positions available now
             </div>
-            <a href="invest.html" class="hcard-cta">
-              Request Brief
-              <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 12 12"><path d="M2 6h8M6 2l4 4-4 4"/></svg>
-            </a>
-          </div>
+            </div>
         </div>
       </div>
     </div>
@@ -1190,15 +1269,15 @@ footer { background: var(--ink); padding: 52px 40px 0; }
 <div class="trust-bar">
   <div class="trust-item">
     <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-    Formal Investment Agreement
+    Legally defined investment terms
   </div>
   <div class="trust-item">
     <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-    Documented Return Structure
+    Structured allocation and payout framework
   </div>
   <div class="trust-item">
     <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-    Performance-Based Payouts
+    Returns linked to asset performance
   </div>
   <div class="trust-item">
     <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
@@ -1228,7 +1307,7 @@ footer { background: var(--ink); padding: 52px 40px 0; }
           Standard Plan
         </div>
         <div class="plan-name">Standard</div>
-        <div class="plan-tagline">Ideal for entry-level and first-time investors</div>
+        <div class="plan-tagline">Entry-level investment structure</div>
         <div class="plan-price-row">
           <div>
             <div class="plan-price-from">Minimum investment</div>
@@ -1241,7 +1320,7 @@ footer { background: var(--ink); padding: 52px 40px 0; }
         <div class="plan-meta-row">
           <div class="plan-meta-item">
             <div class="plan-meta-label">Duration</div>
-            <div class="plan-meta-val">Flexible / Shorter</div>
+            <div class="plan-meta-val">Flexible</div>
           </div>
           <div class="plan-meta-item">
             <div class="plan-meta-label">Payout Cycle</div>
@@ -1257,7 +1336,7 @@ footer { background: var(--ink); padding: 52px 40px 0; }
           </div>
         </div>
         <div class="plan-divider"></div>
-        <div class="plan-features-label">What's Included</div>
+        <div class="plan-features-label">Standard investment features include:</div>
         <div class="plan-features">
           <div class="plan-feature">
             <div class="plan-feature-icon"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
@@ -1273,7 +1352,7 @@ footer { background: var(--ink); padding: 52px 40px 0; }
           </div>
           <div class="plan-feature">
             <div class="plan-feature-icon"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
-            <p>Full operations managed by Enigma — fully passive investment</p>
+            <p>Fully managed operational structure</p>
           </div>
           <div class="plan-feature">
             <div class="plan-feature-icon"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
@@ -1284,7 +1363,7 @@ footer { background: var(--ink); padding: 52px 40px 0; }
             <p>Dedicated team contact for investor queries</p>
           </div>
         </div>
-        <a href="invest.html" class="plan-cta">Request Standard Plan Brief</a>
+        <a href="standard-tier.html" class="plan-cta-secondary">View Tier</a>
       </div>
     </div>
 
@@ -1301,7 +1380,7 @@ footer { background: var(--ink); padding: 52px 40px 0; }
           Premium Plan
         </div>
         <div class="plan-name">Premium</div>
-        <div class="plan-tagline">For serious investors seeking growth allocation</div>
+        <div class="plan-tagline">Higher allocation investment structure</div>
         <div class="plan-price-row">
           <div>
             <div class="plan-price-from">Minimum investment</div>
@@ -1338,7 +1417,7 @@ footer { background: var(--ink); padding: 52px 40px 0; }
           </div>
           <div class="plan-feature">
             <div class="plan-feature-icon"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
-            <p>Enhanced return parameters reflecting larger capital deployment</p>
+            <p>Optimized return structure based on capital scale</p>
           </div>
           <div class="plan-feature">
             <div class="plan-feature-icon"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
@@ -1346,7 +1425,7 @@ footer { background: var(--ink); padding: 52px 40px 0; }
           </div>
           <div class="plan-feature">
             <div class="plan-feature-icon"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
-            <p>Enhanced weekly reporting with asset-level performance data</p>
+            <p>Detailed performance reporting</p>
           </div>
           <div class="plan-feature">
             <div class="plan-feature-icon"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
@@ -1357,7 +1436,7 @@ footer { background: var(--ink); padding: 52px 40px 0; }
             <p>Direct line to senior investment team for escalated queries</p>
           </div>
         </div>
-        <a href="invest.html" class="plan-cta">Request Premium Plan Brief</a>
+        <a href="premium-tier.html" class="plan-cta-premium">View Tier</a>
       </div>
     </div>
 
@@ -1381,7 +1460,7 @@ footer { background: var(--ink); padding: 52px 40px 0; }
           <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
         </div>
         <h4>Request Your Brief</h4>
-        <p>Submit your details. Our team prepares a tailored investment document covering asset classes, returns, and terms for your capital range.</p>
+        <p>Submit your details to receive a structured investment brief.</p>
       </div>
 
       <div class="how-step">
@@ -1390,7 +1469,7 @@ footer { background: var(--ink); padding: 52px 40px 0; }
           <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
         </div>
         <h4>Consultation Call</h4>
-        <p>A member of our investment team contacts you within 1–2 business days to walk through the brief and answer your questions.</p>
+        <p>Our team reviews your request and provides investment details.</p>
       </div>
 
       <div class="how-step">
@@ -1399,7 +1478,7 @@ footer { background: var(--ink); padding: 52px 40px 0; }
           <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
         </div>
         <h4>Sign Agreement</h4>
-        <p>A formal investment agreement is issued and signed by both parties. Capital is only received after the agreement is fully executed.</p>
+        <p>Sign a formal agreement before capital deployment.</p>
       </div>
 
       <div class="how-step">
@@ -1408,7 +1487,7 @@ footer { background: var(--ink); padding: 52px 40px 0; }
           <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
         </div>
         <h4>Asset Deployment</h4>
-        <p>Capital is deployed into your selected asset class. Enigma's operations team manages all logistics, maintenance, and dispatch from day one.</p>
+        <p>Capital is deployed into selected transport assets for management.</p>
       </div>
 
       <div class="how-step">
@@ -1417,7 +1496,7 @@ footer { background: var(--ink); padding: 52px 40px 0; }
           <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
         </div>
         <h4>Earn Weekly Returns</h4>
-        <p>Performance-based returns are calculated from actual asset utilisation and paid to your account on a structured weekly settlement schedule.</p>
+        <p>Receive scheduled weekly returns based on asset performance.</p>
       </div>
 
     </div>
@@ -1430,12 +1509,12 @@ footer { background: var(--ink); padding: 52px 40px 0; }
     <div class="why-text">
       <div class="section-tag">Why Enigma</div>
       <h2 class="section-h2">A Market Built on <span class="accent">Daily Demand</span></h2>
-      <p>Abuja's transport sector serves millions of commuters, corporate travellers, and logistics operators every single day. This is not a speculative market — it is essential infrastructure with consistent, measurable cash flow.</p>
+      <p>nvestment opportunities are backed by active transport demand across Nigeria's commercial and commuter network.</p>
       <p>Enigma's operational model is built to capture that demand efficiently, deploying capital into high-utilisation assets and returning income to investors through a structured, documented process.</p>
       <ul class="why-list">
         <li>
           <span class="check"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>
-          Consistent daily utilisation across Abuja's primary transport corridors
+          Consistent daily utilisation across Nigeria's primary transport corridors
         </li>
         <li>
           <span class="check"><svg fill="none" stroke="#fff" stroke-width="2.5" viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></span>
@@ -1494,7 +1573,7 @@ footer { background: var(--ink); padding: 52px 40px 0; }
     <div class="risk-head">
       <div class="section-tag" style="justify-content:center;display:flex;">Risk &amp; Transparency</div>
       <h2 class="section-h2" style="text-align:center;">What Every Investor <span class="accent">Should Understand</span></h2>
-      <p class="section-intro" style="margin:0 auto;text-align:center;">We operate with full transparency. Sound investment decisions require a complete understanding of both the opportunity and the risks involved.</p>
+      <p class="section-intro" style="margin:0 auto;text-align:center;">Investment returns are tied to real operational performance and are influenced by external market and operational conditions.</p>
     </div>
 
     <div class="risk-grid">
@@ -1548,7 +1627,7 @@ footer { background: var(--ink); padding: 52px 40px 0; }
       </div>
       <div class="risk-disclosure-text">
         <h4>Important Disclosure</h4>
-        <p>Investment returns presented here are performance-based projections and are not a guarantee of future results. All capital deployed carries inherent operational risk. This platform does not constitute financial advice. Prospective investors should review the full risk disclosure document included in their investment brief before committing any capital. Capital thresholds per tier are disclosed only during the formal briefing process.</p>
+        <p>All investment returns are performance-based and not guaranteed</p>
       </div>
     </div>
   </div>
@@ -1560,7 +1639,7 @@ footer { background: var(--ink); padding: 52px 40px 0; }
     <div class="returns-text">
       <div class="section-tag light">Returns &amp; Monitoring</div>
       <h2 class="section-h2 light">How You <span class="accent">Earn &amp; Track</span></h2>
-      <p>Returns are generated from the daily operational revenue of your deployed asset. Enigma collects, reconciles, and distributes earnings on a weekly basis — with full reporting so you always know exactly how your capital is performing.</p>
+      <p>Returns are generated from asset performance and distributed on a structured weekly cycle with investor reporting.</p>
       <div class="returns-features">
         <div class="returns-feature">
           <div class="returns-feat-icon">
@@ -1604,11 +1683,11 @@ footer { background: var(--ink); padding: 52px 40px 0; }
     <!-- Dashboard preview -->
     <div class="dashboard-preview">
       <div class="dash-header">
-        <span class="dash-title">Investor Portfolio Overview</span>
+        <span class="dash-title">Sample Reporting View</span>
         <span class="dash-period">Last 8 Weeks</span>
       </div>
       <div class="dash-main-num">+18.4%</div>
-      <div class="dash-main-label">Cumulative return — illustrative example only</div>
+      <div class="dash-main-label">Estimated Performance Scenario</div>
       <div class="dash-bars">
         <div class="dash-bar" style="height:52%"></div>
         <div class="dash-bar" style="height:61%"></div>
@@ -1646,7 +1725,7 @@ footer { background: var(--ink); padding: 52px 40px 0; }
       <div class="dash-footer">
         <div class="dash-footer-status">
           <div class="status-dot"></div>
-          Illustrative — actual returns vary by performance
+          Preview only — performance depends on operational results
         </div>
         <a href="invest.html" class="dash-footer-link">
           Get Started
@@ -1663,7 +1742,7 @@ footer { background: var(--ink); padding: 52px 40px 0; }
   <div class="final-cta-inner">
     <div class="final-cta-tag">Ready to Invest</div>
     <h2>Request Your Investment<br/>Brief Today</h2>
-    <p>Submit your details and our team will prepare a tailored investment document covering asset classes, structured return parameters, tier-specific capital thresholds, and the formal agreement process.</p>
+    <p>Submit your details to receive a structured investment brief and begin onboarding.</p>
     <div class="final-cta-btns">
       <a href="invest.html" class="btn-white">Request Investment Brief</a>
       <a href="contact.html" class="btn-outline-white">Speak with Our Team</a>
@@ -1686,7 +1765,7 @@ footer { background: var(--ink); padding: 52px 40px 0; }
   <div class="footer-grid">
     <div class="footer-brand">
       <div class="footer-logo-text">Enigma<span>.</span></div>
-      <p class="footer-tagline">A structured asset-backed investment platform focused on transport income generation in Abuja.</p>
+      <p class="footer-tagline">Structured investment platform built on real transport asset operations in Nigeria.</p>
       <div class="footer-contact-item">
         <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 010 1.17 2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14.92z"/></svg>
         <a href="tel:+2348000000000">+234 (0) 800 000 0000</a>
@@ -1709,7 +1788,6 @@ footer { background: var(--ink); padding: 52px 40px 0; }
     </div>
     <div class="footer-col">
       <h5>Invest</h5>
-      <a href="invest.html">Request Investment Brief</a>
       <a href="opportunities.html#plans">Standard Plan</a>
       <a href="opportunities.html#plans">Premium Plan</a>
       <a href="risk.html">Risk Disclosure</a>
@@ -1717,7 +1795,6 @@ footer { background: var(--ink); padding: 52px 40px 0; }
     <div class="footer-col">
       <h5>Company</h5>
       <a href="about.html">Our Mission</a>
-      <a href="contact.html">Become a Driver</a>
       <a href="contact.html">Contact Us</a>
       <a href="privacy.html">Privacy Policy</a>
     </div>

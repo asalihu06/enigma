@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Request Investment Brief — Enigma Transport</title>
+<title>Start Your Investment — Enigma Transport</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet" />
@@ -21,6 +21,7 @@ body { font-family: var(--font-body); background: var(--surface); color: var(--i
 @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
 @keyframes slideDown { from{transform:translateY(-100%);opacity:0} to{transform:translateY(0);opacity:1} }
 @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+@keyframes contextPop { 0%{opacity:0;transform:translateY(-8px) scale(0.98)} 100%{opacity:1;transform:translateY(0) scale(1)} }
 
 /* Top Bar */
 .top-bar { display:flex;justify-content:flex-end;align-items:center;gap:24px;background:var(--ink);padding:7px 40px;font-size:12px;color:rgba(255,255,255,0.5);letter-spacing:0.02em; }
@@ -56,6 +57,65 @@ body { font-family: var(--font-body); background: var(--surface); color: var(--i
 .page-hero h1 .accent { color:var(--green); }
 .page-hero > .page-hero-inner > p { font-size:16px;color:rgba(255,255,255,0.55);max-width:520px;line-height:1.75;margin-top:18px;animation:fadeUp 0.55s 0.3s both; }
 
+/* ── Context Awareness Banner ── */
+.context-banner {
+  display: none;
+  align-items: center;
+  gap: 14px;
+  background: linear-gradient(135deg, var(--green-pale) 0%, rgba(91,191,58,0.08) 100%);
+  border: 1.5px solid rgba(91,191,58,0.35);
+  border-radius: 14px;
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  animation: contextPop 0.4s cubic-bezier(.22,1,.36,1) both;
+}
+.context-banner.visible { display: flex; }
+.context-banner-icon {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--green); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.context-banner-icon svg { width: 16px; height: 16px; color: #fff; }
+.context-banner-body { flex: 1; }
+.context-banner-body strong {
+  font-family: var(--font-head); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase; color: var(--green-dark);
+  display: block; margin-bottom: 3px;
+}
+.context-banner-body p { font-size: 13px; color: var(--ink-soft); line-height: 1.5; }
+.context-banner-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.context-pill {
+  font-family: var(--font-head); font-size: 11px; font-weight: 700;
+  background: var(--green); color: #fff; border-radius: 100px;
+  padding: 4px 12px; letter-spacing: 0.04em;
+}
+.context-dismiss {
+  background: none; border: none; cursor: pointer;
+  color: var(--muted); padding: 4px; flex-shrink: 0;
+  transition: color 0.2s; border-radius: 6px;
+}
+.context-dismiss:hover { color: var(--ink); }
+
+/* Prefilled field highlight */
+.form-group select.prefilled,
+.form-group input.prefilled {
+  border-color: var(--green);
+  background-color: var(--green-pale);
+  box-shadow: 0 0 0 3px rgba(91,191,58,0.12);
+}
+.form-group select.prefilled:focus,
+.form-group input.prefilled:focus {
+  box-shadow: 0 0 0 4px rgba(91,191,58,0.18);
+}
+.prefilled-tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; font-weight: 600; color: var(--green-dark);
+  background: var(--green-pale); border: 1px solid rgba(91,191,58,0.3);
+  border-radius: 100px; padding: 2px 10px 2px 7px;
+  margin-top: 5px; width: fit-content;
+}
+.prefilled-tag svg { width: 10px; height: 10px; }
+
 /* Form Section */
 .form-section { background:var(--bg);padding:0 40px 80px;margin-top:-60px;position:relative;z-index:10; }
 .form-wrap { max-width:820px;margin:0 auto; }
@@ -71,17 +131,18 @@ body { font-family: var(--font-body); background: var(--surface); color: var(--i
 .form-group textarea {
   font-family:var(--font-body);font-size:14px;color:var(--ink);
   background:var(--bg);border:1.5px solid var(--border);border-radius:12px;
-  padding:13px 16px;transition:border-color 0.22s,box-shadow 0.22s;outline:none;
+  padding:13px 16px;transition:border-color 0.22s,box-shadow 0.22s,background 0.22s;outline:none;
   appearance:none;-webkit-appearance:none;
 }
 .form-group select { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7c65' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px; }
+.form-group select.prefilled { background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%233a9e1f' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); }
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus { border-color:var(--green);box-shadow:0 0 0 3px rgba(91,191,58,0.1); }
 .form-group input::placeholder,
 .form-group textarea::placeholder { color:var(--muted); }
 .form-note { font-size:12px;color:var(--muted);line-height:1.6;margin-top:4px; }
-.btn-submit { font-family:var(--font-head);font-size:14px;font-weight:700;background:var(--green);color:#fff;border:none;border-radius:100px;padding:15px 40px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background 0.25s,transform 0.2s,box-shadow 0.25s;box-shadow:0 4px 20px rgba(91,191,58,0.35);margin-top:8px; }
+.btn-submit { font-family:var(--font-head);font-size:14px;font-weight:600;background:var(--green);color:#fff;border:none;border-radius:100px;padding:16px 20px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:background 0.25s,transform 0.2s,box-shadow 0.25s;box-shadow:0 4px 20px rgba(91,191,58,0.35);margin-top:8px; }
 .btn-submit:hover{background:var(--green-dark);transform:translateY(-2px);box-shadow:0 8px 28px rgba(91,191,58,0.4)}
 .btn-submit svg{width:16px;height:16px;transition:transform 0.22s}
 .btn-submit:hover svg{transform:translateX(4px)}
@@ -106,7 +167,7 @@ body { font-family: var(--font-body); background: var(--surface); color: var(--i
 .info-item { display:flex;align-items:flex-start;gap:12px;margin-bottom:14px; }
 .info-item:last-child{margin-bottom:0}
 .info-dot { width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:5px; }
-.info-item p { font-size:12.5px;color:var(--muted);line-height:1.65; }
+.info-item p { font-size:12px; color:var(--muted);line-height:1.65; }
 .info-item p strong { color:var(--ink-soft);font-weight:600; }
 
 /* Footer */
@@ -127,17 +188,98 @@ footer{background:var(--ink);padding:40px 40px 0}
   .form-card{padding:28px 20px} .form-grid{grid-template-columns:1fr}
   .info-sidebar{grid-template-columns:1fr}
   footer{padding:32px 20px 0} .disclaimer-strip{padding:16px 20px}
+  .context-banner { flex-wrap: wrap; }
 }
 
 /* Mobile Nav */
-.mobile-nav{display:none;position:fixed;inset:0;background:var(--ink);z-index:200;flex-direction:column;padding:80px 40px 40px;animation:fadeIn 0.25s ease}
-.mobile-nav.open{display:flex}
-.mobile-nav a{font-family:var(--font-head);font-size:1.6rem;font-weight:800;color:rgba(255,255,255,0.7);text-decoration:none;padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.06);transition:color 0.2s}
-.mobile-nav a:hover{color:var(--green)}
-.mobile-nav .close-btn{position:absolute;top:20px;right:24px;background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.6)}
-.mobile-nav-ctas{margin-top:32px;display:flex;flex-direction:column;gap:12px}
-.btn-primary{font-family:var(--font-head);font-size:14px;font-weight:700;background:var(--green);color:#fff;border:none;border-radius:100px;padding:14px 28px;cursor:pointer;transition:background 0.25s,transform 0.2s;text-decoration:none;display:inline-block;text-align:center}
-.btn-ghost{font-family:var(--font-head);font-size:14px;font-weight:700;background:rgba(255,255,255,0.1);color:#fff;border:1.5px solid rgba(255,255,255,0.35);border-radius:100px;padding:12px 24px;cursor:pointer;backdrop-filter:blur(6px);transition:background 0.25s;text-decoration:none;display:inline-block;text-align:center}
+.mobile-nav {
+  display: none;
+  position: fixed; 
+  /* Using 0 ensures it snaps to the edges of the viewport exactly */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  
+  background: var(--ink); 
+  z-index: 200;
+  flex-direction: column; 
+  /* Adjusted padding: 80px top to clear the 'X' button better */
+  padding: 80px 40px 40px; 
+  animation: fadeIn 0.25s ease;
+  
+  /* Critical: prevents horizontal scrolling within the menu */
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.mobile-nav.open { 
+  display: flex; 
+}
+
+.mobile-nav a {
+  font-family: var(--font-head); 
+  /* Reduced font size slightly so long words don't overflow */
+  font-size: 1rem; 
+  font-weight: 600;
+  color: rgba(255,255,255,0.7); 
+  text-decoration: none; 
+  /* Reduced vertical padding to fit more items on small screens */
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  transition: color 0.2s;
+  
+  /* Helps with the wide font style */
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.mobile-nav a:hover { 
+  color: var(--green); 
+}
+
+.mobile-nav .close-btn {
+  position: absolute; 
+  top: 24px; 
+  right: 24px;
+  background: none; 
+  border: none; 
+  cursor: pointer; 
+  color: rgba(255,255,255,0.6);
+  /* Increase hit area for thumbs */
+  padding: 8px;
+  z-index: 201;
+}
+
+.mobile-nav-ctas { 
+  margin-top: auto; /* Pushes the 'Request' button to the bottom of the list */
+  padding-top: 32px;
+  display: flex; 
+  flex-direction: column; 
+  gap: 12px; 
+}
+
+.btn-primary {
+  font-family: var(--font-head); font-size: 14px; font-weight: 700;
+  background: var(--green); color: #fff; border: none;
+  border-radius: 100px; padding: 14px 28px; cursor: pointer;
+  transition: background 0.25s, transform 0.2s, box-shadow 0.25s;
+  box-shadow: 0 4px 20px rgba(91,191,58,0.4); text-decoration: none;
+  display: inline-block; text-align: center;
+}
+.btn-primary:hover { background: var(--green-dark); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(91,191,58,0.45); }
+
+.btn-ghost {
+  font-family: var(--font-head); font-size: 14px; font-weight: 700;
+  background: rgba(255,255,255,0.1); color: #fff;
+  border: 1.5px solid rgba(255,255,255,0.35); border-radius: 100px;
+  padding: 12px 24px; cursor: pointer; backdrop-filter: blur(6px);
+  transition: background 0.25s, border-color 0.25s, transform 0.2s;
+  text-decoration: none; display: inline-block; text-align: center;
+}
+.btn-ghost:hover { background: rgba(255,255,255,0.18); border-color: rgba(255,255,255,0.7); transform: translateY(-2px); }
 </style>
 </head>
 <body>
@@ -162,13 +304,12 @@ footer{background:var(--ink);padding:40px 40px 0}
   <nav class="nav">
     <a href="index.html">Home</a>
     <a href="about.html">About</a>
-    <a href="opportunities.html">Opportunities</a>
+    <a href="opportunities.html">Overview</a>
     <a href="how-it-works.html">How It Works</a>
   </nav>
   <div class="cta-group">
-    <a href="invest.html" class="nav-cta active">Request Investment Brief</a>
-    <a href="contact.html" class="nav-cta-secondary">Become a Driver</a>
-
+    <a href="invest.html" class="btn-primary">Request Investment Brief</a>
+    <a href="contact.html" class="btn-ghost">Become a Driver</a>
   </div>
   <button class="menu-toggle" id="menuToggle" aria-label="Open menu">
     <span></span><span></span><span></span>
@@ -183,7 +324,6 @@ footer{background:var(--ink);padding:40px 40px 0}
   <a href="about.html">About</a>
   <a href="opportunities.html">Opportunities</a>
   <a href="how-it-works.html">How It Works</a>
-  <a href="contact.html">Contact</a>
   <div class="mobile-nav-ctas">
     <a href="invest.html" class="btn-primary">Request Investment Brief</a>
     <a href="contact.html" class="btn-ghost">Become a Driver</a>
@@ -196,10 +336,10 @@ footer{background:var(--ink);padding:40px 40px 0}
     <div class="breadcrumb">
       <a href="index.html">Home</a>
       <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-      Request Investment Brief
+      Start Your Investment
     </div>
     <div class="hero-eyebrow">Investment Enquiry</div>
-    <h1>Request an <span class="accent">Investment Brief</span></h1>
+    <h1>Start Your <span class="accent">Investment</span></h1>
     <p>Submit your details below. Our team will prepare a tailored investment brief covering available asset classes, structured return parameters, and the formal agreement process for your capital range.</p>
   </div>
 </section>
@@ -209,11 +349,37 @@ footer{background:var(--ink);padding:40px 40px 0}
   <div class="form-layout">
     <div class="form-wrap">
       <div class="form-card">
-        <h2>Investment Request</h2>
-        <p>All fields are required. No payment is collected at this stage. This form initiates the formal briefing process only.</p>
 
         <div id="formContent">
+          <h2>Investment Request</h2>
+          <p>All fields are required. No payment is collected at this stage. This form initiates the formal briefing process only.</p>
+
+          <!-- ── Context Awareness Banner (shown when URL params detected) ── -->
+          <br/>
+          <div class="context-banner" id="contextBanner">
+            <div class="context-banner-icon">
+              <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </div>
+            <div class="context-banner-body">
+              <strong>Pre-filled for you</strong>
+              <p>Based on your selection, we've filled in the relevant fields below.</p>
+              <div class="context-banner-pills" id="contextPills"></div>
+            </div>
+            <button class="context-dismiss" id="contextDismiss" aria-label="Dismiss">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
+
           <form id="investForm" novalidate>
+
+            <!-- Hidden context fields — carry data through submission -->
+            <input type="hidden" id="contextTier" name="contextTier" value="" />
+            <input type="hidden" id="contextAsset" name="contextAsset" value="" />
+
             <div class="form-grid">
               <div class="form-group">
                 <label for="name">Full Name</label>
@@ -227,28 +393,77 @@ footer{background:var(--ink);padding:40px 40px 0}
                 <label for="email">Email Address</label>
                 <input type="email" id="email" name="email" placeholder="your@email.com" required />
               </div>
+
+              <!-- Asset Class — auto-selected by ?asset= param -->
+             <!-- Asset Class -->
+<div class="form-group">
+  <label for="asset_class">Asset Class</label>
+  <select id="asset_class" name="asset_class" required>
+    <option value="" disabled selected>Select an asset class</option>
+
+    <option value="motorcycle">Motorcycle (Bike)</option>
+    <option value="tricycle">Tricycle (Keke)</option>
+    <option value="car_sedan">Car / Sedan</option>
+    <option value="minibus">Urban Minibus</option>
+    <option value="intercity_bus">Intercity Bus</option>
+    <option value="haulage">Commercial Haulage</option>
+
+    <option value="multiple">Multiple Asset Classes</option>
+    <option value="undecided">Not Sure — Need Guidance</option>
+  </select>
+
+  <small class="form-note">
+    Choose the type of asset you’re interested in investing in.
+  </small>
+</div>
+
+<!-- Number of Assets -->
+<div class="form-group">
+  <label for="asset_count">Number of Assets</label>
+  <select id="asset_count" name="asset_count" required>
+    <option value="" disabled selected>Select number of assets</option>
+
+    <option value="1">1 Asset</option>
+    <option value="2">2 Assets</option>
+    <option value="3">3 Assets</option>
+    <option value="4_5">4 – 5 Assets</option>
+    <option value="6_10">6 – 10 Assets</option>
+    <option value="10_plus">10+ Assets</option>
+  </select>
+
+  <small class="form-note">
+    This helps us understand the scale of your investment interest.
+  </small>
+</div>
+
+<!-- Return Preference -->
+<div class="form-group">
+  <label for="return_frequency">Return Preference</label>
+  <select id="return_frequency" name="return_frequency" required>
+    <option value="" disabled selected>Select return preference</option>
+
+    <option value="weekly">Weekly Returns</option>
+    <option value="monthly">Monthly Returns</option>
+    <option value="yearly">Yearly Returns</option>
+  </select>
+
+  <small class="form-note">
+    This helps us align your investment with your preferred payout cycle.
+  </small>
+</div>
+
+              <!-- Tier — auto-selected by ?tier= param -->
               <div class="form-group">
-                <label for="assetClass">Investment Asset Class</label>
-                <select id="assetClass" name="assetClass" required>
-                  <option value="" disabled selected>Select an asset class</option>
-                  <option value="intercity-buses">Intercity Buses</option>
-                  <option value="urban-minibuses">Urban Minibuses</option>
-                  <option value="executive-sedans">Executive Sedans</option>
-                  <option value="commercial-haulage">Commercial Haulage</option>
-                  <option value="multiple">Multiple Asset Classes</option>
-                  <option value="undecided">Undecided — Need Guidance</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label for="range">Investment Range</label>
+                <label for="range">Investment Tier</label>
                 <select id="range" name="range" required>
-                  <option value="" disabled selected>Select a range</option>
-                  <option value="tier-1">Tier 1 — Entry Level</option>
-                  <option value="tier-2">Tier 2 — Growth Allocation</option>
+                  <option value="" disabled selected>Select a tier</option>
+                  <option value="standard">Standard — Entry Level</option>
+                  <option value="premium">Premium — Growth Allocation</option>
                   <option value="discuss">Prefer to Discuss Directly</option>
                 </select>
-                <span class="form-note">Exact capital amounts are discussed during the briefing process.</span>
+                <span class="form-note" id="tierNote">Exact capital amounts are discussed during the briefing process.</span>
               </div>
+
             </div>
 
             <div class="form-divider"></div>
@@ -263,7 +478,7 @@ footer{background:var(--ink);padding:40px 40px 0}
           </form>
         </div>
 
-        <div class="success-msg" id="successMsg">
+        <div class="success-msg" id="successMsg" style="display:none">
           <div class="success-icon">
             <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
@@ -292,22 +507,6 @@ footer{background:var(--ink);padding:40px 40px 0}
         <div class="info-item">
           <div class="info-dot"></div>
           <p><strong>Asset deployment:</strong> Capital is deployed into the agreed asset class and operations begin under Enigma's management.</p>
-        </div>
-      </div>
-
-      <div class="info-card">
-        <h3>Investment Tiers</h3>
-        <div class="info-item">
-          <div class="info-dot"></div>
-          <p><strong>Tier 1 — Entry Level:</strong> Designed for first-time investors in the platform. Structured for single asset deployment with weekly return cycle.</p>
-        </div>
-        <div class="info-item">
-          <div class="info-dot"></div>
-          <p><strong>Tier 2 — Growth Allocation:</strong> For investors deploying larger capital across multiple asset classes with enhanced performance parameters.</p>
-        </div>
-        <div class="info-item">
-          <div class="info-dot"></div>
-          <p>Specific capital thresholds per tier are disclosed during the formal briefing — not on this public page.</p>
         </div>
       </div>
 
@@ -354,25 +553,151 @@ footer{background:var(--ink);padding:40px 40px 0}
 </footer>
 
 <script>
-const menuToggle = document.getElementById('menuToggle');
-const mobileNav = document.getElementById('mobileNav');
-const closeNav = document.getElementById('closeNav');
-if (menuToggle) menuToggle.addEventListener('click', () => mobileNav.classList.add('open'));
-if (closeNav) closeNav.addEventListener('click', () => mobileNav.classList.remove('open'));
+/* ─────────────────────────────────────────────
+   CONTEXT AWARENESS ENGINE
+   Reads URL params and pre-fills the form.
 
-document.getElementById('investForm').addEventListener('submit', function(e) {
+   Supported params:
+     ?tier=standard | premium
+     ?asset=bike | motorcycle | keke | tricycle | car | sedan | minibus | bus | haulage | multiple
+   
+   Examples from other pages:
+     <a href="invest.html?tier=standard&asset=bike">Invest in Bikes (Standard)</a>
+     <a href="invest.html?tier=premium&asset=car">Invest in Cars (Premium)</a>
+     <a href="invest.html?tier=premium">Premium tier (any asset)</a>
+───────────────────────────────────────────── */
+
+(function () {
+  const params = new URLSearchParams(window.location.search);
+  const tierParam  = (params.get('tier')  || '').toLowerCase().trim();
+  const assetParam = (params.get('asset') || '').toLowerCase().trim();
+
+  // ── Maps: param value → select option value + display label ──
+  const TIER_MAP = {
+    'standard':  { value: 'standard', label: 'Standard Tier' },
+    'entry':     { value: 'standard', label: 'Standard Tier' },
+    'premium':   { value: 'premium',  label: 'Premium Tier'  },
+    'growth':    { value: 'premium',  label: 'Premium Tier'  },
+  };
+
+  const ASSET_MAP = {
+    'bike':        { value: 'motorcycle',    label: 'Motorcycle (Bike)'  },
+    'motorcycle':  { value: 'motorcycle',    label: 'Motorcycle (Bike)'  },
+    'keke':        { value: 'tricycle',      label: 'Tricycle (Keke)'    },
+    'tricycle':    { value: 'tricycle',      label: 'Tricycle (Keke)'    },
+    'car':         { value: 'car',           label: 'Car / Sedan'        },
+    'sedan':       { value: 'car',           label: 'Car / Sedan'        },
+    'minibus':     { value: 'minibus',       label: 'Urban Minibus'      },
+    'bus':         { value: 'intercity-bus', label: 'Intercity Bus'      },
+    'intercitybus':{ value: 'intercity-bus', label: 'Intercity Bus'      },
+    'haulage':     { value: 'haulage',       label: 'Commercial Haulage' },
+    'multiple':    { value: 'multiple',      label: 'Multiple Classes'   },
+  };
+
+  const tierMatch  = TIER_MAP[tierParam]   || null;
+  const assetMatch = ASSET_MAP[assetParam] || null;
+
+  // Nothing to prefill — exit silently
+  if (!tierMatch && !assetMatch) return;
+
+  // ── Apply values to selects ──
+  const assetSelect = document.getElementById('assetClass');
+  const tierSelect  = document.getElementById('range');
+  const pills       = document.getElementById('contextPills');
+  const banner      = document.getElementById('contextBanner');
+
+  function applyPrefill(selectEl, value, noteEl, noteText) {
+    selectEl.value = value;
+    selectEl.classList.add('prefilled');
+    if (noteEl && noteText) {
+      noteEl.textContent = noteText;
+      noteEl.style.color = 'var(--green-dark)';
+      noteEl.style.fontWeight = '600';
+    }
+  }
+
+  function addPill(label) {
+    const pill = document.createElement('span');
+    pill.className = 'context-pill';
+    pill.textContent = label;
+    pills.appendChild(pill);
+  }
+
+  if (assetMatch) {
+    applyPrefill(assetSelect, assetMatch.value, document.getElementById('assetNote'), '✓ Pre-selected based on your interest');
+    document.getElementById('contextAsset').value = assetMatch.value;
+    addPill(assetMatch.label);
+  }
+
+  if (tierMatch) {
+    applyPrefill(tierSelect, tierMatch.value, null, null);
+    document.getElementById('contextTier').value = tierMatch.value;
+    addPill(tierMatch.label);
+    // Update tier note to reflect selection
+    const tierNote = document.getElementById('tierNote');
+    if (tierNote) {
+      tierNote.textContent = '✓ Pre-selected based on your interest';
+      tierNote.style.color = 'var(--green-dark)';
+      tierNote.style.fontWeight = '600';
+    }
+  }
+
+  // ── Show banner ──
+  banner.classList.add('visible');
+
+  // Clear prefill highlight when user manually changes a select
+  [assetSelect, tierSelect].forEach(el => {
+    el.addEventListener('change', function () {
+      this.classList.remove('prefilled');
+      const note = this === assetSelect
+        ? document.getElementById('assetNote')
+        : document.getElementById('tierNote');
+      if (note) {
+        note.textContent = this === tierSelect
+          ? 'Exact capital amounts are discussed during the briefing process.'
+          : '';
+        note.style.color = '';
+        note.style.fontWeight = '';
+      }
+    });
+  });
+
+  // Dismiss banner
+  document.getElementById('contextDismiss').addEventListener('click', () => {
+    banner.style.animation = 'none';
+    banner.style.opacity = '0';
+    banner.style.transform = 'translateY(-6px)';
+    banner.style.transition = 'opacity 0.25s, transform 0.25s';
+    setTimeout(() => banner.remove(), 300);
+  });
+
+})();
+
+/* ── Mobile nav ── */
+const menuToggle = document.getElementById('menuToggle');
+const mobileNav  = document.getElementById('mobileNav');
+const closeNav   = document.getElementById('closeNav');
+if (menuToggle) menuToggle.addEventListener('click', () => mobileNav.classList.add('open'));
+if (closeNav)   closeNav.addEventListener('click',   () => mobileNav.classList.remove('open'));
+
+/* ── Form submission ── */
+document.getElementById('investForm').addEventListener('submit', function (e) {
   e.preventDefault();
-  const name = document.getElementById('name').value.trim();
-  const phone = document.getElementById('phone').value.trim();
-  const email = document.getElementById('email').value.trim();
+  const name       = document.getElementById('name').value.trim();
+  const phone      = document.getElementById('phone').value.trim();
+  const email      = document.getElementById('email').value.trim();
   const assetClass = document.getElementById('assetClass').value;
-  const range = document.getElementById('range').value;
+  const range      = document.getElementById('range').value;
+
   if (!name || !phone || !email || !assetClass || !range) {
     alert('Please complete all fields before submitting.');
     return;
   }
+
   document.getElementById('formContent').style.display = 'none';
-  document.getElementById('successMsg').classList.add('visible');
+  const successEl = document.getElementById('successMsg');
+  successEl.style.display = 'block';
+  successEl.classList.add('visible');
 });
 </script>
 </body>
